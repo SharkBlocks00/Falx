@@ -15,19 +15,22 @@ def main():
     try:
         obj = argumentHandler.handleArguments()
     except Exception as e:
-        print(e.args[0])
+        print(e)
     if obj is None: return
 
     source: str = obj.__str__()
     lexer: Lexer = Lexer(source)
-    tokens: list[Token] = lexer.lex()
+    try:
+        tokens: list[Token] = lexer.lex()
 
-    parser: Parser = Parser(tokens)
+        parser: Parser = Parser(tokens)
 
-    statements: list[Statement] = parser.parse()
+        statements: list[Statement] = parser.parse()
 
-    interpreter: Interpreter = Interpreter()
-    interpreter.interpret(statements)
+        interpreter: Interpreter = Interpreter()
+        interpreter.interpret(statements)
+    except Exception as e:
+        print(e)
 
 if __name__ == "__main__":
     main()

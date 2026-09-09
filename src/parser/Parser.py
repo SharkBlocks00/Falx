@@ -35,6 +35,7 @@ class Parser:
     def __init__(self, tokens: list[Token]):
         self.tokens: list[Token] = tokens
         self.current: int = 0
+        self._insideFunction: bool = False
 
     def parse(self) -> list[Statement]:
         statements: list[Statement] = []
@@ -57,7 +58,9 @@ class Parser:
         if self._match(TokenKind.FOREACH): return self._foreachStatement()
         if self._match(TokenKind.BREAK): return self._breakStatement()
         if self._match(TokenKind.CONTINUE): return self._continueStatement()
-        if self._match(TokenKind.RETURN): return self._returnStatement()
+        if self._match(TokenKind.RETURN):
+            if not self._insideFunction: raise Exception("'return' called outside a valid function")
+            return self._returnStatement()
         if self._match(TokenKind.LEFT_BRACE): return self._blockStatement()
 
         return self._expressionStatement()
@@ -88,14 +91,19 @@ class Parser:
         parameters: list[str] = []
 
         if not self._check(TokenKind.RIGHT_PAREN):
-            while self._match(TokenKind.COMMA):
+            while True:
                 parameter: Token = self._consume(TokenKind.IDENTIFIER, "Expected parameter name")
                 parameters.append(parameter.lexeme)
+                if not self._match(TokenKind.COMMA): break
 
         self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after function parameters")
         self._consumeLeftBrace()
+
+        old: bool = self._insideFunction
+        self._insideFunction = True
         body: list[Statement] = self._block()
 
+        self._insideFunction = old
         return FunctionDeclaration(name.location, name.lexeme, parameters, body)
 
     def _structDeclaration(self) -> StructDeclaration:
