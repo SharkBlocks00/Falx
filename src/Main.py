@@ -1,3 +1,6 @@
+import sys
+
+from src.ArgumentHandler import ArgumentHandler
 from src.ast.Statement import Statement
 from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
@@ -6,7 +9,16 @@ from src.tokens.Token import Token
 
 
 def main():
-    source: str = 'let x = 5; output(x);'
+
+    argumentHandler: ArgumentHandler = ArgumentHandler(sys.argv)
+    obj: object = None
+    try:
+        obj = argumentHandler.handleArguments()
+    except Exception as e:
+        print(e.args[0])
+    if obj is None: return
+
+    source: str = obj.__str__()
     lexer: Lexer = Lexer(source)
     tokens: list[Token] = lexer.lex()
 

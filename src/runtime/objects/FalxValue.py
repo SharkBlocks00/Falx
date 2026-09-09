@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.packages.NativeFunction import NativeFunction
 
 
 class FalxValue(ABC):

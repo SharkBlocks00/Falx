@@ -39,7 +39,7 @@ class BinaryExpression(Expression):
             case TokenKind.EQUAL_EQUAL: FalxBoolean(leftValue.compareTo(rightValue) == 0)
             case TokenKind.BANG_EQUAL: FalxBoolean(leftValue.compareTo(rightValue) != 0)
 
-        raise RuntimeError(f"Cannot evaluate '{leftValue.asString()}' and '{rightValue.asString()}'")
+            case _: raise RuntimeError(f"Cannot evaluate '{leftValue.asString()}' and '{rightValue.asString()}'")
 
     def __str__(self) -> str:
         return f"{self.left.__str__} {self.operator.tokenKind.__str__()} {self.right.__str__()}"
