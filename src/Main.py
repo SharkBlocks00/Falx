@@ -1,0 +1,22 @@
+from src.ast.Statement import Statement
+from src.lexer.Lexer import Lexer
+from src.parser.Parser import Parser
+from src.runtime.Interpreter import Interpreter
+from src.tokens.Token import Token
+
+
+def main():
+    source: str = 'let x = 5; output(x);'
+    lexer: Lexer = Lexer(source)
+    tokens: list[Token] = lexer.lex()
+
+    parser: Parser = Parser(tokens)
+
+    statements: list[Statement] = parser.parse()
+
+    interpreter: Interpreter = Interpreter()
+    interpreter.interpret(statements)
+
+if __name__ == "__main__":
+    main()
+
