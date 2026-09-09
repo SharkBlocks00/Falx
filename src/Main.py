@@ -1,4 +1,5 @@
 import sys
+import traceback
 
 from src.ArgumentHandler import ArgumentHandler
 from src.ast.Statement import Statement
@@ -30,7 +31,7 @@ def main():
         interpreter: Interpreter = Interpreter()
         interpreter.interpret(statements)
     except Exception as e:
-        print(e)
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()

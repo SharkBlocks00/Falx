@@ -30,8 +30,6 @@ class UserFunction(Callable):
                 stmt.execute(interpreter, local)
         except ReturnException as r:
             return r.value
-        except Exception as e:
-            pass
 
         return FalxNull()
 

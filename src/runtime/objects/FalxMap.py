@@ -52,7 +52,7 @@ class FalxMap(FalxValue, FalxIterable):
         return FalxArray([i for i in self.values.values()])
 
     def isEmpty(self) -> bool:
-        return len(self) == 0
+        return len(self.values) == 0
 
     def getMap(self) -> dict[FalxValue, FalxValue]:
         return self.values.copy()

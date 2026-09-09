@@ -36,7 +36,7 @@ class StructConstructor(Callable):
             else:
                 value: FalxValue = FalxNull()
 
-            struct[field.name] = value
+            struct.set(field.name, value)
 
         return struct
 

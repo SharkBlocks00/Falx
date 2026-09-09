@@ -25,19 +25,19 @@ class BinaryExpression(Expression):
         rightValue: FalxValue = self.right.evaluate(interpreter, environment)
 
         match self.operator.tokenKind:
-            case TokenKind.PLUS: leftValue.add(rightValue)
-            case TokenKind.MINUS: leftValue.minus(rightValue)
-            case TokenKind.STAR: leftValue.multiply(rightValue)
-            case TokenKind.SLASH: leftValue.divide(rightValue)
-            case TokenKind.PERCENT: leftValue.mod(rightValue)
+            case TokenKind.PLUS: return leftValue.add(rightValue)
+            case TokenKind.MINUS: return leftValue.minus(rightValue)
+            case TokenKind.STAR: return leftValue.multiply(rightValue)
+            case TokenKind.SLASH: return leftValue.divide(rightValue)
+            case TokenKind.PERCENT: return leftValue.mod(rightValue)
 
             # Assignment operators
-            case TokenKind.GREATER: FalxBoolean(leftValue.compareTo(rightValue) > 0)
-            case TokenKind.GREATER_EQUAL: FalxBoolean(leftValue.compareTo(rightValue) >= 0)
-            case TokenKind.LESS: FalxBoolean(leftValue.compareTo(rightValue) < 0)
-            case TokenKind.LESS_EQUAL: FalxBoolean(leftValue.compareTo(rightValue) <= 0)
-            case TokenKind.EQUAL_EQUAL: FalxBoolean(leftValue.compareTo(rightValue) == 0)
-            case TokenKind.BANG_EQUAL: FalxBoolean(leftValue.compareTo(rightValue) != 0)
+            case TokenKind.GREATER: return FalxBoolean(leftValue.compareTo(rightValue) > 0)
+            case TokenKind.GREATER_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) >= 0)
+            case TokenKind.LESS: return FalxBoolean(leftValue.compareTo(rightValue) < 0)
+            case TokenKind.LESS_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) <= 0)
+            case TokenKind.EQUAL_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) == 0)
+            case TokenKind.BANG_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) != 0)
 
             case _: raise RuntimeError(f"Cannot evaluate '{leftValue.asString()}' and '{rightValue.asString()}'")
 
