@@ -15,9 +15,10 @@ class WhileStatement(Statement):
 
     def execute(self, interpreter: Interpreter, environment: Environment) -> None:
         while self.condition.evaluate(interpreter, environment).asBool():
+            localEnv: Environment = Environment(environment)
             try:
                 for stmt in self.body:
-                    stmt.execute(interpreter, environment)
+                    stmt.execute(interpreter, localEnv)
             except ContinueException:
                 continue
             except BreakException:

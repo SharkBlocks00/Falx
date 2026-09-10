@@ -29,7 +29,7 @@ class ForeachStatement(Statement):
 
             for stmt in self.body:
                 try:
-                    stmt.execute(interpreter, environment)
+                    stmt.execute(interpreter, loopEnv)
                 except BreakException:
                     break
                 except ContinueException:
