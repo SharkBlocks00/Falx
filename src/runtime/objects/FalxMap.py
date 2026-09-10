@@ -1,5 +1,13 @@
 from typing import Iterable
 
+from src.runtime.methods.maps.ClearMethod import ClearMethod
+from src.runtime.methods.maps.ContainsMethod import ContainsMethod
+from src.runtime.methods.maps.CopyMethod import CopyMethod
+from src.runtime.methods.maps.EmptyMethod import EmptyMethod
+from src.runtime.methods.maps.EntiresMethod import EntriesMethod
+from src.runtime.methods.maps.KeysMethod import KeysMethod
+from src.runtime.methods.maps.RemoveMethod import RemoveMethod
+from src.runtime.methods.maps.ValuesMethod import ValuesMethod
 from src.runtime.objects.FalxArray import FalxArray
 from src.runtime.objects.FalxIterable import FalxIterable
 from src.runtime.objects.FalxNumber import FalxNumber
@@ -12,6 +20,14 @@ class FalxMap(FalxValue, FalxIterable):
         super().__init__()
         self.values: dict[FalxValue, FalxValue] = values
         self._properties["size"] = lambda: FalxNumber(len(values))
+        self._methods["keys"] = KeysMethod(self)
+        self._methods["isEmpty"] = EmptyMethod(self)
+        self._methods["contains"] = ContainsMethod(self)
+        self._methods["copy"] = CopyMethod(self)
+        self._methods["remove"] = RemoveMethod(self)
+        self._methods["clear"] = ClearMethod(self)
+        self._methods["values"] = ValuesMethod(self)
+        self._methods["entries"] = EntriesMethod(self)
 
     def get(self, name: str) -> FalxValue:
         try:
@@ -52,7 +68,7 @@ class FalxMap(FalxValue, FalxIterable):
         return FalxArray([i for i in self.values.values()])
 
     def isEmpty(self) -> bool:
-        return len(self) == 0
+        return len(self.values) == 0
 
     def getMap(self) -> dict[FalxValue, FalxValue]:
         return self.values.copy()

@@ -13,6 +13,9 @@ class StructConstructor(Callable):
         super().__init__()
         self.definition = definition
 
+    def isStrict(self) -> bool:
+        return False
+
     def arity(self) -> int:
         return len(self.definition.fields)
 
@@ -36,7 +39,8 @@ class StructConstructor(Callable):
             else:
                 value: FalxValue = FalxNull()
 
-            struct[field.name] = value
+            struct.set(field.name, value)
+            i += 1
 
         return struct
 

@@ -2,6 +2,7 @@ from src.ast.Statement import Statement
 from src.packages.Callable import Callable
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
+from src.runtime.objects.FalxNull import FalxNull
 from src.runtime.objects.FalxValue import FalxValue
 from src.runtime.values.ReturnException import ReturnException
 
@@ -13,6 +14,9 @@ class UserFunction(Callable):
         self.parameters: list[str] = parameters
         self.body: list[Statement] = body
         self.closure: Environment = closure
+
+    def isStrict(self) -> bool:
+        return True
 
     def arity(self) -> int:
         return len(self.parameters)
@@ -29,10 +33,8 @@ class UserFunction(Callable):
                 stmt.execute(interpreter, local)
         except ReturnException as r:
             return r.value
-        except Exception as e:
-            pass
 
-        return FalxNull
+        return FalxNull()
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, UserFunction) and self.parameters == other.parameters and self.body == other.body

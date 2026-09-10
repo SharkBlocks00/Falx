@@ -25,6 +25,7 @@ class Environment:
             if not variable.mutable:
                 raise RuntimeError(f"Cannot assign to constant '{name}'")
             variable.value = value
+            return
 
         if self.parent is not None:
             self.parent.assign(name, value)

@@ -1,8 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from src.runtime.objects.FalxString import FalxString
 
 from src.runtime.objects.FalxValue import FalxValue
 
@@ -12,6 +10,9 @@ class FalxNumber(FalxValue):
         self.value = value
 
     def __str__(self):
+        return str(self.value)
+
+    def __repr__(self):
         return str(self.value)
 
     def asInt(self) -> int:
@@ -24,6 +25,7 @@ class FalxNumber(FalxValue):
         return self.value
 
     def add(self, other: FalxValue) -> FalxValue:
+        from src.runtime.objects.FalxString import FalxString
         if isinstance(other, FalxString):
             return FalxString(self.asString() + other.asString())
 
@@ -38,6 +40,7 @@ class FalxNumber(FalxValue):
         return super().minus(other)
 
     def multiply(self, other: FalxValue) -> FalxValue:
+        from src.runtime.objects.FalxString import FalxString
         if isinstance(other, FalxNumber):
             return FalxNumber(_mul(self.value, other.value))
 
@@ -101,7 +104,7 @@ def _div(a: int | float, b: int | float) -> int | float:
 def _mod(a: int | float, b: int | float) -> int | float:
     if isinstance(a, int) and isinstance(b, int):
         return int(a % b)
-    return float(a) / b
+    return float(a) % b
 
 
 
