@@ -15,6 +15,9 @@ class UserFunction(Callable):
         self.body: list[Statement] = body
         self.closure: Environment = closure
 
+    def isStrict(self) -> bool:
+        return True
+
     def arity(self) -> int:
         return len(self.parameters)
 

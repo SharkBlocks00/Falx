@@ -30,6 +30,9 @@ class FalxString(FalxValue, FalxIterable):
     def __str__(self):
         return self.value
 
+    def __repr__(self):
+        return self.value
+
     def __eq__(self, other: object) -> bool:
         return isinstance(other, FalxString) and self.value == other.value
 

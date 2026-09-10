@@ -27,8 +27,8 @@ class FunctionCallExpression(Expression):
         for arg in self.arguments:
             args.append(arg.evaluate(interpreter, environment))
 
-        if len(args) != obj.arity():
-            raise RuntimeError(f"Expected {len(self.arguments)} arguments, got {len(args)}")
+        if len(args) != obj.arity() and  obj.isStrict():
+            raise RuntimeError(f"Expected {obj.arity()} arguments, got {len(args)}")
 
         return obj.call(interpreter, args)
 

@@ -26,5 +26,8 @@ class FalxNull(FalxValue):
     def __str__(self) -> str:
         return "null"
 
+    def __repr__(self) -> str:
+        return "null"
+
     def asString(self) -> str:
         return "null"
