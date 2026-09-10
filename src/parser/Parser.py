@@ -212,6 +212,7 @@ class Parser:
         elements: list[Expression] = []
 
         if not self._check(TokenKind.RIGHT_BRACKET):
+            elements.append(self._expression())
             while self._match(TokenKind.COMMA):
                 elements.append(self._expression())
 
@@ -222,15 +223,18 @@ class Parser:
         location: SourceLocation = self._previous().location
 
         elements: dict[str, Expression] = {}
-        iterations: int = 0
 
         if not self._check(TokenKind.RIGHT_BRACE):
+            key: str = self._consumeIdentifier().lexeme
+            self._consume(TokenKind.COLON, "Expected ':' to separate map key and value")
+            value: Expression = self._expression()
+            elements[key] = value
+
             while self._match(TokenKind.COMMA):
-                key: str = self._consumeIdentifier().lexeme
-                self._consume(TokenKind.COLON, "Expected ':' to seperate map key and values")
-                value: Expression = self._expression()
+                key = self._consumeIdentifier().lexeme
+                self._consume(TokenKind.COLON, "Expected ':' to separate map key and value")
+                value = self._expression()
                 elements[key] = value
-                iterations += 1
 
         self._consumeRightBrace()
         return MapLiteral(location, elements)

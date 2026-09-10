@@ -12,6 +12,9 @@ class FalxNumber(FalxValue):
     def __str__(self):
         return str(self.value)
 
+    def __repr__(self):
+        return str(self.value)
+
     def asInt(self) -> int:
         return int(self.value)
 

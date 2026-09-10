@@ -1,5 +1,15 @@
 from typing import Iterable
 
+from src.runtime.methods.string.ContainMethod import ContainMethod
+from src.runtime.methods.string.EndsWithMethod import EndsWithMethod
+from src.runtime.methods.string.IntMethod import IntMethod
+from src.runtime.methods.string.LowerMethod import LowerMethod
+from src.runtime.methods.string.RealMethod import RealMethod
+from src.runtime.methods.string.ReplaceMethod import ReplaceMethod
+from src.runtime.methods.string.SplitMethod import SplitMethod
+from src.runtime.methods.string.StartsWithMethod import StartsWithMethod
+from src.runtime.methods.string.TrimMethod import TrimMethod
+from src.runtime.methods.string.UpperMethod import UpperMethod
 from src.runtime.objects.FalxBoolean import FalxBoolean
 from src.runtime.objects.FalxIterable import FalxIterable
 from src.runtime.objects.FalxNumber import FalxNumber
@@ -11,6 +21,17 @@ class FalxString(FalxValue, FalxIterable):
         super().__init__()
         self.value: str = value
         self._properties["length"] = lambda: FalxNumber(len(value))
+        self._methods["toUpper"] = UpperMethod(self)
+        self._methods["toLower"] = LowerMethod(self)
+        self._methods["trim"] = TrimMethod(self)
+        self._methods["toInt"] = IntMethod(self)
+        self._methods["toReal"] = RealMethod(self)
+        self._methods["trim"] = TrimMethod(self)
+        self._methods["contains"] = ContainMethod(self)
+        self._methods["endsWith"] = EndsWithMethod(self)
+        self._methods["startsWith"] = StartsWithMethod(self)
+        self._methods["replace"] = ReplaceMethod(self)
+        self._methods["split"] = SplitMethod(self)
 
     def asString(self) -> str:
         return self.value
