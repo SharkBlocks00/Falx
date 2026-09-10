@@ -1,0 +1,12 @@
+func makeAccumulator = define() {
+    let total = 0;
+    func add = define(n) {
+        total = total + n;
+        return total;
+    }
+    return add;
+}
+let acc = makeAccumulator();
+output(acc(5));
+output(acc(10));
+output(acc(3));

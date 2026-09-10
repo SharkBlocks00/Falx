@@ -1,0 +1,7 @@
+struct Pair {
+    first;
+    second;
+}
+let p = Pair(10, 20);
+output(p.first);
+output(p.second);

@@ -1,0 +1,5 @@
+let m = { x: 10, y: 20 };
+output(m["x"]);
+m["z"] = 30;
+output(m["z"]);
+output(m.size);

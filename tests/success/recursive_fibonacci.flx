@@ -1,0 +1,8 @@
+func fib = define(n) {
+    if (n <= 1) { return n; }
+    return fib(n - 1) + fib(n - 2);
+}
+output(fib(0));
+output(fib(1));
+output(fib(5));
+output(fib(10));

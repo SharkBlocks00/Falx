@@ -17,6 +17,8 @@ class ArgumentHandler:
                 case "--file" | "-f" | "run":
                     if i + 1 >= len(self.arguments):
                         raise Exception(f"Missing filename after '{self.arguments[i]}'")
+                    if not self.arguments[i + 1].endswith(".flx"):
+                        raise Exception(f"Invalid filetype after '{self.arguments[i]}'")
                     with open(self.arguments[i + 1]) as file:
                       contents: str = file.read()
                       return contents

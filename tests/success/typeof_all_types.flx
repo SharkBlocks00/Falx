@@ -1,0 +1,5 @@
+output(typeof(42));
+output(typeof("hello"));
+output(typeof(true));
+output(typeof([1, 2]));
+output(typeof({ key: "val" }));

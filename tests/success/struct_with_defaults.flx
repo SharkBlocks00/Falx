@@ -1,0 +1,7 @@
+struct Config {
+    host = "localhost";
+    port = 8080;
+}
+let c = Config();
+output(c.host);
+output(c.port);

@@ -1,0 +1,5 @@
+func noReturn = define() {
+    let x = 10;
+}
+let result = noReturn();
+output(result);

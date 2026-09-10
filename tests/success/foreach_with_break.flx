@@ -1,0 +1,5 @@
+let arr = [1, 2, 3, 4, 5];
+foreach (item: arr) {
+    if (item == 3) { break; }
+    output(item);
+}

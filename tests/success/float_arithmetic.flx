@@ -1,0 +1,6 @@
+let a = 3.14;
+let b = 2.0;
+output(a + b);
+output(a - b);
+output(a * b);
+output(a / b);

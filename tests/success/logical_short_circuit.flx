@@ -1,0 +1,4 @@
+let x = true || true;
+let y = true && true;
+output(x);
+output(y);

@@ -1,0 +1,4 @@
+output("tab:\there");
+output("newline:\nhere");
+output("quote: \"");
+output("backslash: \\");

@@ -1,0 +1,7 @@
+let arr = [5, 3, 1, 4, 2];
+arr.push(6);
+output(arr.size);
+output(arr.contains(3));
+output(arr.isEmpty());
+let copy = arr.copy();
+output(copy.size);

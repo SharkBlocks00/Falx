@@ -1,0 +1,3 @@
+let items = [{ name: "a" }, { name: "b" }];
+output(items[0].name);
+output(items[1].name);

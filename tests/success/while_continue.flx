@@ -1,0 +1,8 @@
+let i = 0;
+let count = 0;
+while (i < 5) {
+    i = i + 1;
+    if (i == 3) { continue; }
+    count = count + 1;
+}
+output(count);

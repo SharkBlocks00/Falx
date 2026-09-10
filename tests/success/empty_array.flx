@@ -1,0 +1,6 @@
+let arr = [];
+output(arr.size);
+output(arr.isEmpty());
+arr.push(42);
+output(arr.size);
+output(arr.isEmpty());

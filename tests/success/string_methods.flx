@@ -1,0 +1,10 @@
+let s = "  Hello World  ";
+output(s.trim());
+output(s.toUpper());
+output(s.toLower());
+output(s.contains("World"));
+output(s.startsWith(" "));
+output(s.endsWith(" "));
+output(s.replace("World", "Falx"));
+let parts = s.trim().split(" ");
+output(parts);

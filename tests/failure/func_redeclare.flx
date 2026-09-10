@@ -1,0 +1,2 @@
+func f = define() { return 1; }
+func f = define() { return 2; }

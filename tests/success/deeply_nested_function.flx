@@ -1,0 +1,10 @@
+func a = define() {
+    func b = define() {
+        func c = define() {
+            return 42;
+        }
+        return c();
+    }
+    return b();
+}
+output(a());

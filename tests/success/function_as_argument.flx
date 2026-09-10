@@ -1,0 +1,7 @@
+func apply = define(f, x) {
+    return f(x);
+}
+func double = define(x) {
+    return x * 2;
+}
+output(apply(double, 5));

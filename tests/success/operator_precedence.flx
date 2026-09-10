@@ -1,0 +1,6 @@
+let x = 2 + 3 * 4;
+output(x);
+let y = (2 + 3) * 4;
+output(y);
+let z = 10 - 2 * 3 + 1;
+output(z);

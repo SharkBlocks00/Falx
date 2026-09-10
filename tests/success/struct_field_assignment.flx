@@ -1,0 +1,9 @@
+struct Point {
+    x;
+    y;
+}
+let p = Point();
+p.x = 10;
+p.y = 20;
+output(p.x);
+output(p.y);

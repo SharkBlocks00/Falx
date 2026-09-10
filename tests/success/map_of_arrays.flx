@@ -1,0 +1,5 @@
+let data = { nums: [1, 2, 3], strs: ["a", "b"] };
+output(data.nums);
+output(data.strs);
+output(data.nums[0]);
+output(data.strs[1]);

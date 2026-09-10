@@ -1,0 +1,5 @@
+func doNothing = define() {
+    return;
+}
+let result = doNothing();
+output(result);

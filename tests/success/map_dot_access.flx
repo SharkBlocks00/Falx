@@ -1,0 +1,5 @@
+let m = { name: "Alice", age: 30 };
+output(m.name);
+output(m.age);
+m.name = "Bob";
+output(m.name);

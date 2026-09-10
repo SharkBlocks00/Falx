@@ -27,7 +27,7 @@ class TestRunner:
     def runAll(self) -> None:
         directory: Path = Path(__file__).parent.parent / "tests"
 
-        files: list[Path] = sorted([item for item in directory.rglob("*") if item.is_file()])
+        files: list[Path] = sorted([item for item in directory.rglob("*") if item.is_file() and item.__str__().endswith(".flx")])
 
         passed: int = 0
         failed: int = 0

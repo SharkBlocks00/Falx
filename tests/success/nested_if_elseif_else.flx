@@ -1,0 +1,8 @@
+let x = 15;
+if (x < 10) {
+    output("small");
+} elseif (x < 20) {
+    output("medium");
+} else {
+    output("large");
+}

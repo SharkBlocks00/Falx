@@ -1,0 +1,9 @@
+func adder = define(n) {
+    func add = define(x) {
+        return x + n;
+    }
+    return add;
+}
+let add5 = adder(5);
+output(add5(10));
+output(add5(20));

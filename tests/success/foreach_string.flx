@@ -1,0 +1,4 @@
+let s = "abc";
+foreach (ch: s) {
+    output(ch);
+}

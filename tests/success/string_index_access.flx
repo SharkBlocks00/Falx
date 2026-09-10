@@ -1,0 +1,3 @@
+let s = "hello";
+output(s[0]);
+output(s[4]);

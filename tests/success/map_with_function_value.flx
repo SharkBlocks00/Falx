@@ -1,0 +1,5 @@
+func greet = define() {
+    output("hello");
+}
+let m = { action: greet };
+m.action();

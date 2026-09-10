@@ -1,0 +1,6 @@
+let m = {};
+output(m.size);
+output(m.isEmpty());
+m["key"] = "value";
+output(m.size);
+output(m.isEmpty());
