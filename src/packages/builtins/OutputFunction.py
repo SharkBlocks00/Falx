@@ -17,6 +17,9 @@ class OutputFunction(NativeFunction):
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, OutputFunction)
 
+    def isStrict(self) -> bool:
+        return False
+
     def arity(self) -> int:
         return 1
 

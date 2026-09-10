@@ -1,5 +1,3 @@
-from unittest import case
-
 from src.ast.SourceLocation import SourceLocation
 from src.tokens.Token import Token
 from src.tokens.TokenKind import TokenKind

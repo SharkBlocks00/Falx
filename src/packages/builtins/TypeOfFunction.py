@@ -10,6 +10,10 @@ from src.runtime.objects.FalxValue import FalxValue
 
 
 class TypeOfFunction(NativeFunction):
+
+    def isStrict(self) -> bool:
+        return True
+
     def arity(self) -> int:
         return 1
 
