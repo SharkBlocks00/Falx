@@ -25,13 +25,15 @@ class Lexer:
     def _scanToken(self) -> None:
         c: str = self._advance()
 
-        if c == "\n":
-            self.line += 1
-            self.column = 1
-            return
 
         self.startColumn = self.column
         match c:
+            case " " | "\r" | "\t":
+                pass # already advanced and had column updated in _advance()
+            case "\n":
+                self.line += 1
+                self.column = 1
+
             case "(": self._addToken(TokenKind.LEFT_PAREN)
             case ")": self._addToken(TokenKind.RIGHT_PAREN)
             case "[": self._addToken(TokenKind.LEFT_BRACKET)
@@ -75,7 +77,10 @@ class Lexer:
                     self._addToken(TokenKind.STAR)
             case "/":
                 if self._match("/"):
-                    self._addToken(TokenKind.SLASH_SLASH)
+                    # handle comments (//)
+                    while self._peek() != "\n" and not self._isAtEnd():
+                        self._advance()
+
                 elif self._match("="):
                     self._addToken(TokenKind.SLASH_EQUAL)
                 else:
@@ -114,6 +119,12 @@ class Lexer:
                 self._advance()
                 self._addToken(TokenKind.STRING, value)
                 return
+            if c == "\n":
+                # handle newlines in strings
+                self.line += 1
+                self.column = 1
+                value += self._advance()
+                continue
             if c == "\\":
                 self._advance()
                 escaped: str = self._advance()
@@ -153,8 +164,8 @@ class Lexer:
 
         value: str = self.source[start:self.current]
 
-        if value == "true" or value == "false":
-            self._addToken(TokenKind.BOOLEAN, bool(value))
+        if value in ("true", "false"):
+            self._addToken(TokenKind.BOOLEAN, value == "true")
             return
 
         self._addToken(self.KEYWORDS[value] if self.KEYWORDS.get(value) else TokenKind.IDENTIFIER, value)

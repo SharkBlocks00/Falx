@@ -1,0 +1,101 @@
+struct Task {
+    id;
+    description;
+    priority = 0;
+    completed = false;
+}
+
+func createScheduler = define() {
+    let tasks = [];
+    let nextId = 1;
+
+    func addTask = define(desc, prio) {
+        let t = Task(nextId, desc, prio, false);
+        tasks.push(t);
+        nextId = nextId + 1;
+        output("Added task " + t.id + ": " + desc + " (Priority: " + prio + ")");
+        return t.id;
+    }
+
+    func completeTask = define(id) {
+        let found = false;
+        foreach (t: tasks) {
+            if (t.id == id) {
+                t.completed = true;
+                found = true;
+                output("Completed task " + t.id + ": " + t.description);
+                break;
+            }
+        }
+        if (!found) {
+            output("Task " + id + " not found.");
+        }
+    }
+
+    func getPendingTasks = define() {
+        let pending = [];
+        foreach (t: tasks) {
+            if (!t.completed) {
+                pending.push(t);
+            }
+        }
+        return pending;
+    }
+
+    func processNextHighestPriority = define() {
+        let pending = getPendingTasks();
+        if (pending.size == 0) {
+            output("No pending tasks.");
+            return null;
+        }
+
+        let highest = pending[0];
+        foreach (t: pending) {
+            if (t.priority > highest.priority) {
+                highest = t;
+            }
+        }
+
+        output("Processing highest priority task...");
+        completeTask(highest.id);
+        return highest;
+    }
+    
+    func printStatus = define() {
+        let pending = getPendingTasks();
+        output("--- Scheduler Status ---");
+        output("Total tasks ever created: " + (nextId - 1));
+        output("Pending tasks: " + pending.size);
+        foreach (t: pending) {
+            output(" - [" + t.id + "] " + t.description + " (Pri: " + t.priority + ")");
+        }
+        output("------------------------");
+    }
+
+    return {
+        add: addTask,
+        complete: completeTask,
+        processNext: processNextHighestPriority,
+        status: printStatus
+    };
+}
+
+output("=== Starting Task Scheduler Test ===");
+let scheduler = createScheduler();
+
+scheduler.add("Write tests", 5);
+scheduler.add("Fix parser bug", 10);
+scheduler.add("Refactor lexer", 2);
+scheduler.add("Update documentation", 5);
+
+scheduler.status();
+
+scheduler.processNext(); // Should pick "Fix parser bug" (priority 10)
+scheduler.processNext(); // Should pick "Write tests" or "Update documentation" (priority 5)
+
+scheduler.complete(4); // Manually complete "Update documentation"
+
+scheduler.status();
+
+scheduler.processNext(); // Should pick "Refactor lexer"
+scheduler.processNext(); // Should say no pending tasks

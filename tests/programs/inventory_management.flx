@@ -1,0 +1,113 @@
+struct Product {
+    sku;
+    name;
+    price;
+    stock;
+}
+
+struct Transaction {
+    type;
+    sku;
+    quantity;
+    timestamp;
+}
+
+func createInventorySystem = define(storeName) {
+    let catalog = {};
+    let transactions = [];
+    let time = 0;
+
+    func addProduct = define(sku, name, price, initialStock) {
+        if (catalog.contains(sku)) {
+            output("Product " + sku + " already exists.");
+            return false;
+        }
+        let p = Product(sku, name, price, initialStock);
+        catalog[sku] = p;
+        output("Added product: " + name + " (SKU: " + sku + ")");
+        return true;
+    }
+
+    func recordTransaction = define(type, sku, qty) {
+        time = time + 1;
+        let t = Transaction(type, sku, qty, time);
+        transactions.push(t);
+    }
+
+    func receiveStock = define(sku, qty) {
+        if (!catalog.contains(sku)) {
+            output("Unknown product SKU: " + sku);
+            return false;
+        }
+        let p = catalog[sku];
+        p.stock = p.stock + qty;
+        recordTransaction("IN", sku, qty);
+        output("Received " + qty + " of " + p.name + ". New stock: " + p.stock);
+        return true;
+    }
+
+    func dispatchOrder = define(sku, qty) {
+        if (!catalog.contains(sku)) {
+            output("Unknown product SKU: " + sku);
+            return false;
+        }
+        let p = catalog[sku];
+        if (p.stock < qty) {
+            output("Insufficient stock for " + p.name + ". Requested: " + qty + ", Available: " + p.stock);
+            return false;
+        }
+        p.stock = p.stock - qty;
+        recordTransaction("OUT", sku, qty);
+        output("Dispatched " + qty + " of " + p.name + ". Remaining stock: " + p.stock);
+        return true;
+    }
+
+    func generateReport = define() {
+        output("\n=== Inventory Report for " + storeName + " ===");
+        let totalValue = 0.0;
+        let keys = catalog.keys();
+        
+        foreach (k: keys) {
+            let p = catalog[k];
+            let value = p.price * p.stock;
+            totalValue = totalValue + value;
+            output(p.sku + " - " + p.name + ": " + p.stock + " units @ $" + p.price + " = $" + value);
+        }
+        
+        output("Total Inventory Value: $" + totalValue);
+        output("Total Transactions: " + transactions.size);
+        output("==========================================\n");
+    }
+    
+    func printTransactionHistory = define() {
+        output("--- Transaction History ---");
+        foreach (t: transactions) {
+            output("Time " + t.timestamp + " | " + t.type + " | SKU: " + t.sku + " | Qty: " + t.quantity);
+        }
+        output("---------------------------");
+    }
+
+    return {
+        add: addProduct,
+        receive: receiveStock,
+        dispatch: dispatchOrder,
+        report: generateReport,
+        history: printTransactionHistory
+    };
+}
+
+output("=== Starting Inventory Management Test ===");
+let sys = createInventorySystem("Falx Mega Store");
+
+sys.add("SKU001", "Mechanical Keyboard", 120.50, 50);
+sys.add("SKU002", "Wireless Mouse", 45.99, 100);
+sys.add("SKU003", "HD Monitor", 299.00, 20);
+
+sys.dispatch("SKU001", 2);
+sys.receive("SKU003", 10);
+sys.dispatch("SKU002", 150); // Should fail due to insufficient stock
+sys.dispatch("SKU002", 5);
+sys.receive("SKU001", 15);
+
+sys.report();
+sys.history();

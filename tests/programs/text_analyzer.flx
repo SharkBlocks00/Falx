@@ -1,0 +1,79 @@
+struct WordStat {
+    word;
+    count = 0;
+}
+
+func analyzeText = define(text) {
+    let lowerText = text.toLower();
+    
+    // Basic punctuation cleaning
+    let cleanText = lowerText.replace(".", " ");
+    cleanText = cleanText.replace(",", " ");
+    cleanText = cleanText.replace("!", " ");
+    cleanText = cleanText.replace("?", " ");
+    cleanText = cleanText.replace(";", " ");
+    cleanText = cleanText.replace(":", " ");
+    cleanText = cleanText.trim();
+    
+    let words = cleanText.split(" ");
+    let counts = {};
+    
+    let totalWords = 0;
+    
+    foreach (w: words) {
+        let trimmed = w.trim();
+        if (trimmed.length > 0) {
+            totalWords = totalWords + 1;
+            if (counts.contains(trimmed)) {
+                let stat = counts[trimmed];
+                stat.count = stat.count + 1;
+            } else {
+                counts[trimmed] = WordStat(trimmed, 1);
+            }
+        }
+    }
+    
+    output("--- Text Analysis Report ---");
+    output("Total words: " + totalWords);
+    output("Unique words: " + counts.size);
+    
+    let maxCount = 0;
+    let mostFrequent = "";
+    
+    let keys = counts.keys();
+    foreach (k: keys) {
+        let stat = counts[k];
+        if (stat.count > maxCount) {
+            maxCount = stat.count;
+            mostFrequent = stat.word;
+        }
+    }
+    
+    output("Most frequent word: '" + mostFrequent + "' (" + maxCount + " times)");
+    output("----------------------------");
+    
+    return counts;
+}
+
+output("=== Starting Text Analyzer Test ===");
+
+let sampleText = "Falx is a programming language. Falx is designed to be simple, yet powerful! Is Falx fast? Yes, it is. Writing code in Falx is fun.";
+output("Sample text: " + sampleText);
+
+let stats = analyzeText(sampleText);
+
+output("Specific word frequencies:");
+if (stats.contains("falx")) {
+    output("'falx' appears " + stats["falx"].count + " times.");
+}
+if (stats.contains("is")) {
+    output("'is' appears " + stats["is"].count + " times.");
+}
+if (stats.contains("simple")) {
+    output("'simple' appears " + stats["simple"].count + " times.");
+}
+
+// Ensure non-existent words are handled gracefully by the script
+if (!stats.contains("python")) {
+    output("'python' does not appear in the text.");
+}
