@@ -30,7 +30,7 @@ def main():
 
         interpreter: Interpreter = Interpreter()
         interpreter.interpret(statements)
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
 
 if __name__ == "__main__":

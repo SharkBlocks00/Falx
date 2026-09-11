@@ -1,4 +1,3 @@
-from src.ast.statements.FunctionDeclaration import FunctionDeclaration
 from src.runtime.objects.FalxNull import FalxNull
 from src.runtime.objects.FalxValue import FalxValue
 from src.runtime.values.StructDefinition import StructDefinition
