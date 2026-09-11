@@ -1,4 +1,5 @@
 import io
+import sys
 import time
 from contextlib import redirect_stdout, redirect_stderr
 from enum import Enum, auto
@@ -112,4 +113,5 @@ class TestRunner:
             print(
                 f"{self.RED}{self.BOLD} {failed} TEST{plural} FAILED{self.RESET}")
 
-
+        if failed > 0:
+            sys.exit(1)
