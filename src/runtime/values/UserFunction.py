@@ -36,6 +36,12 @@ class UserFunction(Callable):
 
         return FalxNull()
 
+    def __str__(self) -> str:
+        return f"{self.parameters} -> {self.body}"
+
+    def __repr__(self) -> str:
+        return f"{self.parameters} -> {self.body}"
+
     def __eq__(self, other: object) -> bool:
         return isinstance(other, UserFunction) and self.parameters == other.parameters and self.body == other.body
 

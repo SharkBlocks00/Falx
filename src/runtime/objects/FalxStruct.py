@@ -35,3 +35,6 @@ class FalxStruct(FalxValue):
     def __str__(self) -> str:
         return self.definition.name + str(self.values)
 
+    def __repr__(self) -> str:
+        return self.definition.name + str(self.values)
+

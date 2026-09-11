@@ -18,6 +18,8 @@ class ReturnStatement(Statement):
         if self.value is not None:
             obj = self.value.evaluate(interpreter, environment)
 
+        print(obj.asString())
+
         raise ReturnException(obj) # by doing this we can intercept the ReturnException.value and get what was returned
 
     def __str__(self) -> str:

@@ -223,4 +223,5 @@ def initKeywords() -> dict[str, TokenKind]:
         "define": TokenKind.DEFINE,
         "func": TokenKind.FUNC,
         "struct": TokenKind.STRUCT,
+        "null": TokenKind.NULL,
     }

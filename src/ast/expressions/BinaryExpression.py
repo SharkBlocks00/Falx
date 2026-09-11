@@ -36,8 +36,8 @@ class BinaryExpression(Expression):
             case TokenKind.GREATER_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) >= 0)
             case TokenKind.LESS: return FalxBoolean(leftValue.compareTo(rightValue) < 0)
             case TokenKind.LESS_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) <= 0)
-            case TokenKind.EQUAL_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) == 0)
-            case TokenKind.BANG_EQUAL: return FalxBoolean(leftValue.compareTo(rightValue) != 0)
+            case TokenKind.EQUAL_EQUAL: return FalxBoolean(leftValue.equalsValue(rightValue))
+            case TokenKind.BANG_EQUAL: return FalxBoolean(not leftValue.equalsValue(rightValue))
 
             case _: raise RuntimeError(f"Cannot evaluate '{leftValue.asString()}' and '{rightValue.asString()}'")
 

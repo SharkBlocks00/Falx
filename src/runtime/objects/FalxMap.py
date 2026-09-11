@@ -61,6 +61,9 @@ class FalxMap(FalxValue, FalxIterable):
     def __str__(self) -> str:
         return self.values.__str__()
 
+    def __repr__(self) -> str:
+        return self.values.__repr__()
+
     def getKeys(self) -> FalxArray:
         return FalxArray([i for i in self.values.keys()])
 

@@ -36,6 +36,9 @@ class FalxBoolean(FalxValue):
     def __str__(self) -> str:
         return str(self.value)
 
+    def __repr__(self) -> str:
+        return str(self.value)
+
     def getTypeName(self) -> str:
         return "boolean"
 

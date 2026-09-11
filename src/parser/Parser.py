@@ -13,6 +13,7 @@ from src.ast.expressions.VariableExpression import VariableExpression
 from src.ast.expressions.literals.ArrayLiteral import ArrayLiteral
 from src.ast.expressions.literals.BooleanLiteral import BooleanLiteral
 from src.ast.expressions.literals.MapLiteral import MapLiteral
+from src.ast.expressions.literals.NullLiteral import NullLiteral
 from src.ast.expressions.literals.NumberLiteral import NumberLiteral
 from src.ast.expressions.literals.StringLiteral import StringLiteral
 from src.ast.statements.BlockStatement import BlockStatement
@@ -387,6 +388,8 @@ class Parser:
             return self._mapLiteral()
         if self._match(TokenKind.EOF):
             raise Exception("Expected expression, found 'EOF'")
+        if self._match(TokenKind.NULL):
+            return NullLiteral(self._previous())
         raise NotImplementedError(f"Other literals not implemented yet: {self._peek().tokenKind}")
 
     def _peek(self) -> Token:

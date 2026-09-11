@@ -15,3 +15,6 @@ class ExpressionStatement(Statement):
 
     def __str__(self):
         return str(self.expression)
+
+    def __repr__(self):
+        return str(self.expression)

@@ -19,3 +19,6 @@ class VariableDeclaration(Statement):
 
     def __str__(self):
         return f"{self.name} = {self.initializer}"
+
+    def __repr__(self):
+        return f"{self.name} = {self.initializer}"

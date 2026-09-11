@@ -97,5 +97,7 @@ scheduler.complete(4); // Manually complete "Update documentation"
 
 scheduler.status();
 
+
 scheduler.processNext(); // Should pick "Refactor lexer"
 scheduler.processNext(); // Should say no pending tasks
+

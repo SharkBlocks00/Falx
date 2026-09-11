@@ -19,4 +19,8 @@ class GetExpression(Expression):
         value: FalxValue = self.obj.evaluate(interpreter, environment)
         return value.get(self._property)
 
+    def __str__(self):
+        return f"GetExpression({self.obj}, {self._property})"
 
+    def __repr__(self):
+        return f"GetExpression({self.obj}, {self._property})"

@@ -4,10 +4,8 @@ from src.runtime.objects.FalxValue import FalxValue
 
 
 class FalxNull(FalxValue):
-    """Falx's class for representing null,
-    used internally in workings where None is not accepted,
-    and externally as placeholders for null values in Falx programs
-    """
+    """Falx's class for representing null"""
+
     def __init__(self):
         super().__init__()
 
@@ -15,7 +13,7 @@ class FalxNull(FalxValue):
         return isinstance(other, FalxNull)
 
     def __hash__(self) -> int:
-        return hash(self)
+        return hash(FalxNull)
 
     def getTypeName(self) -> str:
         return "null"
@@ -31,3 +29,6 @@ class FalxNull(FalxValue):
 
     def asString(self) -> str:
         return "null"
+
+    def equalsValue(self, other: FalxValue) -> bool:
+        return isinstance(other, FalxNull)
