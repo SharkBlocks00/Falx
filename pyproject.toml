@@ -1,0 +1,16 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+exclude = [
+    "__pycache__",
+    "tests",
+]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+ignore = [
+    "E701" # single line if statements are much neater when used like they are here
+]
+
+[tool.ruff.format]
+quote-style = "preserve"
