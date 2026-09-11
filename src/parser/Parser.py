@@ -111,21 +111,28 @@ class Parser:
         name: Token = self._consume(TokenKind.IDENTIFIER, "Expected struct name after 'struct'")
         self._consumeLeftBrace()
         fields: list[FieldDefinition] = []
+        methods: list[FunctionDeclaration] = []
 
         while not self._check(TokenKind.RIGHT_BRACE):
-            field: Token = self._consume(TokenKind.IDENTIFIER, "Expected field name")
+            if self._peek().tokenKind == TokenKind.IDENTIFIER:
+                field: Token = self._consume(TokenKind.IDENTIFIER, "Expected field name")
 
-            defaultValue: Expression = None
+                defaultValue: Expression = None
 
-            if self._match(TokenKind.EQUAL):
-                defaultValue = self._expression()
+                if self._match(TokenKind.EQUAL):
+                    defaultValue = self._expression()
 
-            self._consume(TokenKind.SEMICOLON, "Expected ';' after struct field")
+                self._consume(TokenKind.SEMICOLON, "Expected ';' after struct field")
 
-            fields.append(FieldDefinition(field.lexeme, defaultValue))
+                fields.append(FieldDefinition(field.lexeme, defaultValue))
+            else:
+                # handle methods in structs
+                if self._match(TokenKind.FUNC):
+                    function: FunctionDeclaration = self._functionDeclaration()
+                    methods.append(function)
 
         self._consumeRightBrace()
-        return StructDeclaration(name.location, name.lexeme, fields)
+        return StructDeclaration(name.location, name.lexeme, fields, methods)
 
     def _ifStatement(self) -> IfStatement:
         location: SourceLocation = self._previous().location
@@ -422,7 +429,7 @@ class Parser:
     def _consume(self, kind: TokenKind, errorMsg: str) -> Token:
         if self._check(kind):
             return self._advance()
-        raise Exception(errorMsg)
+        raise Exception(f"{errorMsg} at {self.current}")
 
 
     def _advance(self) -> Token:

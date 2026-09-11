@@ -2,7 +2,13 @@ struct Person {
     name = "Bob";
     age ;
     gender = "Test";
+    func set = define(gn) {
+        gender = gn;
+    }
 }
 
 let bob = Person();
+output(bob);
+bob.set("hi");
+
 output(bob);

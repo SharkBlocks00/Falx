@@ -18,3 +18,6 @@ class FunctionDeclaration(Statement):
 
     def __str__(self) -> str:
         return f"{self.name}({self.parameters}) -> {self.body}"
+
+    def getTypeName(self) -> str:
+        return self.name

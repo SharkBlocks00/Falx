@@ -11,3 +11,9 @@ class Variable(FalxValue):
 
     def __hash__(self) -> int:
         return hash(self.value)
+
+    def __str__(self):
+        return str(self.value)
+
+    def __repr__(self):
+        return str(self.value)

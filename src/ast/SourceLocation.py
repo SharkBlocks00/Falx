@@ -8,3 +8,6 @@ class SourceLocation:
 
     def __str__(self):
         return f"{self.filename}:{self.line}:{self.column}"
+
+    def __repr__(self):
+        return f"{self.filename}:{self.line}:{self.column}"
