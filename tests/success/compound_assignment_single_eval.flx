@@ -1,0 +1,46 @@
+
+let boxes = [];
+
+struct Box {
+    count = 0;
+}
+
+func factory = define() {
+    let b = Box();
+    boxes.push(b);
+    return b;
+}
+
+factory().count += 1;
+assert(boxes.size == 1, "factory() should only be called once");
+assert(boxes[0].count == 1, "the increment should land on the instance that was read");
+
+let calls = 0;
+
+func nextIndex = define() {
+    calls = calls + 1;
+    return calls - 1;
+}
+
+let arr = [10, 20, 30];
+arr[nextIndex()] += 100;
+
+assert(calls == 1, "nextIndex() should only be called once");
+assert(arr[0] == 110, "the read and write should use the same index");
+assert(arr[1] == 20, "other slots should be untouched");
+
+
+let calls2 = 0;
+
+func nextIndex2 = define() {
+    calls2 = calls2 + 1;
+    return calls2 - 1;
+}
+
+let arr2 = [5, 5, 5];
+arr2[nextIndex2()]++;
+
+assert(calls2 == 1, "nextIndex2() should only be called once for ++");
+assert(arr2[0] == 6, "the increment should land on the slot that was read");
+
+output("single-evaluation of compound-assignment targets OK");
