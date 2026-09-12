@@ -1,0 +1,86 @@
+name: Bug report
+description: Report something that doesn't behave the way it should
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the sections below — the version fields especially help us reproduce issues quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear, short description of what's wrong.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal .flx script to reproduce
+      description: Paste the smallest script that triggers the issue.
+      render: text
+      placeholder: |
+        let x = 1;
+        output(x);
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened. Include the full traceback/output if there is one.
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: falx-version
+    attributes:
+      label: Falx version
+      description: Output of `python -m src.Main --version`
+      placeholder: "v0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      description: Output of `python --version`
+      placeholder: "3.13.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other (please specify in the description above)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues to make sure this isn't a duplicate
+          required: true
+        - label: I included a minimal reproduction script above
+          required: true
