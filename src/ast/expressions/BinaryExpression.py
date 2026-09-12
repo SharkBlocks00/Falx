@@ -24,7 +24,11 @@ class BinaryExpression(Expression):
         leftValue: FalxValue = self.left.evaluate(interpreter, environment)
         rightValue: FalxValue = self.right.evaluate(interpreter, environment)
 
-        match self.operator.tokenKind:
+        return BinaryExpression.applyOperator(self.operator.tokenKind, leftValue, rightValue)
+
+    @staticmethod
+    def applyOperator(operatorKind: TokenKind, leftValue: FalxValue, rightValue: FalxValue) -> FalxValue:
+        match operatorKind:
             case TokenKind.PLUS: return leftValue.add(rightValue)
             case TokenKind.MINUS: return leftValue.minus(rightValue)
             case TokenKind.STAR: return leftValue.multiply(rightValue)

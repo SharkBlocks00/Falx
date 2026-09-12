@@ -273,9 +273,7 @@ class Parser:
                 rhs: Expression = self._assignment()
 
                 operator: Token = Token(baseOp, lexeme, None, operatorToken.location)
-                combined: Expression = BinaryExpression(operatorToken.location, expr, operator, rhs)
-
-                return self._buildAssignmentTarget(expr, operatorToken.location, combined)
+                return self._buildCompoundAssignment(expr, operatorToken.location, operator, rhs)
 
         if self._match(TokenKind.PLUS_PLUS, TokenKind.MINUS_MINUS):
             operatorToken: Token = self._previous()
@@ -284,9 +282,8 @@ class Parser:
 
             operator: Token = Token(baseOp, lexeme, None, operatorToken.location)
             one: Expression = NumberLiteral(Token(TokenKind.NUMBER, "1", 1, operatorToken.location))
-            combined: Expression = BinaryExpression(operatorToken.location, expr, operator, one)
 
-            return self._buildAssignmentTarget(expr, operatorToken.location, combined)
+            return self._buildCompoundAssignment(expr, operatorToken.location, operator, one)
 
         return expr
 
@@ -298,6 +295,17 @@ class Parser:
         if isinstance(target, IndexExpression):
             return IndexSetExpression(location, target.obj, target.index, value)
         raise Exception("Invalid assignment target")
+
+    def _buildCompoundAssignment(self, target: Expression, location, operator: Token, rhs: Expression) -> Expression:
+        if isinstance(target, VariableExpression):
+            combined: Expression = BinaryExpression(location, target, operator, rhs)
+            return AssignmentExpression(location, target.name, combined)
+        if isinstance(target, GetExpression):
+            return SetExpression(location, target.obj, target._property, rhs, operator)
+        if isinstance(target, IndexExpression):
+            return IndexSetExpression(location, target.obj, target.index, rhs, operator)
+        raise Exception("Invalid assignment target")
+
 
     def _logicalOr(self) -> Expression:
         expression: Expression = self._logicalAnd()
