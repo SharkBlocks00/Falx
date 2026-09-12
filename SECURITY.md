@@ -10,7 +10,16 @@ Falx is pre-1.0 and does not yet maintain long-term support branches. Security f
 
 ## Reporting a Vulnerability
 
-Falx is a tree-walking interpreter that executes untrusted `.flx` source directly in the host Python process. If you find a way to escape the interpreter's intended sandboxing (e.g. accessing the host filesystem, network, or Python internals from within a Falx script in ways not explicitly documented as built-ins), please report it responsibly rather than opening a public issue:
+Falx is a tree-walking interpreter that executes untrusted `.flx` source directly in the host Python process. We do _not_ provide a sandboxed environment when running Falx scripts, so you should run any untrusted `.flx` scripts in a separate container or disposable VM.
+
+If you find yourself able to do any of the following:
+
+- Accessing the host filesystem, network, or Python internals from within a Falx script in ways not explicitly documented as built-ins
+- Crashing the Python process via a crafted `.flx` script in a way that suggests a memory-safety or resource-exhaustion issue, beyond what's expected of an unbounded interpreter (e.g. an easily-triggered, unbounded amplification rather than "recursion eventually hits Python's stack limit")
+- Exploiting a bug in the CLI itself (`src/ArgumentHandler.py`, `src/Main.py`) that mishandles file paths or arguments in an unsafe way
+- Compromising the build, packaging, or CI configuration in a way that could lead to a supply-chain issue
+
+please report it responsibly rather than opening a public issue:
 
 1. Open a [GitHub Security Advisory](https://github.com/SharkBlocks00/Falx/security/advisories/new) for this repository, **or**
 2. Contact the maintainer directly via their GitHub profile.
