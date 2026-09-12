@@ -6,6 +6,7 @@ from src.ast.expressions.BinaryExpression import BinaryExpression
 from src.ast.expressions.FunctionCallExpression import FunctionCallExpression
 from src.ast.expressions.GetExpression import GetExpression
 from src.ast.expressions.IndexExpression import IndexExpression
+from src.ast.expressions.IndexSetExpression import IndexSetExpression
 from src.ast.expressions.LogicalExpression import LogicalExpression
 from src.ast.expressions.SetExpression import SetExpression
 from src.ast.expressions.UnaryExpression import UnaryExpression
@@ -250,21 +251,53 @@ class Parser:
     def _expression(self) -> Expression:
         return self._assignment()
 
+    _COMPOUND_ASSIGNMENT_OPERATORS = {
+        TokenKind.PLUS_EQUAL: (TokenKind.PLUS, "+"),
+        TokenKind.MINUS_EQUAL: (TokenKind.MINUS, "-"),
+        TokenKind.STAR_EQUAL: (TokenKind.STAR, "*"),
+        TokenKind.SLASH_EQUAL: (TokenKind.SLASH, "/"),
+        TokenKind.PERCENT_EQUAL: (TokenKind.PERCENT, "%"),
+    }
+
     def _assignment(self) -> Expression:
         expr: Expression = self._logicalOr()
 
         if self._match(TokenKind.EQUAL):
             equals: Token = self._previous()
             value: Expression = self._assignment()
+            return self._buildAssignmentTarget(expr, equals.location, value)
 
-            if isinstance(expr, VariableExpression):
-                return AssignmentExpression(equals.location, expr.name, value)
-            if isinstance(expr, GetExpression):
-                return SetExpression(equals.location, expr.obj, expr._property, value)
-            if isinstance(expr, IndexExpression):
-                return SetExpression(equals.location, expr.obj, expr.index.__str__(), value)
-            raise Exception("Invalid assignment target")
+        for compoundToken, (baseOp, lexeme) in self._COMPOUND_ASSIGNMENT_OPERATORS.items():
+            if self._match(compoundToken):
+                operatorToken: Token = self._previous()
+                rhs: Expression = self._assignment()
+
+                operator: Token = Token(baseOp, lexeme, None, operatorToken.location)
+                combined: Expression = BinaryExpression(operatorToken.location, expr, operator, rhs)
+
+                return self._buildAssignmentTarget(expr, operatorToken.location, combined)
+
+        if self._match(TokenKind.PLUS_PLUS, TokenKind.MINUS_MINUS):
+            operatorToken: Token = self._previous()
+            baseOp: TokenKind = TokenKind.PLUS if operatorToken.tokenKind == TokenKind.PLUS_PLUS else TokenKind.MINUS
+            lexeme: str = "+" if baseOp == TokenKind.PLUS else "-"
+
+            operator: Token = Token(baseOp, lexeme, None, operatorToken.location)
+            one: Expression = NumberLiteral(Token(TokenKind.NUMBER, "1", 1, operatorToken.location))
+            combined: Expression = BinaryExpression(operatorToken.location, expr, operator, one)
+
+            return self._buildAssignmentTarget(expr, operatorToken.location, combined)
+
         return expr
+
+    def _buildAssignmentTarget(self, target: Expression, location, value: Expression) -> Expression:
+        if isinstance(target, VariableExpression):
+            return AssignmentExpression(location, target.name, value)
+        if isinstance(target, GetExpression):
+            return SetExpression(location, target.obj, target._property, value)
+        if isinstance(target, IndexExpression):
+            return IndexSetExpression(location, target.obj, target.index, value)
+        raise Exception("Invalid assignment target")
 
     def _logicalOr(self) -> Expression:
         expression: Expression = self._logicalAnd()

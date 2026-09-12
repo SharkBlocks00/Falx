@@ -37,6 +37,9 @@ class FalxArray(FalxValue, FalxIterable):
     def index(self, index: FalxValue) -> FalxValue:
         return self.values[index.asInt()]
 
+    def indexAssign(self, key: FalxValue, value: FalxValue) -> None:
+        self.values[key.asInt()] = value
+
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, FalxArray) and self.values == other.values
 
