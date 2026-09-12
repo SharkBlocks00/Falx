@@ -59,7 +59,7 @@ recommended for anything beyond experimentation.
 
 ## Contributing
 
-Contributions, bug reports and ideas are very much welcome. Please read [`CONTRIBUTING.md`](CONTRIBUTING.MD) 
+Contributions, bug reports and ideas are very much welcome. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) 
 before opening a pull request, and note this project follows a [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security
