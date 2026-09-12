@@ -1,4 +1,5 @@
 from src.ast.Statement import Statement
+from src.packages.builtins.AssertFunction import AssertFunction
 from src.packages.builtins.OutputFunction import OutputFunction
 from src.packages.builtins.RequestFunction import RequestFunction
 from src.packages.builtins.TypeOfFunction import TypeOfFunction
@@ -24,3 +25,4 @@ class Interpreter:
         self.globals.define("output", OutputFunction(), False)
         self.globals.define("request", RequestFunction(), False)
         self.globals.define("typeof", TypeOfFunction(), False)
+        self.globals.define("assert", AssertFunction(), False)
