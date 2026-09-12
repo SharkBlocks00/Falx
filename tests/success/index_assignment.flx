@@ -1,0 +1,14 @@
+let arr = [10, 20, 30];
+arr[1] = 99;
+assert(arr[1] == 99, "literal index assignment should work");
+
+let i = 2;
+arr[i] = 500;
+assert(arr[2] == 500, "variable index assignment should work");
+
+let user = { name: "Sam", age: 30 };
+let key = "age";
+user[key] = 31;
+assert(user.age == 31, "map index assignment with a variable key should work");
+
+output("index assignment OK");
