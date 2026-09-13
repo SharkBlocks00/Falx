@@ -21,7 +21,7 @@ class EntriesMethod(BoundNativeFunction):
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         from src.runtime.objects.FalxMap import FalxMap
         if not isinstance(self.this, FalxMap):
-            raise RuntimeError(f"Expected FalxMap, got {type(self.this)}")
+            raise Exception(f"Expected FalxMap, got {type(self.this)}")
 
         map: FalxMap = self.this
         entries: list[FalxValue] = []

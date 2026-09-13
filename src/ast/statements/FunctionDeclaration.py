@@ -1,5 +1,6 @@
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
 from src.runtime.values.UserFunction import UserFunction
@@ -13,8 +14,11 @@ class FunctionDeclaration(Statement):
         self.body = body
 
     def execute(self, interpreter: Interpreter, environment: Environment) -> None:
-        function: UserFunction = UserFunction(self.parameters, self.body, environment)
-        environment.define(self.name, function, False)
+        try:
+            function: UserFunction = UserFunction(self.parameters, self.body, environment)
+            environment.define(self.name, function, False)
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None
 
     def __str__(self) -> str:
         return f"{self.name}({self.parameters}) -> {self.body}"
