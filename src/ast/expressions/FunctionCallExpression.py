@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 
@@ -21,7 +23,7 @@ class FunctionCallExpression(Expression):
 
         if not isinstance(obj, Callable):
             print(f"Trying to evaluate {self.callee.__str__()} type={type(obj)}")
-            raise RuntimeError(f"{obj.getTypeName()} is not callable")
+            raise FalxRuntimeException(f"{obj.getTypeName()} is not callable", self.location)
 
         args: list[FalxValue] = []
 
@@ -29,7 +31,7 @@ class FunctionCallExpression(Expression):
             args.append(arg.evaluate(interpreter, environment))
 
         if len(args) != obj.arity() and  obj.isStrict():
-            raise RuntimeError(f"Expected {obj.arity()} arguments, got {len(args)}")
+            raise FalxRuntimeException(f"Expected {obj.arity()} arguments, got {len(args)}", self.location)
 
         return obj.call(interpreter, args)
 

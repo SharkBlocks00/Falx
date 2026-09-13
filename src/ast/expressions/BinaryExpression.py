@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 
@@ -24,7 +26,11 @@ class BinaryExpression(Expression):
         leftValue: FalxValue = self.left.evaluate(interpreter, environment)
         rightValue: FalxValue = self.right.evaluate(interpreter, environment)
 
-        return BinaryExpression.applyOperator(self.operator.tokenKind, leftValue, rightValue)
+        try:
+             return BinaryExpression.applyOperator(self.operator.tokenKind, leftValue, rightValue)
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None
+
 
     @staticmethod
     def applyOperator(operatorKind: TokenKind, leftValue: FalxValue, rightValue: FalxValue) -> FalxValue:
