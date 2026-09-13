@@ -65,7 +65,7 @@ class TestRunner:
                     parser: Parser = Parser(tokens)
                     statements: list[Statement] = parser.parse()
 
-                    interpreter: Interpreter = Interpreter()
+                    interpreter: Interpreter = Interpreter(path.parent)
                     interpreter.interpret(statements)
             except Exception as e:
                 threw = True

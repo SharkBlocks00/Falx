@@ -11,7 +11,7 @@ from src.runtime.modules.ModuleLoader import ModuleLoader
 
 
 class Interpreter:
-    def __init__(self, projectDir: Path):
+    def __init__(self, projectDir: Path = Path.cwd()):
         self.globals: Environment = Environment()
         self.environment: Environment = self.globals
 
