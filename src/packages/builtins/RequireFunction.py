@@ -6,7 +6,6 @@ if TYPE_CHECKING:
     from src.runtime.modules.ModuleLoader import ModuleLoader
 
 from src.packages.NativeFunction import NativeFunction
-from src.runtime.objects.FalxModule import FalxModule
 from src.runtime.objects.FalxValue import FalxValue
 
 class RequireFunction(NativeFunction):
