@@ -8,6 +8,14 @@ class FalxModule(FalxValue):
         self.name = name
         self.environment = environment
 
+    def get(self, name: str) -> FalxValue:
+        try:
+            return self.environment.get(name)
+        except RuntimeError:
+            raise RuntimeError(
+                f"Module '{self.name}' has no property '{name}'"
+            ) from None
+
     def getTypeName(self) -> str:
         return "module"
 

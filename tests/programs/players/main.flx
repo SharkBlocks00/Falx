@@ -1,0 +1,11 @@
+let player = require("player");
+
+let p = player.Player();
+
+output(p.health);
+
+p.takeDamage(25);
+
+output(p.health);
+
+output(player.playerVersion);
