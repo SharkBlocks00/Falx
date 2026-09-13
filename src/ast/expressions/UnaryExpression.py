@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 
@@ -21,10 +23,12 @@ class UnaryExpression(Expression):
         self.expression: Expression = expression
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
-        value: FalxValue = self.expression.evaluate(interpreter, environment)
+        try:
+            value: FalxValue = self.expression.evaluate(interpreter, environment)
 
-        match self.operator.tokenKind:
-            case TokenKind.MINUS: return FalxNumber(-value.asNumber())
-            case TokenKind.BANG: return FalxBoolean(not value.asBool())
-            case _:
-                return value
+            match self.operator.tokenKind:
+                case TokenKind.MINUS: return FalxNumber(-value.asNumber())
+                case TokenKind.BANG: return FalxBoolean(not value.asBool())
+                case _: return value
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None

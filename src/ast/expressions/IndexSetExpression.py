@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from src.ast.expressions.BinaryExpression import BinaryExpression
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
 from src.tokens.Token import Token
 
 if TYPE_CHECKING:
@@ -23,16 +24,18 @@ class IndexSetExpression(Expression):
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
         falxObject: FalxValue = self.obj.evaluate(interpreter, environment)
         evaluatedIndex: FalxValue = self.index.evaluate(interpreter, environment)
+        try:
+            if self.operator is not None:
+                currentValue: FalxValue = falxObject.index(evaluatedIndex)
+                rhsValue: FalxValue = self.value.evaluate(interpreter, environment)
+                evaluatedValue: FalxValue = BinaryExpression.applyOperator(self.operator.tokenKind, currentValue, rhsValue)
+            else:
+                evaluatedValue: FalxValue = self.value.evaluate(interpreter, environment)
 
-        if self.operator is not None:
-            currentValue: FalxValue = falxObject.index(evaluatedIndex)
-            rhsValue: FalxValue = self.value.evaluate(interpreter, environment)
-            evaluatedValue: FalxValue = BinaryExpression.applyOperator(self.operator.tokenKind, currentValue, rhsValue)
-        else:
-            evaluatedValue: FalxValue = self.value.evaluate(interpreter, environment)
-
-        falxObject.indexAssign(evaluatedIndex, evaluatedValue)
-        return evaluatedValue
+            falxObject.indexAssign(evaluatedIndex, evaluatedValue)
+            return evaluatedValue
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None
 
     def __str__(self):
         return f"IndexSetExpression({self.obj}, {self.index}, {self.value})"

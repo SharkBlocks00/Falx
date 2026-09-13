@@ -1,6 +1,7 @@
 from src.ast.Expression import Expression
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
 from src.runtime.objects.FalxValue import FalxValue
@@ -14,8 +15,11 @@ class VariableDeclaration(Statement):
         self.name = name
 
     def execute(self, interpreter: Interpreter, environment: Environment) -> None:
-        value: FalxValue = self.initializer.evaluate(interpreter, environment)
-        environment.define(self.name, value, self.mutable)
+        try:
+            value: FalxValue = self.initializer.evaluate(interpreter, environment)
+            environment.define(self.name, value, self.mutable)
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None
 
     def __str__(self):
         return f"{self.name} = {self.initializer}"

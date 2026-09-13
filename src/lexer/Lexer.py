@@ -1,4 +1,5 @@
 from src.ast.SourceLocation import SourceLocation
+from src.exceptions.exceptions.FalxLexerException import FalxLexerException
 from src.tokens.Token import Token
 from src.tokens.TokenKind import TokenKind
 
@@ -96,12 +97,12 @@ class Lexer:
                 if self._match("|"):
                     self._addToken(TokenKind.OR)
                 else:
-                    raise RuntimeError("Expected '||', found '|'.")
+                    raise FalxLexerException("Expected '||', found '|'.")
             case "&":
                 if self._match("&"):
                     self._addToken(TokenKind.AND)
                 else:
-                    raise RuntimeError("Expected '&&', found '&'.")
+                    raise FalxLexerException("Expected '&&', found '&'.")
             case _:
                 if c.isdigit(): self._number()
                 elif c.isalpha(): self._identifier()

@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from src.ast.expressions.BinaryExpression import BinaryExpression
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
 from src.tokens.Token import Token
 
 if TYPE_CHECKING:
@@ -25,15 +26,17 @@ class SetExpression(Expression):
 
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
-        falxObject: FalxValue = self.obj.evaluate(interpreter, environment)
+        try:
+            falxObject: FalxValue = self.obj.evaluate(interpreter, environment)
 
-        if self.operator is not None:
-            currentValue: FalxValue = falxObject.get(self.property)
-            rhsValue: FalxValue = self.value.evaluate(interpreter, environment)
-            evaluatedValue: FalxValue = BinaryExpression.applyOperator(self.operator.tokenKind, currentValue, rhsValue)
-        else:
-            evaluatedValue: FalxValue = self.value.evaluate(interpreter, environment)
+            if self.operator is not None:
+                currentValue: FalxValue = falxObject.get(self.property)
+                rhsValue: FalxValue = self.value.evaluate(interpreter, environment)
+                evaluatedValue: FalxValue = BinaryExpression.applyOperator(self.operator.tokenKind, currentValue, rhsValue)
+            else:
+                evaluatedValue: FalxValue = self.value.evaluate(interpreter, environment)
 
-        falxObject.set(self.property, evaluatedValue)
-        return evaluatedValue
-    
+            falxObject.set(self.property, evaluatedValue)
+            return evaluatedValue
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None

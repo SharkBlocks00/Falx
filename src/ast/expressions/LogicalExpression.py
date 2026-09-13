@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 
@@ -20,20 +22,23 @@ class LogicalExpression(Expression):
         self.right: Expression = right
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
-        leftValue: FalxValue = self.left.evaluate(interpreter, environment)
+        try:
+            leftValue: FalxValue = self.left.evaluate(interpreter, environment)
 
-        if self.operator.tokenKind == TokenKind.OR:
-            if isTruthy(leftValue):
-                return leftValue
+            if self.operator.tokenKind == TokenKind.OR:
+                if isTruthy(leftValue):
+                    return leftValue
 
-            return self.right.evaluate(interpreter, environment)
+                return self.right.evaluate(interpreter, environment)
 
-        if self.operator.tokenKind == TokenKind.AND:
-            if not isTruthy(leftValue):
-                return leftValue
-            return self.right.evaluate(interpreter, environment)
+            if self.operator.tokenKind == TokenKind.AND:
+                if not isTruthy(leftValue):
+                    return leftValue
+                return self.right.evaluate(interpreter, environment)
 
-        return leftValue
+            return leftValue
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None
 
 
 
