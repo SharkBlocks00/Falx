@@ -16,8 +16,13 @@ class Interpreter:
     def interpret(self, program: list[Statement]):
         # Because of how all the statements and expressions are structured,
         # the interpreter gets to be extremely simple
+        self.execute(program, self.environment)
+
+    def execute(self, program: list[Statement], environment: Environment):
+        # doing this means that we can support interpreting with seperate environments,
+        # useful for doing modulation
         for statement in program:
-            statement.execute(self, self.environment)
+            statement.execute(self, environment)
 
     def registerBuiltins(self):
         """Registers the interpreter's builtin functions to the interpreter"""
