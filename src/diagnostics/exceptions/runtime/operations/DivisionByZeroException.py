@@ -1,5 +1,5 @@
 from src.ast.SourceLocation import SourceLocation
-from src.diagnostics.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 
 
 class DivisionByZeroException(FalxRuntimeException):

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from src.ast.Variable import Variable
+from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.runtime.objects.FalxValue import FalxValue
 
 class Environment:
@@ -31,7 +32,7 @@ class Environment:
             self.parent.assign(name, value)
             return
 
-        raise RuntimeError(f"Undefined variable '{name}'")
+        raise UndefinedVariableException(name)
 
     def get(self, name: str) -> FalxValue:
         variable: Variable = self.variables.get(name)

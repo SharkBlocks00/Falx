@@ -11,3 +11,4 @@ class DiagnosticDefinition:
     severity: DiagnosticSeverity
     title: str
     help: tuple[str, ...] = ()
+    notes: tuple[str, ...] = ()

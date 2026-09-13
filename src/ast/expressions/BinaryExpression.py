@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.diagnostics.exceptions.DivisionByZeroException import DivisionByZeroException
-from src.diagnostics.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter

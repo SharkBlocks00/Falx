@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.diagnostics.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -22,6 +22,6 @@ class AssignmentExpression(Expression):
         newValue: FalxValue = self.value.evaluate(interpreter, environment)
         try:
             environment.assign(self.name, newValue)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except FalxRuntimeException as e:
+            raise e.withLocation(self.location)
         return newValue

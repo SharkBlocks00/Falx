@@ -31,8 +31,8 @@ class DiagnosticPrinter:
 
             print(f"  {' ' * lineNumberWidth} | {' ' * (location.column -1)}^", file=sys.stderr)
 
-        for note in diagnostic.notes:
-            print(f"note: {note}", file=sys.stderr)
-
         for helpMessage in diagnostic.help:
             print(f"help: {helpMessage}", file=sys.stderr)
+        print()
+        for note in diagnostic.notes:
+            print(f"note: {note}", file=sys.stderr)

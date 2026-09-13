@@ -9,4 +9,4 @@ def createDiagnostic(error: FalxException) -> Diagnostic:
     if definition is None:
         raise RuntimeError(f"No diagnostic definition registered for '{type(error).__name__}'")
 
-    return Diagnostic(definition.code, definition.severity, error.message, error.location, list(definition.help))
+    return Diagnostic(definition.code, definition.severity, error.message, error.location, list(definition.notes), list(definition.help))
