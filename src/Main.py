@@ -58,7 +58,7 @@ def main():
 
     except FalxException as e:
         printErrorContext(source, e)
-    except Exception as e:
+    except Exception: # baseline for actual language bug exceptions (all in language ones are from FalxRuntimeException)
         traceback.print_exc()
 
 
