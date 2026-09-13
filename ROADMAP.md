@@ -12,7 +12,7 @@ Small items that will be coming soon:
 
 - [ ] Line/column aware runtime error messages
 - [ ] Friendly parser errors (`Expected ';' but found 'X' on line N`)
-- [ ] Unique, separate errors, instead of just `RuntimeError`s and `Exceptions`
+- [x] Unique, separate errors, instead of just `RuntimeError`s and `Exceptions`
 
 ## Planned
 
