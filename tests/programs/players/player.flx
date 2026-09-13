@@ -1,0 +1,9 @@
+struct Player {
+    health = 100;
+
+    func takeDamage = define(amount) {
+        health -= amount;
+       }
+}
+
+let playerVersion = "1.0";

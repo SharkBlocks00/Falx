@@ -19,7 +19,7 @@ Small items that will be coming soon:
 Larger features that fit the language's current direction:
 
 - [ ] **REPL mode** - running `falx` with no arguments should drop into an interactive REPL
-- [ ] **Module system** - some form of `require` to split a program across multiple `.flx` files
+- [x] **Module system** - some form of `require` to split a program across multiple `.flx` files
 - [ ] **Expanded stdlib** - math functions, random methods, more numeric methods
 - [ ] **Packaging** - make Falx either pip installable or a standalone executable rather than `python -m src.Main`
 - [ ] **Struct inheritance or composition** - some way to share behavior between structs

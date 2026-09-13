@@ -21,6 +21,7 @@ Falx is a dynamically typed, C like scripting language with structs, first class
 - `break`, `continue`, `return`
 - Native string and number types with built in methods
 - A handful of built in functions: `output`, `request`, `typeof`
+- Modularization of `.flx` files supported for large programs
 
 See [`tests/programs`](tests/programs) for large example scripts.
 

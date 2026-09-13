@@ -1,5 +1,6 @@
-import sys
 import traceback
+from pathlib import Path
+import sys
 
 from src.ArgumentHandler import ArgumentHandler
 from src.ast.Statement import Statement
@@ -10,29 +11,34 @@ from src.tokens.Token import Token
 
 
 def main():
-
     argumentHandler: ArgumentHandler = ArgumentHandler(sys.argv)
-    obj: object = None
+    obj: Path | None = None
+
     try:
         obj = argumentHandler.handleArguments()
     except Exception as e:
         print(e)
-    if obj is None: return
 
-    source: str = obj.__str__()
+    if obj is None:
+        return
+
+    script_path: Path = obj
+    source: str = script_path.read_text(encoding="utf-8")
+
     lexer: Lexer = Lexer(source)
+
     try:
         tokens: list[Token] = lexer.lex()
 
         parser: Parser = Parser(tokens)
-
         statements: list[Statement] = parser.parse()
 
-        interpreter: Interpreter = Interpreter()
+        interpreter: Interpreter = Interpreter(script_path.parent)
         interpreter.interpret(statements)
+
     except Exception:
         traceback.print_exc()
 
+
 if __name__ == "__main__":
     main()
-
