@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing yet - see [`ROADMAP.md`](ROADMAP.md) for what's planned.
+- Upgraded features
+- Assertation with `assert`
+- Modularization of larger programs with `require`
+- Generic bug fixes
 
 ## [0.1.0]
 
