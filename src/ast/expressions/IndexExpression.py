@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 
@@ -19,6 +21,8 @@ class IndexExpression(Expression):
         _obj: FalxValue = self.obj.evaluate(interpreter, environment)
         _idx: FalxValue = self.index.evaluate(interpreter, environment)
 
-        return _obj.index(_idx)
-
+        try:
+            return _obj.index(_idx)
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None
     

@@ -1,6 +1,7 @@
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
 from src.ast.statements.FunctionDeclaration import FunctionDeclaration
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
 from src.runtime.values.FieldDefinition import FieldDefinition
@@ -16,13 +17,16 @@ class StructDeclaration(Statement):
         self.methods = methods
 
     def execute(self, interpreter: Interpreter, environment: Environment) -> None:
-        methods = {}
-        for method in self.methods:
-            method.execute(interpreter, environment)
-            methods[method.name] = environment.get(method.name)
+        try:
+            methods = {}
+            for method in self.methods:
+                method.execute(interpreter, environment)
+                methods[method.name] = environment.get(method.name)
 
 
-        definition: StructDefinition = StructDefinition(self.name, self.fields, methods, environment)
-        constructor: StructConstructor = StructConstructor(definition)
+            definition: StructDefinition = StructDefinition(self.name, self.fields, methods, environment)
+            constructor: StructConstructor = StructConstructor(definition)
 
-        environment.define(self.name, constructor, False)
+            environment.define(self.name, constructor, False)
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None

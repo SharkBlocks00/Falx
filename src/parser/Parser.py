@@ -28,6 +28,7 @@ from src.ast.statements.ReturnStatement import ReturnStatement
 from src.ast.statements.StructDeclaration import StructDeclaration
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.WhileStatement import WhileStatement
+from src.exceptions.exceptions.FalxParserException import FalxParserException
 from src.runtime.values.FieldDefinition import FieldDefinition
 from src.tokens.Token import Token
 from src.tokens.TokenKind import TokenKind
@@ -61,7 +62,7 @@ class Parser:
         if self._match(TokenKind.BREAK): return self._breakStatement()
         if self._match(TokenKind.CONTINUE): return self._continueStatement()
         if self._match(TokenKind.RETURN):
-            if not self._insideFunction: raise Exception("'return' called outside a valid function")
+            if not self._insideFunction: raise FalxParserException("'return' called outside a valid function")
             return self._returnStatement()
         if self._match(TokenKind.LEFT_BRACE): return self._blockStatement()
 
@@ -294,7 +295,7 @@ class Parser:
             return SetExpression(location, target.obj, target._property, value)
         if isinstance(target, IndexExpression):
             return IndexSetExpression(location, target.obj, target.index, value)
-        raise Exception("Invalid assignment target")
+        raise FalxParserException("Invalid assignment target")
 
     def _buildCompoundAssignment(self, target: Expression, location, operator: Token, rhs: Expression) -> Expression:
         if isinstance(target, VariableExpression):
@@ -304,7 +305,7 @@ class Parser:
             return SetExpression(location, target.obj, target._property, rhs, operator)
         if isinstance(target, IndexExpression):
             return IndexSetExpression(location, target.obj, target.index, rhs, operator)
-        raise Exception("Invalid assignment target")
+        raise FalxParserException("Invalid assignment target")
 
 
     def _logicalOr(self) -> Expression:
@@ -435,7 +436,7 @@ class Parser:
         if self._match(TokenKind.LEFT_BRACE):
             return self._mapLiteral()
         if self._match(TokenKind.EOF):
-            raise Exception("Expected expression, found 'EOF'")
+            raise FalxParserException("Expected expression, found 'EOF'")
         if self._match(TokenKind.NULL):
             return NullLiteral(self._previous())
         raise NotImplementedError(f"Other literals not implemented yet: {self._peek().tokenKind}")
@@ -470,7 +471,7 @@ class Parser:
     def _consume(self, kind: TokenKind, errorMsg: str) -> Token:
         if self._check(kind):
             return self._advance()
-        raise Exception(f"{errorMsg} at {self.current}")
+        raise FalxParserException(f"{errorMsg} at {self.current}")
 
 
     def _advance(self) -> Token:

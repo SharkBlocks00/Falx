@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 
@@ -17,7 +19,10 @@ class GetExpression(Expression):
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
         value: FalxValue = self.obj.evaluate(interpreter, environment)
-        return value.get(self._property)
+        try:
+            return value.get(self._property)
+        except RuntimeError as e:
+            raise FalxRuntimeException(str(e), self.location) from None
 
     def __str__(self):
         return f"GetExpression({self.obj}, {self._property})"
