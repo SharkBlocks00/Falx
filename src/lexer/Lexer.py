@@ -97,12 +97,12 @@ class Lexer:
                 if self._match("|"):
                     self._addToken(TokenKind.OR)
                 else:
-                    raise FalxLexerException("Expected '||', found '|'.")
+                    raise FalxLexerException("Expected '||', found '|'.", SourceLocation("", self.line, self.column-1))
             case "&":
                 if self._match("&"):
                     self._addToken(TokenKind.AND)
                 else:
-                    raise FalxLexerException("Expected '&&', found '&'.")
+                    raise FalxLexerException("Expected '&&', found '&'.", SourceLocation("", self.line, self.column-1))
             case _:
                 if c.isdigit(): self._number()
                 elif c.isalpha(): self._identifier()
