@@ -1,4 +1,6 @@
 import sys
+from pathlib import Path
+
 from src.TestRunner import TestRunner
 
 
@@ -8,20 +10,22 @@ class ArgumentHandler:
     def __init__(self, arguments: list[str]):
         self.arguments: list[str] = arguments
 
-    def handleArguments(self) -> object:
+    def handleArguments(self) -> Path | None:
         for i, argument in enumerate(self.arguments):
-            match self.arguments[i]:
+            match argument:
                 case "--version" | "-v":
                     print("Falx v0.1.0")
                     sys.exit(0)
                 case "--file" | "-f" | "run":
                     if i + 1 >= len(self.arguments):
                         raise Exception(f"Missing filename after '{self.arguments[i]}'")
-                    if not self.arguments[i + 1].endswith(".flx"):
+
+                    path: Path = Path(self.arguments[i + 1])
+
+                    if path.suffix != ".flx":
                         raise Exception(f"Invalid filetype after '{self.arguments[i]}'")
-                    with open(self.arguments[i + 1]) as file:
-                      contents: str = file.read()
-                      return contents
+                    return path
+
                 case "--test" | "-t":
                     testRunner.runAll()
         return None

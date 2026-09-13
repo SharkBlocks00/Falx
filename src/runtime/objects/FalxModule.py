@@ -16,3 +16,9 @@ class FalxModule(FalxValue):
 
     def __repr__(self) -> str:
         return self.__str__()
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, FalxModule) and self.name == other.name and self.environment == other.environment
+
+    def __hash__(self) -> int:
+        return hash(self.__class__)

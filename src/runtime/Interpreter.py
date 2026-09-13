@@ -1,15 +1,21 @@
+from pathlib import Path
+
 from src.ast.Statement import Statement
 from src.packages.builtins.AssertFunction import AssertFunction
 from src.packages.builtins.OutputFunction import OutputFunction
 from src.packages.builtins.RequestFunction import RequestFunction
+from src.packages.builtins.RequireFunction import RequireFunction
 from src.packages.builtins.TypeOfFunction import TypeOfFunction
 from src.runtime.Environment import Environment
+from src.runtime.modules.ModuleLoader import ModuleLoader
 
 
 class Interpreter:
-    def __init__(self):
+    def __init__(self, projectDir: Path):
         self.globals: Environment = Environment()
         self.environment: Environment = self.globals
+
+        self.moduleLoader = ModuleLoader(self, projectDir)
 
         self.registerBuiltins()
 
@@ -31,3 +37,4 @@ class Interpreter:
         self.globals.define("request", RequestFunction(), False)
         self.globals.define("typeof", TypeOfFunction(), False)
         self.globals.define("assert", AssertFunction(), False)
+        self.globals.define("require", RequireFunction(self.moduleLoader), False)

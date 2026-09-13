@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from src.lexer.Lexer import Lexer
-from src.parser.Parser import Parser
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.runtime.Interpreter import Interpreter
+
 from src.runtime.Environment import Environment
-from src.runtime.Interpreter import Interpreter
 from src.runtime.objects.FalxModule import FalxModule
 
 
@@ -13,6 +18,7 @@ class ModuleLoader:
         self.project_directory = project_directory
 
     def load(self, name: str) -> FalxModule:
+        from src.parser.Parser import Parser
         path = self._resolve(name)
 
         source = path.read_text(encoding="utf-8")
