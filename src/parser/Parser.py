@@ -28,7 +28,7 @@ from src.ast.statements.ReturnStatement import ReturnStatement
 from src.ast.statements.StructDeclaration import StructDeclaration
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.WhileStatement import WhileStatement
-from src.exceptions.exceptions.FalxParserException import FalxParserException
+from src.diagnostics.exceptions.FalxParserException import FalxParserException
 from src.runtime.values.FieldDefinition import FieldDefinition
 from src.tokens.Token import Token
 from src.tokens.TokenKind import TokenKind

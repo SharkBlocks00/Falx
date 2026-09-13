@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.FalxRuntimeException import FalxRuntimeException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter

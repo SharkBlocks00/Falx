@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.DivisionByZeroException import DivisionByZeroException
+from src.diagnostics.exceptions.FalxRuntimeException import FalxRuntimeException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -30,6 +31,8 @@ class BinaryExpression(Expression):
              return BinaryExpression.applyOperator(self.operator.tokenKind, leftValue, rightValue)
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
+        except ZeroDivisionError as e:
+            raise DivisionByZeroException(self.location) from None
 
 
     @staticmethod

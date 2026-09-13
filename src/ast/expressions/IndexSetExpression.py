@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from src.ast.expressions.BinaryExpression import BinaryExpression
-from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.FalxRuntimeException import FalxRuntimeException
 from src.tokens.Token import Token
 
 if TYPE_CHECKING:

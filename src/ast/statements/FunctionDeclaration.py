@@ -1,6 +1,6 @@
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
-from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.FalxRuntimeException import FalxRuntimeException
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
 from src.runtime.values.UserFunction import UserFunction
