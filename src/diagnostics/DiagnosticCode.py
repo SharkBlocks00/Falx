@@ -18,6 +18,8 @@ class DiagnosticCode(Enum):
 
     # Lexer errors
     INVALID_CHARACTER = "E3000"
+    UNTERMINATED_STRING = "E3001"
+    INVALID_ESCAPE_SEQUENCE = "E3002"
 
     # Module errors
     MODULE_NOT_FOUND = "E4000"

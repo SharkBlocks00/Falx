@@ -67,7 +67,7 @@ class Parser:
         if self._match(TokenKind.WHILE): return self._whileStatement()
         if self._match(TokenKind.FOREACH): return self._foreachStatement()
         if self._match(TokenKind.BREAK):
-            if not self._insideFunction or not self._insideLoop: raise BreakOutsideFunctionException(self._previous().location)
+            if not self._insideLoop: raise BreakOutsideFunctionException(self._previous().location)
             return self._breakStatement()
         if self._match(TokenKind.CONTINUE):
             if not self._insideLoop: raise ContinueOutsideFunctionException(self._previous().location)
@@ -455,6 +455,8 @@ class Parser:
             raise UnexpectedTokenException("Expected expression, found 'EOF'", self._previous().location)
         if self._match(TokenKind.NULL):
             return NullLiteral(self._previous())
+        if self._match(TokenKind.SEMICOLON):
+            raise UnexpectedTokenException("Expected expression, found ';'", self._previous().location)
         raise NotImplementedError(f"Other literals not implemented yet: {self._peek().tokenKind}")
 
     def _peek(self) -> Token:

@@ -22,7 +22,6 @@ class FunctionCallExpression(Expression):
         obj: FalxValue = self.callee.evaluate(interpreter, environment)
 
         if not isinstance(obj, Callable):
-            print(f"Trying to evaluate {self.callee.__str__()} type={type(obj)}")
             raise FalxRuntimeException(f"{obj.getTypeName()} is not callable", self.location)
 
         args: list[FalxValue] = []

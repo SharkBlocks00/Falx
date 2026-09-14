@@ -1,10 +1,14 @@
 from src.diagnostics.DiagnosticCode import DiagnosticCode
 from src.diagnostics.DiagnosticDefinition import DiagnosticDefinition
 from src.diagnostics.DiagnosticSeverity import DiagnosticSeverity
+from src.diagnostics.exceptions.lexer.syntax.InvalidCharacterException import InvalidCharacterException
+from src.diagnostics.exceptions.lexer.syntax.InvalidEscapeSequenceException import InvalidEscapeSequenceException
+from src.diagnostics.exceptions.lexer.syntax.UnterminatedStringException import UnterminatedStringException
 from src.diagnostics.exceptions.parser.context.BreakOutsideFunction import BreakOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
+from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 
@@ -69,5 +73,45 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
             "Check the type of the assignment target.",
         ),
         notes=("Certain data types cannot be assigned to.",)
+    ),
+
+    UnexpectedTokenException: DiagnosticDefinition(
+        code=DiagnosticCode.UNEXPECTED_TOKEN,
+        severity=DiagnosticSeverity.ERROR,
+        title="unexpected token",
+        help=(
+            "Check that your syntax is correct and not missing anything.",
+        )
+    ),
+
+    InvalidCharacterException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_CHARACTER,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid character",
+        help=(
+            "Check that your syntax is correct and not missing anything.",
+        )
+    ),
+
+    UnterminatedStringException: DiagnosticDefinition(
+        code=DiagnosticCode.UNTERMINATED_STRING,
+        severity=DiagnosticSeverity.ERROR,
+        title="unterminated string",
+        help=(
+            "Check that you have put a \" or ' at the end of the string.",
+        ),
+        notes=("You must enclose strings with \" at either ends.",)
+    ),
+
+    InvalidEscapeSequenceException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_ESCAPE_SEQUENCE,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid escape sequence",
+        help=(
+            "Check that your escape sequence is valid.",
+        ),
+        notes=("Valid escape sequences include the following: '\\n', '\\t', '\\r', '\\f', '\\b', '\\\"', '\\\\'.",)
     )
+
+
 }
