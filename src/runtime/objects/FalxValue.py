@@ -3,6 +3,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Callable, TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
+from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException import CannotMinusFromValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
+
 if TYPE_CHECKING:
     from src.packages.NativeFunction import NativeFunction
 
@@ -61,23 +66,23 @@ class FalxValue(ABC):
 
     def add(self, other: FalxValue) -> FalxValue:
         """Add another FalxValue to this one"""
-        raise RuntimeError(f"{self.getTypeName()} cannot be added to '{other.asString()}'")
+        raise CannotAddWithValueException(self.getTypeName(), other.asString())
 
     def minus(self, other: FalxValue) -> FalxValue:
         """Subtract another FalxValue from this one"""
-        raise RuntimeError(f"{self.getTypeName()} cannot be subtracted from '{other.asString()}'")
+        raise CannotMinusFromValueException(self.getTypeName(), other.asString())
 
     def multiply(self, other: FalxValue) -> FalxValue:
         """Multiply this FalxValue by another FalxValue"""
-        raise RuntimeError(f"{self.getTypeName()} cannot be multiplied by '{other.asString()}'")
+        raise CannotMultiplyByValueException(other.asString(), self.getTypeName())
 
     def divide(self, other: FalxValue) -> FalxValue:
         """Divide this FalxValue by another FalxValue"""
-        raise RuntimeError(f"{self.getTypeName()} cannot be divided by '{other.asString()}'")
+        raise CannotDivideByValueException(other.asString(), self.getTypeName())
 
     def mod(self, other: FalxValue) -> FalxValue:
         """Return the remainder of dividing this value by another FalxValue"""
-        raise RuntimeError(f"Cannot mod {self.getTypeName()} with '{other.asString()}'")
+        raise CannotModWithValueException(f"Cannot mod {self.getTypeName()} with '{other.asString()}'")
 
     def compareTo(self, other: FalxValue) -> int:
         """Compare this value with another FalxValue"""

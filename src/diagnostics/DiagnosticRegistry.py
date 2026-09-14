@@ -9,8 +9,14 @@ from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException 
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
+from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
+from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
+from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
+from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 
 DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
 
@@ -111,6 +117,68 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
             "Check that your escape sequence is valid.",
         ),
         notes=("Valid escape sequences include the following: '\\n', '\\t', '\\r', '\\f', '\\b', '\\\"', '\\\\'.",)
+    ),
+
+    AssignToConstantException: DiagnosticDefinition(
+        code=DiagnosticCode.ASSIGN_TO_CONSTANT,
+        severity=DiagnosticSeverity.ERROR,
+        title="assign to constant",
+        help=(
+            "Check that you are not attempting to assign a value to a `const` variable.",
+        ),
+        notes=("You cannot assign a new value to a variable declared using `const`.",)
+    ),
+
+    VariableAlreadyExistsException: DiagnosticDefinition(
+        code=DiagnosticCode.VARIABLE_ALREADY_EXISTS,
+        severity=DiagnosticSeverity.ERROR,
+        title="variable already exists",
+        help=(
+            "Check that you are not re-declaring a variable using `let`.",
+        ),
+        notes=("You cannot declare a variable that has already been declared using `let`,",
+               "If you are wanting to assign a value to a variable, simply remove `let`."
+               )
+    ),
+
+    CannotMultiplyByValueException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_MULTIPLY_BY,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot multiply by value",
+        help=(
+            "Check you are performing a valid multiplication.",
+        ),
+        notes=("Not all data types can be multiplied together, for example, a string and a string.",)
+    ),
+
+    CannotDivideByValueException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_DIVIDE_BY,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot divide by value",
+        help=(
+            "Check you are performing a valid division.",
+        ),
+        notes=("Not all data types can be divided by another, for example, a string and a string.",)
+    ),
+
+    CannotAddWithValueException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_ADD_WITH_VALUE,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot add with value",
+        help=(
+            "Check you are performing a valid addition.",
+        ),
+        notes=("Not all data types can be added, for example, an array and an integer.",)
+    ),
+
+    CannotModWithValueException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_MOD_WITH_VALUE,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot mod with value",
+        help=(
+            "Check you are performing a valid modulus.",
+        ),
+        notes=("Not all data types can be used with modulus (`%`), for example, an integer and a string.",)
     )
 
 
