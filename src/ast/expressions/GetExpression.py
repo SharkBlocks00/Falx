@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -21,6 +22,8 @@ class GetExpression(Expression):
         value: FalxValue = self.obj.evaluate(interpreter, environment)
         try:
             return value.get(self._property)
+        except CannotAccessPropertyException:
+            raise CannotAccessPropertyException(f"'{self.obj}' has no property '{self._property}'", self.location)
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
 

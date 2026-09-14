@@ -43,7 +43,7 @@ def main():
 
         printer = DiagnosticPrinter()
         printer.print(diagnostic, source)
-    except Exception: # baseline for actual language bug exceptions (all in language ones are from FalxRuntimeException)
+    except Exception: # baseline for actual language bug exceptions (all in language ones are from FalxRuntimeException/FalxException)
         traceback.print_exc()
 
 

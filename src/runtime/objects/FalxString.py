@@ -1,5 +1,6 @@
 from typing import Iterable
 
+from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.runtime.methods.string.ContainMethod import ContainMethod
 from src.runtime.methods.string.EndsWithMethod import EndsWithMethod
 from src.runtime.methods.string.IntMethod import IntMethod
@@ -40,7 +41,16 @@ class FalxString(FalxValue, FalxIterable):
         try:
             return int(self.value)
         except ValueError:
-            raise RuntimeError(f"Cannot convert {self.value} to int")
+            raise CannotConvertToTypeException(self.value, "int")
+
+    def asFloat(self) -> float:
+        try:
+            return float(self.value)
+        except ValueError:
+            raise CannotConvertToTypeException(self.value, "float")
+
+    def asBool(self) -> bool:
+        return self.value.lower() == "true"
 
     def equalsValue(self, other: FalxValue) -> bool:
         if isinstance(other, FalxString):

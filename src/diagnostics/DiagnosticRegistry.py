@@ -10,10 +10,15 @@ from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException im
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
+from src.diagnostics.exceptions.runtime.operations.CannotCompareToException import CannotCompareToException
+from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
+from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
+from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
+from src.diagnostics.exceptions.runtime.properties.ObjectIsNotIndexableException import ObjectIsNotIndexableException
 from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
@@ -134,10 +139,10 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="variable already exists",
         help=(
-            "Check that you are not re-declaring a variable using `let`.",
+            "Check that you are not re-declaring a variable using `let` or `const`.",
         ),
-        notes=("You cannot declare a variable that has already been declared using `let`,",
-               "If you are wanting to assign a value to a variable, simply remove `let`."
+        notes=("You cannot declare a variable that has already been declared using `let` or `const`.",
+               "If you are wanting to assign a value to a variable, simply remove `let` or `const`."
                )
     ),
 
@@ -179,7 +184,55 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
             "Check you are performing a valid modulus.",
         ),
         notes=("Not all data types can be used with modulus (`%`), for example, an integer and a string.",)
-    )
+    ),
 
+    CannotCompareToException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_COMPARE_TO,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot compare to",
+        help=(
+            "Check you are comparing two comparable items.",
+        ),
+    ),
+
+    CannotConvertToTypeException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_CONVERT_TO_TYPE,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot convert to type",
+        help=(
+            "Check that the values you are trying to cast can be casted to that type.",
+        ),
+        notes=("Not all data types support casting.",
+               "Not all data types can be casted to every individual type.")
+    ),
+
+    CannotAccessPropertyException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_ACCESS_PROPERTY,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot access property",
+        help=(
+            "Check that the property you are trying to access exists.",
+        ),
+        notes=("Check the data type of the object you are trying to get the property of.",)
+    ),
+
+    ObjectIsNotIndexableException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_ACCESS_PROPERTY,
+        severity=DiagnosticSeverity.ERROR,
+        title="object is not indexable",
+        help=(
+            "The object you are trying to index is not indexable.",
+        ),
+        notes=("Check the type of the object you are trying to index.",)
+    ),
+
+    CannotSetPropertyException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_SET_PROPERTY,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot set property",
+        help=(
+            "Check that the property you are trying to set exists and is modifiable.",
+        ),
+    ),
 
 }
