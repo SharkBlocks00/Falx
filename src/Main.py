@@ -21,10 +21,10 @@ def main():
         scriptPath: Path | None = argumentHandler.handleArguments()
     except Exception as e:
         print(e, file=sys.stderr)
-        return
+        return 1
 
     if scriptPath is None:
-        return
+        return 0
 
     source: str = scriptPath.read_text(encoding="utf-8")
 
@@ -43,9 +43,11 @@ def main():
 
         printer = DiagnosticPrinter()
         printer.print(diagnostic, source)
+        return 1
     except Exception: # baseline for actual language bug exceptions (all in language ones are from FalxRuntimeException/FalxException)
         traceback.print_exc()
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

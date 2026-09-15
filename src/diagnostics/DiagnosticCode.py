@@ -1,7 +1,7 @@
 from enum import Enum
 
 class DiagnosticCode(Enum):
-    """Enum class for all error/exception codes"""
+    """Diagnostic codes used by the Falx lexer, parser and runtime"""
     # Runtime errors
     UNDEFINED_VARIABLE = "E1000"
     UNDEFINED_PROPERTY = "E1001"
@@ -18,6 +18,7 @@ class DiagnosticCode(Enum):
     CANNOT_COMPARE_TO = "E1010"
     CANNOT_CONVERT_TO_TYPE = "E1011"
     CANNOT_EVALUATE_VALUE = "E1015"
+    CANNOT_MINUS_FROM_VALUE = "E1019"
 
     # Property errors
 
@@ -30,12 +31,16 @@ class DiagnosticCode(Enum):
     ARRAY_INVALID_INDEX = "E1017"
     STRING_INVALID_INDEX = "E1018"
 
+    # Method errors
+    OBJECT_NOT_CALLABLE = "E1020"
+    INVALID_ARGUMENT_COUNT = "E1021"
+
     # Parser errors
     SYNTAX_ERROR = "E2000"
     UNEXPECTED_TOKEN = "E2001"
     RETURN_OUTSIDE_FUNCTION = "E2002"
     CONTINUE_OUTSIDE_LOOP = "E2003"
-    BREAK_OUTSIDE_FUNCTION = "E2004"
+    BREAK_OUTSIDE_LOOP = "E2004"
     INVALID_ASSIGNMENT_TARGET = "E2005"
 
     # Lexer errors

@@ -4,4 +4,4 @@ from src.diagnostics.exceptions.parser.FalxParserException import FalxParserExce
 
 class ContinueOutsideFunctionException(FalxParserException):
     def __init__(self, location: SourceLocation | None = None):
-        super().__init__("'continue' called outside a valid function", location)
+        super().__init__("'continue' called outside a valid loop", location)

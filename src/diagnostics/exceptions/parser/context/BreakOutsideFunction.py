@@ -4,4 +4,4 @@ from src.diagnostics.exceptions.parser.FalxParserException import FalxParserExce
 
 class BreakOutsideFunctionException(FalxParserException):
     def __init__(self, location: SourceLocation | None = None):
-        super().__init__("'break' called outside a valid function", location)
+        super().__init__("'break' called outside a valid loop", location)

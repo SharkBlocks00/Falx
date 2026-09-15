@@ -457,7 +457,11 @@ class Parser:
             return NullLiteral(self._previous())
         if self._match(TokenKind.SEMICOLON):
             raise UnexpectedTokenException("Expected expression, found ';'", self._previous().location)
-        raise NotImplementedError(f"Other literals not implemented yet: {self._peek().tokenKind}")
+        if self._match(TokenKind.ELSEIF):
+            raise UnexpectedTokenException("Cannot call 'elseif' without a valid if.", self._previous().location)
+        if self._match(TokenKind.ELSE):
+            raise UnexpectedTokenException("Cannot call 'else' without a valid if", self._previous().location)
+        raise UnexpectedTokenException(f"Expected expression, found '{self._peek().lexeme}'", self._previous().location)
 
     def _peek(self) -> Token:
         return self.tokens[self.current]

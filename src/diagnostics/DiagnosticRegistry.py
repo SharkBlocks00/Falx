@@ -12,11 +12,14 @@ from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import Un
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
+from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
+from src.diagnostics.exceptions.runtime.methods.ObjectNotCallableException import ObjectNotCallableException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotCompareToException import CannotCompareToException
 from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
 from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException import CannotMinusFromValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
@@ -71,9 +74,9 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
     ),
 
     BreakOutsideFunctionException: DiagnosticDefinition(
-        code=DiagnosticCode.BREAK_OUTSIDE_FUNCTION,
+        code=DiagnosticCode.BREAK_OUTSIDE_LOOP,
         severity=DiagnosticSeverity.ERROR,
-        title="break outside function",
+        title="break outside loop",
         help=(
             "Check you have not called break outside of a function or loop.",
         ),
@@ -221,7 +224,7 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
     ),
 
     ObjectIsNotIndexableException: DiagnosticDefinition(
-        code=DiagnosticCode.CANNOT_ACCESS_PROPERTY,
+        code=DiagnosticCode.OBJECT_IS_NOT_INDEXABLE,
         severity=DiagnosticSeverity.ERROR,
         title="object is not indexable",
         help=(
@@ -274,6 +277,33 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         title="invalid index on string",
         help=(
             "Check the index is within the lower and upper bounds of the string.",
+        ),
+    ),
+
+    CannotMinusFromValueException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_MINUS_FROM_VALUE,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot minus from value",
+        help=(
+            "Check you are performing a valid subtraction.",
+        ),
+    ),
+
+    ObjectNotCallableException: DiagnosticDefinition(
+        code=DiagnosticCode.OBJECT_NOT_CALLABLE,
+        severity=DiagnosticSeverity.ERROR,
+        title="object not callable",
+        help=(
+            "Check the object you are trying to call is callable.",
+        ),
+    ),
+
+    InvalidArgumentCountException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_ARGUMENT_COUNT,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid argument count",
+        help=(
+            "Check you are passing in the correct number of arguments.",
         )
     )
 
