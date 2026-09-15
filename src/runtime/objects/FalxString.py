@@ -1,5 +1,6 @@
 from typing import Iterable
 
+from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
 from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.runtime.methods.string.ContainMethod import ContainMethod
 from src.runtime.methods.string.EndsWithMethod import EndsWithMethod
@@ -72,6 +73,7 @@ class FalxString(FalxValue, FalxIterable):
 
     def index(self, index: FalxValue) -> FalxValue:
         i: int = index.asInt()
+        StringIndexInvalidException.check(i, len(self.value))
         return FalxString(self.value[i])
 
     def iterate(self) -> Iterable[FalxValue]:

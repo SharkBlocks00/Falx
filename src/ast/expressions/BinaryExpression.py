@@ -1,8 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
+from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
@@ -41,6 +43,8 @@ class BinaryExpression(Expression):
             raise CannotAddWithValueException(leftValue.asString(), rightValue.asString(), self.location) from None
         except CannotModWithValueException:
             raise CannotModWithValueException(leftValue.asString(), rightValue.asString(), self.location) from None
+        except CannotEvaluateValueException:
+            raise CannotEvaluateValueException(leftValue.asString(), rightValue.asString()).withLocation(self.location)
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
         except ZeroDivisionError:
@@ -64,7 +68,7 @@ class BinaryExpression(Expression):
             case TokenKind.EQUAL_EQUAL: return FalxBoolean(leftValue.equalsValue(rightValue))
             case TokenKind.BANG_EQUAL: return FalxBoolean(not leftValue.equalsValue(rightValue))
 
-            case _: raise RuntimeError(f"Cannot evaluate '{leftValue.asString()}' and '{rightValue.asString()}'")
+            case _: raise CannotEvaluateValueException(leftValue.asString(), rightValue.asString())
 
     def __str__(self) -> str:
         return f"{self.left.__str__} {self.operator.tokenKind.__str__()} {self.right.__str__()}"

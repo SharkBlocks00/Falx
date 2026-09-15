@@ -9,16 +9,20 @@ from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException 
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotCompareToException import CannotCompareToException
 from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
+from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
-from src.diagnostics.exceptions.runtime.properties.ObjectIsNotIndexableException import ObjectIsNotIndexableException
+from src.diagnostics.exceptions.runtime.indexing.ObjectIsNotIndexableException import ObjectIsNotIndexableException
 from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
@@ -234,5 +238,43 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
             "Check that the property you are trying to set exists and is modifiable.",
         ),
     ),
+
+    CannotEvaluateValueException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_EVALUATE_VALUE,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot evaluate value",
+        help=(
+            "Check the operator of the evaluation and make sure it is valid.",
+        ),
+        notes=("Valid mathematical operators include the following: '+', '-', '*', '/', '%'.",
+               "Valid comparison operators include the following: '>', '>=', '<', '<=', '==', '!='.")
+    ),
+
+    IndexInvalidException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_INDEX,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid index",
+        help=(
+            "Check the index is valid.",
+        ),
+    ),
+
+    ArrayIndexInvalidException: DiagnosticDefinition(
+        code=DiagnosticCode.ARRAY_INVALID_INDEX,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid index on array",
+        help=(
+            "Check the index is within the lower and upper bounds of the array.",
+        ),
+    ),
+
+    StringIndexInvalidException: DiagnosticDefinition(
+        code=DiagnosticCode.STRING_INVALID_INDEX,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid index on string",
+        help=(
+            "Check the index is within the lower and upper bounds of the string.",
+        )
+    )
 
 }

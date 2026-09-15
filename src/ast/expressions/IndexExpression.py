@@ -2,6 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -23,6 +26,10 @@ class IndexExpression(Expression):
 
         try:
             return _obj.index(_idx)
+        except ArrayIndexInvalidException:
+            raise ArrayIndexInvalidException(_idx.asInt(), len(_obj.asString())).withLocation(self.location)
+        except StringIndexInvalidException:
+            raise StringIndexInvalidException(_idx.asInt(), len(_obj.asString())).withLocation(self.location)
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
     

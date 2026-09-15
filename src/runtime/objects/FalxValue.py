@@ -12,7 +12,7 @@ from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException i
 from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
-from src.diagnostics.exceptions.runtime.properties.ObjectIsNotIndexableException import ObjectIsNotIndexableException
+from src.diagnostics.exceptions.runtime.indexing.ObjectIsNotIndexableException import ObjectIsNotIndexableException
 
 if TYPE_CHECKING:
     from src.packages.NativeFunction import NativeFunction
