@@ -30,6 +30,7 @@ class DiagnosticCode(Enum):
     INVALID_INDEX = "E1016"
     ARRAY_INVALID_INDEX = "E1017"
     STRING_INVALID_INDEX = "E1018"
+    INVALID_INDEX_TYPE = "E1023"
 
     # Method errors
     OBJECT_NOT_CALLABLE = "E1020"

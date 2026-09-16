@@ -11,6 +11,7 @@ from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException i
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
 from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
 from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException import DuplicateParameterException
 from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
@@ -314,6 +315,15 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         title="duplicate parameter",
         help=(
             "Check that there is not more than one parameter of the same name in your function declaration",
+        ),
+    ),
+
+    InvalidIndexTypeException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_INDEX_TYPE,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid index type",
+        help=(
+            "Check you are trying to index with an invalid index type.",
         )
     )
 
