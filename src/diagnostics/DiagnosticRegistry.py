@@ -39,10 +39,12 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="undefined variable",
         help=(
-            "Check that the variable has been declared.",
-            "Check that the variable name is spelled correctly."
+            "Check that the variable has been declared before it is used.",
+            "Check that the variable name is spelled correctly.",
         ),
-        notes=("Variables must be declared before you can use them.",)
+        notes=(
+            "Variables must be declared using `let` or `const` before they can be used.",
+        )
     ),
 
     DivisionByZeroException: DiagnosticDefinition(
@@ -50,9 +52,12 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="division by zero",
         help=(
-            "Check the value of the divisor before performing the division.",
+            "Check the value being used as the divisor.",
+            "Make sure the divisor cannot evaluate to zero before performing the division.",
         ),
-        notes=("You cannot divide by zero.",)
+        notes=(
+            "Division by zero is not a valid operation in Falx.",
+        )
     ),
 
     ReturnOutsideFunctionException: DiagnosticDefinition(
@@ -60,9 +65,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="return outside function",
         help=(
-            "Check you have not called return outside of a function.",
+            "Move the `return` statement inside a function declaration.",
         ),
-        notes=("Return can only be called inside of a function",)
+        notes=(
+            "The `return` statement can only be used while executing a function.",
+        )
     ),
 
     ContinueOutsideFunctionException: DiagnosticDefinition(
@@ -70,9 +77,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="continue outside loop",
         help=(
-            "Check you have not called continue outside of a loop.",
+            "Move the `continue` statement inside a loop.",
         ),
-        notes=("Continue can only be called inside of a loop",)
+        notes=(
+            "The `continue` statement can only be used inside a loop.",
+        )
     ),
 
     BreakOutsideFunctionException: DiagnosticDefinition(
@@ -80,9 +89,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="break outside loop",
         help=(
-            "Check you have not called break outside of a function or loop.",
+            "Move the `break` statement inside a loop.",
         ),
-        notes=("Break can only be called inside of a function or loop.",)
+        notes=(
+            "The `break` statement can only be used inside a loop.",
+        )
     ),
 
     InvalidAssignmentTargetException: DiagnosticDefinition(
@@ -90,9 +101,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid assignment target",
         help=(
-            "Check the type of the assignment target.",
+            "Check that the left-hand side of the assignment is a valid assignment target.",
         ),
-        notes=("Certain data types cannot be assigned to.",)
+        notes=(
+            "Only assignable variables, properties, and other supported targets can appear on the left-hand side of an assignment.",
+        )
     ),
 
     UnexpectedTokenException: DiagnosticDefinition(
@@ -100,8 +113,9 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="unexpected token",
         help=(
-            "Check that your syntax is correct and not missing anything.",
-        )
+            "Check the surrounding syntax for a missing, extra, or incorrectly placed token.",
+            "Check that the statement follows the expected Falx syntax.",
+        ),
     ),
 
     InvalidCharacterException: DiagnosticDefinition(
@@ -109,7 +123,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid character",
         help=(
-            "Check that your syntax is correct and not missing anything.",
+            "Remove the invalid character or replace it with a valid Falx character.",
+            "Check that the character is not the result of a typing or encoding error.",
+        ),
+        notes=(
+            "The lexer encountered a character that is not valid in the current context.",
         )
     ),
 
@@ -118,9 +136,12 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="unterminated string",
         help=(
-            "Check that you have put a \" or ' at the end of the string.",
+            "Add the missing closing quote to the string.",
+            "Check that an escaped quote has not been unintentionally used or omitted.",
         ),
-        notes=("You must enclose strings with \" at either ends.",)
+        notes=(
+            "String literals must begin and end with matching quotation marks.",
+        )
     ),
 
     InvalidEscapeSequenceException: DiagnosticDefinition(
@@ -128,9 +149,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid escape sequence",
         help=(
-            "Check that your escape sequence is valid.",
+            "Replace the invalid escape sequence with a supported escape sequence.",
         ),
-        notes=("Valid escape sequences include the following: '\\n', '\\t', '\\r', '\\f', '\\b', '\\\"', '\\\\'.",)
+        notes=(
+            "Supported escape sequences include `\\n`, `\\t`, `\\r`, `\\f`, `\\b`, `\\\"`, and `\\\\`.",
+        )
     ),
 
     AssignToConstantException: DiagnosticDefinition(
@@ -138,9 +161,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="assign to constant",
         help=(
-            "Check that you are not attempting to assign a value to a `const` variable.",
+            "Remove the assignment or declare the variable using `let` if its value needs to change.",
         ),
-        notes=("You cannot assign a new value to a variable declared using `const`.",)
+        notes=(
+            "Variables declared using `const` cannot be assigned a new value after declaration.",
+        )
     ),
 
     VariableAlreadyExistsException: DiagnosticDefinition(
@@ -148,11 +173,12 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="variable already exists",
         help=(
-            "Check that you are not re-declaring a variable using `let` or `const`.",
+            "Choose a different variable name or assign a new value to the existing variable.",
+            "If you are assigning to an existing variable, remove `let` or `const` from the declaration.",
         ),
-        notes=("You cannot declare a variable that has already been declared using `let` or `const`.",
-               "If you are wanting to assign a value to a variable, simply remove `let` or `const`."
-               )
+        notes=(
+            "A variable cannot be declared more than once in the same environment.",
+        )
     ),
 
     CannotMultiplyByValueException: DiagnosticDefinition(
@@ -160,9 +186,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot multiply by value",
         help=(
-            "Check you are performing a valid multiplication.",
+            "Check that both operands support multiplication with each other.",
         ),
-        notes=("Not all data types can be multiplied together, for example, a string and a string.",)
+        notes=(
+            "The `*` operator only supports combinations of data types that define multiplication.",
+        )
     ),
 
     CannotDivideByValueException: DiagnosticDefinition(
@@ -170,9 +198,12 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot divide by value",
         help=(
-            "Check you are performing a valid division.",
+            "Check that both operands support division with each other.",
+            "If the divisor is valid but evaluates to zero, check for a division-by-zero error instead.",
         ),
-        notes=("Not all data types can be divided by another, for example, a string and a string.",)
+        notes=(
+            "The `/` operator only supports combinations of data types that define division.",
+        )
     ),
 
     CannotAddWithValueException: DiagnosticDefinition(
@@ -180,9 +211,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot add with value",
         help=(
-            "Check you are performing a valid addition.",
+            "Check that both operands support addition with each other.",
         ),
-        notes=("Not all data types can be added, for example, an array and an integer.",)
+        notes=(
+            "The `+` operator only supports combinations of data types that define addition.",
+        )
     ),
 
     CannotModWithValueException: DiagnosticDefinition(
@@ -190,9 +223,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot mod with value",
         help=(
-            "Check you are performing a valid modulus.",
+            "Check that both operands support the modulus operation.",
         ),
-        notes=("Not all data types can be used with modulus (`%`), for example, an integer and a string.",)
+        notes=(
+            "The `%` operator only supports combinations of data types that define modulus.",
+        )
     ),
 
     CannotCompareToException: DiagnosticDefinition(
@@ -200,8 +235,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot compare to",
         help=(
-            "Check you are comparing two comparable items.",
+            "Check that the values being compared support the selected comparison operator.",
         ),
+        notes=(
+            "Comparison operators can only be used with values that support comparison.",
+        )
     ),
 
     CannotConvertToTypeException: DiagnosticDefinition(
@@ -209,10 +247,13 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot convert to type",
         help=(
-            "Check that the values you are trying to cast can be casted to that type.",
+            "Check that the value can be converted to the requested type.",
+            "Use a type conversion that is supported by the value and target type.",
         ),
-        notes=("Not all data types support casting.",
-               "Not all data types can be casted to every individual type.")
+        notes=(
+            "Not every data type can be converted to every other data type.",
+            "Type conversion is only supported where Falx defines a valid conversion.",
+        )
     ),
 
     CannotAccessPropertyException: DiagnosticDefinition(
@@ -220,9 +261,12 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot access property",
         help=(
-            "Check that the property you are trying to access exists.",
+            "Check that the property exists on the value being accessed.",
+            "Check that the value supports property access.",
         ),
-        notes=("Check the data type of the object you are trying to get the property of.",)
+        notes=(
+            "A property can only be accessed when the object's type provides that property.",
+        )
     ),
 
     ObjectIsNotIndexableException: DiagnosticDefinition(
@@ -230,9 +274,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="object is not indexable",
         help=(
-            "The object you are trying to index is not indexable.",
+            "Check that the value supports indexing with `[]`.",
         ),
-        notes=("Check the type of the object you are trying to index.",)
+        notes=(
+            "Only indexable values can be accessed using an index.",
+        )
     ),
 
     CannotSetPropertyException: DiagnosticDefinition(
@@ -240,8 +286,12 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot set property",
         help=(
-            "Check that the property you are trying to set exists and is modifiable.",
+            "Check that the property exists and can be modified.",
+            "Check that the value allows the property to be changed.",
         ),
+        notes=(
+            "A property cannot be assigned when it does not exist or is not modifiable.",
+        )
     ),
 
     CannotEvaluateValueException: DiagnosticDefinition(
@@ -249,10 +299,13 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="cannot evaluate value",
         help=(
-            "Check the operator of the evaluation and make sure it is valid.",
+            "Check that the operator is valid for the values being evaluated.",
+            "Check that the expression uses a supported operator.",
         ),
-        notes=("Valid mathematical operators include the following: '+', '-', '*', '/', '%'.",
-               "Valid comparison operators include the following: '>', '>=', '<', '<=', '==', '!='.")
+        notes=(
+            "Falx supports arithmetic operators such as `+`, `-`, `*`, `/`, and `%`.",
+            "Falx also supports comparison operators such as `>`, `>=`, `<`, `<=`, `==`, and `!=`.",
+        )
     ),
 
     IndexInvalidException: DiagnosticDefinition(
@@ -260,8 +313,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid index",
         help=(
-            "Check the index is valid.",
+            "Check that the index is valid for the value being accessed.",
         ),
+        notes=(
+            "An index must be valid for the type and size of the value being indexed.",
+        )
     ),
 
     ArrayIndexInvalidException: DiagnosticDefinition(
@@ -269,8 +325,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid index on array",
         help=(
-            "Check the index is within the lower and upper bounds of the array.",
+            "Check that the index is within the valid range of the array.",
         ),
+        notes=(
+            "An array index must refer to an element that exists within the array.",
+        )
     ),
 
     StringIndexInvalidException: DiagnosticDefinition(
@@ -278,17 +337,23 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid index on string",
         help=(
-            "Check the index is within the lower and upper bounds of the string.",
+            "Check that the index is within the valid range of the string.",
         ),
+        notes=(
+            "A string index must refer to a character that exists within the string.",
+        )
     ),
 
     CannotMinusFromValueException: DiagnosticDefinition(
         code=DiagnosticCode.CANNOT_MINUS_FROM_VALUE,
         severity=DiagnosticSeverity.ERROR,
-        title="cannot minus from value",
+        title="cannot subtract from value",
         help=(
-            "Check you are performing a valid subtraction.",
+            "Check that the operands support subtraction with each other.",
         ),
+        notes=(
+            "The `-` operator only supports combinations of data types that define subtraction.",
+        )
     ),
 
     ObjectNotCallableException: DiagnosticDefinition(
@@ -296,8 +361,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="object not callable",
         help=(
-            "Check the object you are trying to call is callable.",
+            "Check that the value you are trying to call is a function or another callable value.",
         ),
+        notes=(
+            "Only callable values can be followed by a function call.",
+        )
     ),
 
     InvalidArgumentCountException: DiagnosticDefinition(
@@ -305,7 +373,10 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid argument count",
         help=(
-            "Check you are passing in the correct number of arguments.",
+            "Check the function declaration and provide the expected number of arguments.",
+        ),
+        notes=(
+            "A function call must provide the number of arguments required by the function.",
         )
     ),
 
@@ -314,8 +385,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="duplicate parameter",
         help=(
-            "Check that there is not more than one parameter of the same name in your function declaration",
+            "Rename or remove the duplicate parameter from the function declaration.",
         ),
+        notes=(
+            "Each parameter in a function declaration must have a unique name.",
+        )
     ),
 
     InvalidIndexTypeException: DiagnosticDefinition(
@@ -323,8 +397,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="invalid index type",
         help=(
-            "Check you are trying to index with an invalid index type.",
+            "Use an index with a type supported by the value being indexed.",
+        ),
+        notes=(
+            "The type of an index must be compatible with the type of value being indexed.",
         )
-    )
+    ),
 
 }
