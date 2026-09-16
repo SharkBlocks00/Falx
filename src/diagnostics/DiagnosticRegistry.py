@@ -12,6 +12,7 @@ from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import Un
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
+from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException import DuplicateParameterException
 from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
 from src.diagnostics.exceptions.runtime.methods.ObjectNotCallableException import ObjectNotCallableException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
@@ -304,6 +305,15 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         title="invalid argument count",
         help=(
             "Check you are passing in the correct number of arguments.",
+        )
+    ),
+
+    DuplicateParameterException: DiagnosticDefinition(
+        code=DiagnosticCode.DUPLICATE_PARAMETER,
+        severity=DiagnosticSeverity.ERROR,
+        title="duplicate parameter",
+        help=(
+            "Check that there is not more than one parameter of the same name in your function declaration",
         )
     )
 

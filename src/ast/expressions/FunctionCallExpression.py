@@ -31,7 +31,7 @@ class FunctionCallExpression(Expression):
         for arg in self.arguments:
             args.append(arg.evaluate(interpreter, environment))
 
-        if len(args) != obj.arity() and  obj.isStrict():
+        if len(args) != obj.arity() and obj.isStrict():
             raise InvalidArgumentCountException(len(args), obj.arity(), self.location)
 
         return obj.call(interpreter, args)

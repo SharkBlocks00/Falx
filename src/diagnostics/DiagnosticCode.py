@@ -34,6 +34,7 @@ class DiagnosticCode(Enum):
     # Method errors
     OBJECT_NOT_CALLABLE = "E1020"
     INVALID_ARGUMENT_COUNT = "E1021"
+    DUPLICATE_PARAMETER = "E1022"
 
     # Parser errors
     SYNTAX_ERROR = "E2000"
