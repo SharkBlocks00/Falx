@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.modules.ModuleNotFoundException import ModuleNotFoundException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
     from src.runtime.modules.ModuleLoader import ModuleLoader

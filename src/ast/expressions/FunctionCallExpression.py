@@ -34,7 +34,10 @@ class FunctionCallExpression(Expression):
         if len(args) != obj.arity() and obj.isStrict():
             raise InvalidArgumentCountException(len(args), obj.arity(), self.location)
 
-        return obj.call(interpreter, args)
+        try:
+            return obj.call(interpreter, args)
+        except FalxRuntimeException as e:
+            raise e.withLocation(self.location)
 
     def __str__(self):
         return f"{self.callee} ({self.arguments})"

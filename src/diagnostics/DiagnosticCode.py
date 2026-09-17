@@ -9,6 +9,7 @@ class DiagnosticCode(Enum):
     DIVISION_BY_ZERO = "E1003"
     ASSIGN_TO_CONSTANT = "E1004"
     VARIABLE_ALREADY_EXISTS = "E1005"
+    RECURSION_DEPTH_EXCEEDED = "E1024"
 
     # Operational errors
     CANNOT_MULTIPLY_BY = "E1006"
@@ -21,7 +22,6 @@ class DiagnosticCode(Enum):
     CANNOT_MINUS_FROM_VALUE = "E1019"
 
     # Property errors
-
     CANNOT_ACCESS_PROPERTY = "E1012"
     CANNOT_SET_PROPERTY = "E1014"
 
@@ -52,3 +52,4 @@ class DiagnosticCode(Enum):
 
     # Module errors
     MODULE_NOT_FOUND = "E4000"
+    CIRCULAR_MODULE_DEPENDENCY = "E4001"

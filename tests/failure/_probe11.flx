@@ -1,1 +1,1 @@
-let value = -"hello";
+let v = require("_probe12");

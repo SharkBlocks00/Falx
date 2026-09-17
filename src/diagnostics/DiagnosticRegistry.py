@@ -9,6 +9,7 @@ from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException 
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
@@ -16,6 +17,9 @@ from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException imp
 from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException import DuplicateParameterException
 from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
 from src.diagnostics.exceptions.runtime.methods.ObjectNotCallableException import ObjectNotCallableException
+from src.diagnostics.exceptions.runtime.modules.CircularModuleDependencyException import \
+    CircularModuleDependencyException
+from src.diagnostics.exceptions.runtime.modules.ModuleNotFoundException import ModuleNotFoundException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotCompareToException import CannotCompareToException
 from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
@@ -403,5 +407,36 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
             "The type of an index must be compatible with the type of value being indexed.",
         )
     ),
+
+    ModuleNotFoundException: DiagnosticDefinition(
+        code=DiagnosticCode.MODULE_NOT_FOUND,
+        severity=DiagnosticSeverity.ERROR,
+        title="module not found",
+        help=(
+            "Make sure the module exists in your current working directory.",
+        ),
+        notes=()
+    ),
+
+    RecursionDepthExceededException: DiagnosticDefinition(
+        code=DiagnosticCode.RECURSION_DEPTH_EXCEEDED,
+        severity=DiagnosticSeverity.ERROR,
+        title="recursion depth exceeded",
+        help=(
+            "Remove any functions or methods calling themselves.",
+        ),
+    ),
+
+    CircularModuleDependencyException: DiagnosticDefinition(
+        code=DiagnosticCode.CIRCULAR_MODULE_DEPENDENCY,
+        severity=DiagnosticSeverity.ERROR,
+        title="circular module dependency detected",
+        help=(
+            "Remove the circular dependency between these modules.",
+        ),
+        notes=(
+            "A module cannot be loaded while it is already being loaded.",
+        )
+    )
 
 }
