@@ -7,5 +7,5 @@ class ArrayIndexInvalidException(IndexInvalidException):
 
     @staticmethod
     def check(index: int, size: int) -> None:
-        if index < 0 or index >= size:
+        if index >= size:
             raise ArrayIndexInvalidException(index, size)
