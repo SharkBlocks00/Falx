@@ -27,10 +27,7 @@ class SplitMethod(BoundNativeFunction):
 
         string: FalxString = self.this
         arr: list[str] = string.asString().split(arguments[0].asString())
-        pt1: str = arr[0]
-        pt2: str = arr[1]
-
-        output: list[FalxValue] = [FalxString(pt1), FalxString(pt2)]
+        output: list[FalxValue] = [FalxString(part) for part in arr]
         return FalxArray(output)
 
     def __eq__(self, other: object) -> bool:

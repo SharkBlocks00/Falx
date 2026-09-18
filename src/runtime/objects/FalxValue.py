@@ -93,7 +93,7 @@ class FalxValue(ABC):
 
     def equalsValue(self, other: FalxValue) -> bool:
         """Determine whether this value is equal to another value at the lowest level"""
-        raise CannotCompareToException(self.getTypeName(), other.asString())
+        return self is other
 
     def getTypeName(self) -> str:
         """Return the type name of this FalxValue"""

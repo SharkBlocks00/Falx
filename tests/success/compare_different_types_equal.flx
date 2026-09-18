@@ -1,0 +1,17 @@
+assert((5 == null) == false);
+assert((5 != null) == true);
+
+assert((5 == []) == false);
+assert((5 != []) == true);
+
+assert(([] == 5) == false);
+assert(([] != 5) == true);
+
+assert((null == 5) == false);
+assert((null != 5) == true);
+
+assert(("hello" == null) == false);
+assert(("hello" != null) == true);
+
+assert((false == null) == false);
+assert((false != null) == true);

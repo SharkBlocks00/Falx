@@ -13,7 +13,9 @@ class FalxBoolean(FalxValue):
         return a == b
 
     def equalsValue(self, other: FalxValue) -> bool:
-        return self.asFloat == other.asFloat()
+        if not isinstance(other, FalxBoolean):
+            return False
+        return self.value == other.value
 
     def asString(self) -> str:
         return str(self.value)

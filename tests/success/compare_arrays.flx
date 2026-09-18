@@ -1,0 +1,8 @@
+assert([1, 2, 3] == [1, 2, 3]);
+assert([1, 2] != [1, 2, 3]);
+
+assert(["test", "hello"] == ["test", "hello"]);
+assert([null, 5] == [null, 5]);
+
+let x = [1];
+assert(x == x);

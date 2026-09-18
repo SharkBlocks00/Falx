@@ -20,6 +20,11 @@ class FalxModule(FalxValue):
     def getTypeName(self) -> str:
         return "module"
 
+    def equalsValue(self, other: FalxValue) -> bool:
+        if not isinstance(other, FalxModule):
+            return False
+        return self.name == other.name and self.environment == other.environment
+
     def __str__(self) -> str:
         return f"<module '{self.name}'>"
 

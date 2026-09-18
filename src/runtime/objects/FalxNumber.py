@@ -67,7 +67,9 @@ class FalxNumber(FalxValue):
         return 0 # TODO: flesh out this to support bit comparisons
 
     def equalsValue(self, other: FalxValue) -> bool:
-        return self.asFloat() == other.asFloat()
+        if not isinstance(other, FalxNumber):
+            return False
+        return self.value == other.value
 
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, FalxNumber) and self.value == other.value

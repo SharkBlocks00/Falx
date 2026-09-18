@@ -20,7 +20,7 @@ class FalxMap(FalxValue, FalxIterable):
     def __init__(self, values: dict[FalxValue, FalxValue]):
         super().__init__()
         self.values: dict[FalxValue, FalxValue] = values
-        self._properties["size"] = lambda: FalxNumber(len(values))
+        self._properties["size"] = lambda: FalxNumber(len(self.values))
         self._methods["keys"] = KeysMethod(self)
         self._methods["isEmpty"] = EmptyMethod(self)
         self._methods["contains"] = ContainsMethod(self)
@@ -54,6 +54,12 @@ class FalxMap(FalxValue, FalxIterable):
 
     def iterate(self) -> Iterable[FalxValue]:
         return self.values.values()
+
+    def equalsValue(self, other: FalxValue) -> bool:
+        if not isinstance(other, FalxMap):
+            return False
+
+        return self.values == other.values
 
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, FalxMap) and self.values == other.values
