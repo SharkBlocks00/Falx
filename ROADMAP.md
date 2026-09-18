@@ -10,8 +10,8 @@ Have an opinion on ordering or want to pick something up? Open an issue - see [`
 
 Small items that will be coming soon:
 
-- [ ] Line/column aware runtime error messages
-- [ ] Friendly parser errors (`Expected ';' but found 'X' on line N`)
+- [x] Line/column aware runtime error messages
+- [x] Friendly parser errors (`Expected ';' but found 'X' on line N`)
 - [x] Unique, separate errors, instead of just `RuntimeError`s and `Exceptions`
 
 ## Planned
