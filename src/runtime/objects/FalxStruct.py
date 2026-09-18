@@ -37,6 +37,12 @@ class FalxStruct(FalxValue):
         except UndefinedVariableException:
             raise CannotSetPropertyException(self.definition.name, name)
 
+    def equalsValue(self, other: FalxValue) -> bool:
+        if not isinstance(other, FalxStruct):
+            return False
+
+        return self.definition == other.definition
+
     def __eq__(self, other: object) -> bool:
         return isinstance(other, FalxStruct) and self.definition == other.definition and self.env.variables == other.env.variables
 

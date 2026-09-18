@@ -55,6 +55,12 @@ class FalxMap(FalxValue, FalxIterable):
     def iterate(self) -> Iterable[FalxValue]:
         return self.values.values()
 
+    def equalsValue(self, other: FalxValue) -> bool:
+        if not isinstance(other, FalxMap):
+            return False
+
+        return self.values == other.values
+
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, FalxMap) and self.values == other.values
 

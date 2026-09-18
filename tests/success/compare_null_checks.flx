@@ -1,0 +1,14 @@
+let x = null;
+assert(x == null);
+
+let y = 5;
+assert(y != null);
+assert(null != y);
+
+let z = "test";
+assert(z != null);
+assert(null != z);
+
+let arr = [1, 2];
+assert(arr != null);
+assert(null != arr);

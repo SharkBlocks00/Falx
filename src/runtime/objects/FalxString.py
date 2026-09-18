@@ -54,10 +54,10 @@ class FalxString(FalxValue, FalxIterable):
         return self.value.lower() == "true"
 
     def equalsValue(self, other: FalxValue) -> bool:
-        if isinstance(other, FalxString):
-            return self.value == other.value
-        else:
-            return self.asFloat() == other.asFloat()
+        if not isinstance(other, FalxString):
+            return False
+
+        return self.value == other.value
 
     def __str__(self):
         return self.value
