@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
     from src.runtime.modules.ModuleLoader import ModuleLoader

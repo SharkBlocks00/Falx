@@ -1,5 +1,7 @@
 from src.ast.SourceLocation import SourceLocation
-from src.exceptions.exceptions.FalxLexerException import FalxLexerException
+from src.diagnostics.exceptions.lexer.syntax.InvalidCharacterException import InvalidCharacterException
+from src.diagnostics.exceptions.lexer.syntax.InvalidEscapeSequenceException import InvalidEscapeSequenceException
+from src.diagnostics.exceptions.lexer.syntax.UnterminatedStringException import UnterminatedStringException
 from src.tokens.Token import Token
 from src.tokens.TokenKind import TokenKind
 
@@ -97,15 +99,16 @@ class Lexer:
                 if self._match("|"):
                     self._addToken(TokenKind.OR)
                 else:
-                    raise FalxLexerException("Expected '||', found '|'.", SourceLocation("", self.line, self.column-1))
+                    raise InvalidCharacterException("Expected '||', found '|'.", SourceLocation("", self.line, self.column-1))
             case "&":
                 if self._match("&"):
                     self._addToken(TokenKind.AND)
                 else:
-                    raise FalxLexerException("Expected '&&', found '&'.", SourceLocation("", self.line, self.column-1))
+                    raise InvalidCharacterException("Expected '&&', found '&'.", SourceLocation("", self.line, self.column-1))
             case _:
                 if c.isdigit(): self._number()
                 elif c.isalpha(): self._identifier()
+                else: raise InvalidCharacterException(f"Invalid character '{c}.'", SourceLocation("", self.line, self.column-1))
 
 
 
@@ -137,9 +140,11 @@ class Lexer:
                     case "b": value += "\n"
                     case '"': value += '"'
                     case "\\": value += '\\'
-                    case _: value += c
+                    case _: raise InvalidEscapeSequenceException(f"Invalid escape character: {escaped}", SourceLocation("", self.line, self.column-1))
             else:
                 value += self._advance()
+            if self._isAtEnd():
+                raise UnterminatedStringException("Unterminated string.", SourceLocation("", self.line, self.column-1))
 
     def _number(self) -> None:
         start: int = self.start

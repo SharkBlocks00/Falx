@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from src.ast.Variable import Variable
+from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
+from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
+from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.runtime.objects.FalxValue import FalxValue
 
 class Environment:
@@ -14,7 +17,7 @@ class Environment:
 
     def define(self, name: str, value: FalxValue, mutable: bool = True) -> None:
         if self.variables.get(name) is not None:
-            raise RuntimeError(f"Variable '{name}' already exists")
+            raise VariableAlreadyExistsException(name)
 
         self.variables[name] = Variable(value, mutable=mutable)
 
@@ -23,7 +26,7 @@ class Environment:
 
         if variable is not None:
             if not variable.mutable:
-                raise RuntimeError(f"Cannot assign to constant '{name}'")
+                raise AssignToConstantException(name)
             variable.value = value
             return
 
@@ -31,7 +34,7 @@ class Environment:
             self.parent.assign(name, value)
             return
 
-        raise RuntimeError(f"Undefined variable '{name}'")
+        raise UndefinedVariableException(name)
 
     def get(self, name: str) -> FalxValue:
         variable: Variable = self.variables.get(name)
@@ -42,6 +45,6 @@ class Environment:
         if self.parent is not None:
             return self.parent.get(name)
 
-        raise RuntimeError(f"Undefined variable '{name}'")
+        raise UndefinedVariableException(name)
 
 

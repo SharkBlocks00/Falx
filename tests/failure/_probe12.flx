@@ -1,1 +1,1 @@
-let x = "a" * "b";
+let a = require("_probe11");

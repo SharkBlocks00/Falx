@@ -3,46 +3,31 @@ from pathlib import Path
 import sys
 
 from src.ArgumentHandler import ArgumentHandler
-from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
-from src.exceptions.exceptions.FalxException import FalxException
+from src.diagnostics.DiagnosticFactory import createDiagnostic
+from src.diagnostics.DiagnosticPrinter import DiagnosticPrinter
+from src.diagnostics.exceptions.cli.FalxCLIException import FalxCLIException
+from src.diagnostics.exceptions.FalxException import FalxException
 from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
 from src.runtime.Interpreter import Interpreter
 from src.tokens.Token import Token
 
-def printErrorContext(source: str, error: FalxException) -> None:
-    location: SourceLocation = error.location
-
-    if location is None:
-        print(f"{type(error).__name__}: {error.message}", file=sys.stderr)
-        return
-
-    lines = source.splitlines()
-
-    print(f"{location}: {type(error).__name__}: {error.message}", file=sys.stderr)
-
-    if location.line > len(lines): return
-
-    errorLine = lines[location.line - 1]
-    lineNumberWidth = len(str(len(lines)))
-
-    print(f"  {location.line:>{lineNumberWidth}} | {errorLine}", file=sys.stderr)
-
-    print(
-        f"  {' ' * lineNumberWidth} |  {' ' * (location.column - 1)}^", file=sys.stderr)
 
 def main():
     argumentHandler: ArgumentHandler = ArgumentHandler(sys.argv)
 
     try:
         scriptPath: Path | None = argumentHandler.handleArguments()
-    except Exception as e:
-        print(e, file=sys.stderr)
-        return
+    except FalxCLIException as e:
+        diagnostic = createDiagnostic(e)
+
+        printer = DiagnosticPrinter()
+        printer.print(diagnostic, "")
+        return 1
 
     if scriptPath is None:
-        return
+        return 0
 
     source: str = scriptPath.read_text(encoding="utf-8")
 
@@ -57,10 +42,15 @@ def main():
         interpreter.interpret(statements)
 
     except FalxException as e:
-        printErrorContext(source, e)
-    except Exception: # baseline for actual language bug exceptions (all in language ones are from FalxRuntimeException)
+        diagnostic = createDiagnostic(e)
+
+        printer = DiagnosticPrinter()
+        printer.print(diagnostic, source)
+        return 1
+    except Exception: # baseline for actual language bug exceptions (all in language ones are from FalxRuntimeException/FalxException)
         traceback.print_exc()
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

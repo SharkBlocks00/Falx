@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 from src.runtime.methods.common.BoundNativeFunction import BoundNativeFunction
@@ -21,7 +23,7 @@ class RealMethod(BoundNativeFunction):
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         from src.runtime.objects.FalxString import FalxString
         if not isinstance(self.this, FalxString):
-            raise TypeError(f"Expected FalxString, got {type(self).__name__}")
+            raise UnexpectedTypeException(FalxString.__class__.__name__, self.this.asString())
 
         string: FalxString = self.this
         return FalxNumber(string.asFloat())

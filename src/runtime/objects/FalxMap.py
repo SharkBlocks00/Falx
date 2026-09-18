@@ -1,5 +1,6 @@
 from typing import Iterable
 
+from src.diagnostics.exceptions.FalxException import FalxException
 from src.runtime.methods.maps.ClearMethod import ClearMethod
 from src.runtime.methods.maps.ContainsMethod import ContainsMethod
 from src.runtime.methods.maps.CopyMethod import CopyMethod
@@ -33,6 +34,8 @@ class FalxMap(FalxValue, FalxIterable):
         try:
             # use the base FalxValue class's get first
             return super().get(name)
+        except FalxException:
+            return self.values.get(FalxString(name))
         except RuntimeError:
             # fallback to this class's values dict
             return self.values.get(FalxString(name))

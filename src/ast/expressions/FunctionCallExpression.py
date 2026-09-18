@@ -1,7 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
+from src.diagnostics.exceptions.runtime.methods.ObjectNotCallableException import ObjectNotCallableException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -22,18 +24,20 @@ class FunctionCallExpression(Expression):
         obj: FalxValue = self.callee.evaluate(interpreter, environment)
 
         if not isinstance(obj, Callable):
-            print(f"Trying to evaluate {self.callee.__str__()} type={type(obj)}")
-            raise FalxRuntimeException(f"{obj.getTypeName()} is not callable", self.location)
+            raise ObjectNotCallableException(obj.getTypeName(), self.location)
 
         args: list[FalxValue] = []
 
         for arg in self.arguments:
             args.append(arg.evaluate(interpreter, environment))
 
-        if len(args) != obj.arity() and  obj.isStrict():
-            raise FalxRuntimeException(f"Expected {obj.arity()} arguments, got {len(args)}", self.location)
+        if len(args) != obj.arity() and obj.isStrict():
+            raise InvalidArgumentCountException(len(args), obj.arity(), self.location)
 
-        return obj.call(interpreter, args)
+        try:
+            return obj.call(interpreter, args)
+        except FalxRuntimeException as e:
+            raise e.withLocation(self.location)
 
     def __str__(self):
         return f"{self.callee} ({self.arguments})"

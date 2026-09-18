@@ -6,6 +6,7 @@ from enum import Enum, auto
 from pathlib import Path
 
 from src.ast.Statement import Statement
+from src.diagnostics.exceptions.FalxException import FalxException
 from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
 from src.runtime.Interpreter import Interpreter
@@ -67,6 +68,9 @@ class TestRunner:
 
                     interpreter: Interpreter = Interpreter(path.parent)
                     interpreter.interpret(statements)
+            except FalxException as e:
+                threw = True
+                exception = e
             except Exception as e:
                 threw = True
                 exception = e

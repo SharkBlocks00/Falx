@@ -1,7 +1,14 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
+from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
+from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException import CannotMinusFromValueException
+from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValueException import CannotMultiplyByValueException
+from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -28,8 +35,22 @@ class BinaryExpression(Expression):
 
         try:
              return BinaryExpression.applyOperator(self.operator.tokenKind, leftValue, rightValue)
+        except CannotMultiplyByValueException:
+            raise CannotMultiplyByValueException(rightValue.asString(), leftValue.asString(), self.location) from None
+        except CannotDivideByValueException:
+            raise CannotDivideByValueException(rightValue.asString(), leftValue.asString(), self.location) from None
+        except CannotAddWithValueException:
+            raise CannotAddWithValueException(leftValue.asString(), rightValue.asString(), self.location) from None
+        except CannotModWithValueException:
+            raise CannotModWithValueException(leftValue.asString(), rightValue.asString(), self.location) from None
+        except CannotEvaluateValueException:
+            raise CannotEvaluateValueException(leftValue.asString(), rightValue.asString()).withLocation(self.location)
+        except CannotMinusFromValueException:
+            raise CannotMinusFromValueException(leftValue.asString(), rightValue.asString(), self.location) from None
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
+        except ZeroDivisionError:
+            raise DivisionByZeroException(self.location) from None
 
 
     @staticmethod
@@ -49,7 +70,7 @@ class BinaryExpression(Expression):
             case TokenKind.EQUAL_EQUAL: return FalxBoolean(leftValue.equalsValue(rightValue))
             case TokenKind.BANG_EQUAL: return FalxBoolean(not leftValue.equalsValue(rightValue))
 
-            case _: raise RuntimeError(f"Cannot evaluate '{leftValue.asString()}' and '{rightValue.asString()}'")
+            case _: raise CannotEvaluateValueException(leftValue.asString(), rightValue.asString())
 
     def __str__(self) -> str:
         return f"{self.left.__str__} {self.operator.tokenKind.__str__()} {self.right.__str__()}"

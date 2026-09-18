@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
 from src.runtime.methods.common.BoundNativeFunction import BoundNativeFunction
 from src.runtime.objects.FalxArray import FalxArray
 from src.runtime.objects.FalxValue import FalxValue
@@ -21,7 +22,7 @@ class EntriesMethod(BoundNativeFunction):
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         from src.runtime.objects.FalxMap import FalxMap
         if not isinstance(self.this, FalxMap):
-            raise Exception(f"Expected FalxMap, got {type(self.this)}")
+            raise UnexpectedTypeException(FalxMap.__class__.__name__, self.this.asString())
 
         map: FalxMap = self.this
         entries: list[FalxValue] = []

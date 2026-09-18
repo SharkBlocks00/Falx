@@ -28,7 +28,12 @@ from src.ast.statements.ReturnStatement import ReturnStatement
 from src.ast.statements.StructDeclaration import StructDeclaration
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.WhileStatement import WhileStatement
-from src.exceptions.exceptions.FalxParserException import FalxParserException
+from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException import BreakOutsideFunctionException
+from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
+from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
+from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
+from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
+from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.runtime.values.FieldDefinition import FieldDefinition
 from src.tokens.Token import Token
 from src.tokens.TokenKind import TokenKind
@@ -39,6 +44,7 @@ class Parser:
         self.tokens: list[Token] = tokens
         self.current: int = 0
         self._insideFunction: bool = False
+        self._insideLoop: bool = False
 
     def parse(self) -> list[Statement]:
         statements: list[Statement] = []
@@ -59,10 +65,14 @@ class Parser:
         if self._match(TokenKind.IF): return self._ifStatement()
         if self._match(TokenKind.WHILE): return self._whileStatement()
         if self._match(TokenKind.FOREACH): return self._foreachStatement()
-        if self._match(TokenKind.BREAK): return self._breakStatement()
-        if self._match(TokenKind.CONTINUE): return self._continueStatement()
+        if self._match(TokenKind.BREAK):
+            if not self._insideLoop: raise BreakOutsideFunctionException(self._previous().location)
+            return self._breakStatement()
+        if self._match(TokenKind.CONTINUE):
+            if not self._insideLoop: raise ContinueOutsideFunctionException(self._previous().location)
+            return self._continueStatement()
         if self._match(TokenKind.RETURN):
-            if not self._insideFunction: raise FalxParserException("'return' called outside a valid function", self._previous().location)
+            if not self._insideFunction: raise ReturnOutsideFunctionException(self._previous().location)
             return self._returnStatement()
         if self._match(TokenKind.LEFT_BRACE): return self._blockStatement()
 
@@ -165,8 +175,10 @@ class Parser:
         self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after while statement condition")
         self._consumeLeftBrace()
 
+        old: bool = self._insideLoop
+        self._insideLoop = True
         body: list[Statement] = self._block()
-
+        self._insideLoop = old
         return WhileStatement(location, condition, body)
 
     def _block(self) -> list[Statement]:
@@ -175,11 +187,13 @@ class Parser:
         while not self._check(TokenKind.RIGHT_BRACE) and not self._isAtEnd():
             statements.append(self._declaration())
 
-        self._consume(TokenKind.RIGHT_BRACE, "Expected '}'")
-
-        return statements
+        if self._match(TokenKind.RIGHT_BRACE):
+            return statements
+        else:
+            raise UnexpectedEndOfInputException("}", self._peek().location)
 
     def _foreachStatement(self) -> ForeachStatement:
+        self._insideLoop = True
         location: SourceLocation = self._previous().location
 
         self._consume(TokenKind.LEFT_PAREN, "Expected '(' after foreach statement")
@@ -191,6 +205,7 @@ class Parser:
         self._consumeLeftBrace()
         body: list[Statement] = self._block()
 
+        self._insideLoop = False
         return ForeachStatement(location, variable, iterable, body)
 
     def _returnStatement(self) -> ReturnStatement:
@@ -295,7 +310,7 @@ class Parser:
             return SetExpression(location, target.obj, target._property, value)
         if isinstance(target, IndexExpression):
             return IndexSetExpression(location, target.obj, target.index, value)
-        raise FalxParserException("Invalid assignment target", target.location)
+        raise InvalidAssignmentTargetException(target.__class__.__name__, location)
 
     def _buildCompoundAssignment(self, target: Expression, location, operator: Token, rhs: Expression) -> Expression:
         if isinstance(target, VariableExpression):
@@ -305,7 +320,7 @@ class Parser:
             return SetExpression(location, target.obj, target._property, rhs, operator)
         if isinstance(target, IndexExpression):
             return IndexSetExpression(location, target.obj, target.index, rhs, operator)
-        raise FalxParserException("Invalid assignment target", target.location)
+        raise InvalidAssignmentTargetException(target.__class__.__name__, location)
 
 
     def _logicalOr(self) -> Expression:
@@ -436,10 +451,16 @@ class Parser:
         if self._match(TokenKind.LEFT_BRACE):
             return self._mapLiteral()
         if self._match(TokenKind.EOF):
-            raise FalxParserException("Expected expression, found 'EOF'", self._previous().location)
+            raise UnexpectedTokenException("Expected expression, found 'EOF'", self._previous().location)
         if self._match(TokenKind.NULL):
             return NullLiteral(self._previous())
-        raise NotImplementedError(f"Other literals not implemented yet: {self._peek().tokenKind}")
+        if self._match(TokenKind.SEMICOLON):
+            raise UnexpectedTokenException("Expected expression, found ';'", self._previous().location)
+        if self._match(TokenKind.ELSEIF):
+            raise UnexpectedTokenException("Cannot call 'elseif' without a valid if.", self._previous().location)
+        if self._match(TokenKind.ELSE):
+            raise UnexpectedTokenException("Cannot call 'else' without a valid if", self._previous().location)
+        raise UnexpectedTokenException(f"Expected expression, found '{self._peek().lexeme}'", self._previous().location)
 
     def _peek(self) -> Token:
         return self.tokens[self.current]
@@ -471,7 +492,7 @@ class Parser:
     def _consume(self, kind: TokenKind, errorMsg: str) -> Token:
         if self._check(kind):
             return self._advance()
-        raise FalxParserException(f"{errorMsg} at {self.current}", self._peek().location)
+        raise UnexpectedTokenException(errorMsg, self._peek().location)
 
 
     def _advance(self) -> Token:

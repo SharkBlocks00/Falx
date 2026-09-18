@@ -1,3 +1,4 @@
+from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.runtime.Environment import Environment
 from src.runtime.objects.FalxValue import FalxValue
 
@@ -12,7 +13,7 @@ class FalxModule(FalxValue):
         try:
             return self.environment.get(name)
         except RuntimeError:
-            raise RuntimeError(
+            raise CannotAccessPropertyException(
                 f"Module '{self.name}' has no property '{name}'"
             ) from None
 

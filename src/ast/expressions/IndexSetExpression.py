@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from src.ast.expressions.BinaryExpression import BinaryExpression
-from src.exceptions.exceptions.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
 from src.tokens.Token import Token
 
 if TYPE_CHECKING:
@@ -34,6 +35,8 @@ class IndexSetExpression(Expression):
 
             falxObject.indexAssign(evaluatedIndex, evaluatedValue)
             return evaluatedValue
+        except InvalidIndexTypeException as e:
+            raise InvalidIndexTypeException(e.__str__()).withLocation(self.location)
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
 

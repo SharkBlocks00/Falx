@@ -1,6 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
+from src.diagnostics.exceptions.runtime.AssertionFailedException import AssertionFailedException
+
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
 
@@ -29,15 +32,15 @@ class AssertFunction(NativeFunction):
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         if len(arguments) == 0:
-            raise RuntimeError("assert() requires at least a condition argument")
+            raise InvalidArgumentCountException(message=f"assert() requires at least one argument, but got {len(arguments)}")
 
         condition: FalxValue = arguments[0]
 
         if not condition.asBool():
             if len(arguments) > 1:
                 message: str = arguments[1].asString()
-                raise RuntimeError(f"Assertion failed: {message}")
-            raise RuntimeError("Assertion failed")
+                raise AssertionFailedException(message=message)
+            raise AssertionFailedException()
 
         return FalxNull()
 

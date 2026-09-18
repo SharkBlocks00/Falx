@@ -1,5 +1,8 @@
 from typing import Iterable
 
+from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
+from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.runtime.methods.array.ClearMethod import ClearMethod
 from src.runtime.methods.array.ContainsMethod import ContainsMethod
 from src.runtime.methods.array.CopyMethod import CopyMethod
@@ -35,6 +38,10 @@ class FalxArray(FalxValue, FalxIterable):
         return self.values
 
     def index(self, index: FalxValue) -> FalxValue:
+        try:
+            ArrayIndexInvalidException.check(index.asInt(), len(self.values))
+        except CannotConvertToTypeException as e:
+            raise InvalidIndexTypeException(e.message, e.location) from e
         return self.values[index.asInt()]
 
     def indexAssign(self, key: FalxValue, value: FalxValue) -> None:

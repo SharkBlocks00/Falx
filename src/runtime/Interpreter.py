@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from src.ast.Statement import Statement
+from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.packages.builtins.AssertFunction import AssertFunction
 from src.packages.builtins.OutputFunction import OutputFunction
 from src.packages.builtins.RequestFunction import RequestFunction
@@ -19,6 +20,8 @@ class Interpreter:
 
         self.registerBuiltins()
 
+        self.maxRecursionDepth = 20
+
     def interpret(self, program: list[Statement]):
         # Because of how all the statements and expressions are structured,
         # the interpreter gets to be extremely simple
@@ -28,7 +31,11 @@ class Interpreter:
         # doing this means that we can support interpreting with seperate environments,
         # useful for doing modulation
         for statement in program:
-            statement.execute(self, environment)
+            try:
+                statement.execute(self, environment)
+            except RecursionError:
+                raise RecursionDepthExceededException(self.maxRecursionDepth, statement.location)
+
 
     def registerBuiltins(self):
         """Registers the interpreter's builtin functions to the interpreter"""
