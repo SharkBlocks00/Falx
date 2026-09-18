@@ -1,6 +1,7 @@
 from src.ast.Expression import Expression
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
+from src.diagnostics.exceptions.runtime.ObjectNotIterableException import ObjectNotIterableException
 from src.exceptions.BreakException import BreakException
 from src.exceptions.ContinueException import ContinueException
 from src.runtime.Environment import Environment
@@ -20,7 +21,7 @@ class ForeachStatement(Statement):
         value: FalxValue = self.iterable.evaluate(interpreter, environment)
 
         if not isinstance(value, FalxIterable):
-            raise RuntimeError("Object is not iterable")
+            raise ObjectNotIterableException(self.variable, self.location)
 
         for element in value.iterate():
             # use an isolated environment for the variable being used to iterate

@@ -3,5 +3,7 @@ from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeE
 
 
 class InvalidArgumentCountException(FalxRuntimeException):
-    def __init__(self, count: int, expected: int, location: SourceLocation | None = None):
-        super().__init__(f"Expected {expected} arguments, but got {count}", location)
+    def __init__(self, count: int | None = None, expected: int | None = None, location: SourceLocation | None = None, message: str | None = None):
+        super().__init__(f"Expected {expected} arguments, but got {count}"
+                         if not message else message
+                         , location)

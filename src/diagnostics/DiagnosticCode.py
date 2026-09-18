@@ -10,6 +10,11 @@ class DiagnosticCode(Enum):
     ASSIGN_TO_CONSTANT = "E1004"
     VARIABLE_ALREADY_EXISTS = "E1005"
     RECURSION_DEPTH_EXCEEDED = "E1024"
+    OBJECT_NOT_ITERABLE = "E1025"
+    ASSERTION_FAILED = "E1027"
+
+    # Type errors
+    UNEXPECTED_TYPE = "E1026"
 
     # Operational errors
     CANNOT_MULTIPLY_BY = "E1006"

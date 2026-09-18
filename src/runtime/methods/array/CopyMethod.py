@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
 from src.runtime.methods.common.BoundNativeFunction import BoundNativeFunction
 from src.runtime.objects.FalxValue import FalxValue
 
@@ -20,7 +21,7 @@ class CopyMethod(BoundNativeFunction):
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         from src.runtime.objects.FalxArray import FalxArray
         if not isinstance(self.this, FalxArray):
-            raise RuntimeError(f"Expected FalxArray, got {type(self.this)}")
+            raise UnexpectedTypeException(FalxArray.__class__.__name__, self.this.asString())
 
         array: FalxArray = self.this
         return FalxArray(array.asList())

@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 from src.ast.expressions.BinaryExpression import BinaryExpression
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
 from src.tokens.Token import Token
 
 if TYPE_CHECKING:
@@ -38,5 +39,7 @@ class SetExpression(Expression):
 
             falxObject.set(self.property, evaluatedValue)
             return evaluatedValue
+        except CannotSetPropertyException as e:
+            raise e.withLocation(self.location)
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None

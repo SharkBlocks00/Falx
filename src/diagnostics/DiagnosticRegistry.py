@@ -9,6 +9,7 @@ from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException 
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.ObjectNotIterableException import ObjectNotIterableException
 from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
@@ -32,9 +33,11 @@ from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException impor
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
 from src.diagnostics.exceptions.runtime.indexing.ObjectIsNotIndexableException import ObjectIsNotIndexableException
+from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
 from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
+from src.diagnostics.exceptions.runtime.AssertionFailedException import AssertionFailedException
 
 DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
 
@@ -413,9 +416,11 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="module not found",
         help=(
-            "Make sure the module exists in your current working directory.",
+            "Check that the module name is spelled correctly and that the module exists in the expected module path.",
         ),
-        notes=()
+        notes=(
+            "Falx searches for modules relative to the current project or module path.",
+        ),
     ),
 
     RecursionDepthExceededException: DiagnosticDefinition(
@@ -423,7 +428,10 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         severity=DiagnosticSeverity.ERROR,
         title="recursion depth exceeded",
         help=(
-            "Remove any functions or methods calling themselves.",
+            "Reduce the depth of recursive calls or restructure the code to avoid excessive recursion.",
+        ),
+        notes=(
+            "Falx limits the maximum recursion depth to prevent excessive stack growth.",
         ),
     ),
 
@@ -437,6 +445,41 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         notes=(
             "A module cannot be loaded while it is already being loaded.",
         )
-    )
+    ),
 
+    ObjectNotIterableException: DiagnosticDefinition(
+        code=DiagnosticCode.OBJECT_NOT_ITERABLE,
+        severity=DiagnosticSeverity.ERROR,
+        title="object not iterable",
+        help=(
+            "Check that the value you are trying to iterate over is an iterable type.",
+        ),
+        notes=(
+            "Only iterable values can be used in iteration.",
+        )
+    ),
+
+    UnexpectedTypeException: DiagnosticDefinition(
+        code=DiagnosticCode.UNEXPECTED_TYPE,
+        severity=DiagnosticSeverity.ERROR,
+        title="unexpected type",
+        help=(
+            "Check that the value has the expected type and that the expression evaluates to the intended value.",
+        ),
+        notes=(
+            "This operation requires a value of a specific type.",
+        )
+    ),
+
+    AssertionFailedException: DiagnosticDefinition(
+        code=DiagnosticCode.ASSERTION_FAILED,
+        severity=DiagnosticSeverity.ERROR,
+        title="assertion failed",
+        help=(
+            "Check the condition passed to assert and make sure it evaluates to true.",
+        ),
+        notes=(
+            "An assertion fails when its condition evaluates to false.",
+        )
+    )
 }

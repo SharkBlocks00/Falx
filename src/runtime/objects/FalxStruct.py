@@ -1,3 +1,5 @@
+from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
+from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.runtime.objects.FalxNull import FalxNull
 from src.runtime.objects.FalxValue import FalxValue
 from src.runtime.values.StructDefinition import StructDefinition
@@ -32,8 +34,8 @@ class FalxStruct(FalxValue):
     def set(self, name: str, value: FalxValue) -> None:
         try:
             self.env.assign(name, value)
-        except RuntimeError:
-            raise RuntimeError(f"Struct '{self.definition.name}' has no field '{name}'")
+        except UndefinedVariableException:
+            raise CannotSetPropertyException(self.definition.name, name)
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, FalxStruct) and self.definition == other.definition and self.env.variables == other.env.variables
