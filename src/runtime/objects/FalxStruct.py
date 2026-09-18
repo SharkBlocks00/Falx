@@ -41,7 +41,7 @@ class FalxStruct(FalxValue):
         if not isinstance(other, FalxStruct):
             return False
 
-        return self.definition == other.definition
+        return self.definition == other.definition and self.env.variables == other.env.variables
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, FalxStruct) and self.definition == other.definition and self.env.variables == other.env.variables
