@@ -7,11 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Upgraded features
-- Assertation with `assert`
-- Modularization of larger programs with `require`
-- Generic bug fixes
-- Much better Exceptions
+Nothing yet.
+
+## [0.2.0]
+
+### Added
+
+- `assert` builtin for validating conditions at runtime
+- Module system using `require` for splitting programs across multiple `.flx` files
+- Circular module dependency detection
+- Recursion depth protection
+- Dedicated exceptions and diagnostic codes for individual lexer, parser, runtime and module errors
+- Improved runtime error messages with source locations
+- Improved diagnostic help and notes
+- Additional runtime type, iteration, assertion, function, property and indexing errors
+
+### Changed
+
+- Runtime errors now provide more specific diagnostic information instead of using Python erros
+- Error messages now include the relevant source location where available
 
 ## [0.1.0]
 
@@ -35,3 +49,4 @@ Initial implementation, ported from an earlier Java prototype.
 
 [Unreleased]: https://github.com/SharkBlocks00/Falx/comparev0.1.0...HEAD
 [0.1.0]: https://github.com/SharkBlocks00/Falx/releases/tag/v0.1.0
+[0.2.0]: https://github.com/SharkBlocks00/Falx/releases/tag/v0.2.0

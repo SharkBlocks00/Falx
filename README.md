@@ -54,7 +54,7 @@ python -m src.Main --test
 
 ## Project status
 
-Falx is a few days old and under active, early development. The language, its syntax and its standard library 
+Falx is an experimental language and under active, early development. The language, its syntax and its standard library 
 should all be considered unstable and subject to breaking changes without any notice. It is not yet 
 recommended for anything beyond experimentation.
 

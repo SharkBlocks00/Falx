@@ -16,7 +16,7 @@ class ArgumentHandler:
         for i, argument in enumerate(self.arguments):
             match argument:
                 case "--version" | "-v":
-                    print("Falx v0.1.0")
+                    print("Falx v0.2.0")
                     sys.exit(0)
                 case "--file" | "-f" | "run":
                     if i + 1 >= len(self.arguments):
