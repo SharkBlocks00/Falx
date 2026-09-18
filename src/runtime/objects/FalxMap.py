@@ -20,7 +20,7 @@ class FalxMap(FalxValue, FalxIterable):
     def __init__(self, values: dict[FalxValue, FalxValue]):
         super().__init__()
         self.values: dict[FalxValue, FalxValue] = values
-        self._properties["size"] = lambda: FalxNumber(len(values))
+        self._properties["size"] = lambda: FalxNumber(len(self.values))
         self._methods["keys"] = KeysMethod(self)
         self._methods["isEmpty"] = EmptyMethod(self)
         self._methods["contains"] = ContainsMethod(self)

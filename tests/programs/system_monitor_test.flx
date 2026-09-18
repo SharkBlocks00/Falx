@@ -1,0 +1,134 @@
+// A comprehensive test combining structs, maps, arrays, null checks, loops, functions, closures, math, and string methods.
+
+struct Process {
+    id;
+    name;
+    cpuUsage;
+    memUsage;
+}
+
+let processes = [];
+let processMap = {
+    root: []
+};
+
+// Function using conditionals and multiple logical operators
+func addProcess = define(id, name, cpu, mem) {
+    // Explicit null check test
+    if (id == null) {
+        return false;
+    }
+    
+    // Null checks and logic
+    if (name == null || name == "") {
+        name = "UnknownProcess";
+    }
+    
+    // Struct instantiation
+    let p = Process(id, name, cpu, mem);
+    
+    // Array methods
+    processes.push(p);
+    
+    // Map methods and indexing
+    if (!processMap.contains(name)) {
+        processMap[name] = [];
+    }
+    processMap[name].push(p);
+    
+    return true;
+}
+
+// Find maximum value using iteration
+func getHighestCpuProcess = define(procList) {
+    if (procList == null || procList.size == 0) {
+        return null;
+    }
+    
+    let highest = procList[0];
+    foreach(p: procList) {
+        if (p.cpuUsage > highest.cpuUsage) {
+            highest = p;
+        }
+    }
+    return highest;
+}
+
+// Simulate string parsing and type conversion
+let rawData = "101;System;15.5;1024|102;App;45.2;2048|103;;0.5;128";
+let rows = rawData.split("|");
+
+foreach(row: rows) {
+    let cols = row.split(";");
+    if (cols.size == 4) {
+        let idStr = cols[0];
+        let pName = cols[1];
+        let cpuStr = cols[2];
+        let memStr = cols[3];
+        
+        // Type conversion methods
+        let pId = idStr.toInt();
+        let cpu = cpuStr.toReal();
+        let mem = memStr.toInt();
+        
+        // Handling empty strings / implicit null conversion
+        if (pName == "") {
+            pName = null;
+        }
+        
+        addProcess(pId, pName, cpu, mem);
+    }
+}
+
+// Assertions to verify correct state across arrays, maps, and objects
+assert(processes.size == 3);
+// "root" initially + "System", "App", "UnknownProcess"
+assert(processMap.size == 4);
+
+let systemProcs = processMap["System"];
+assert(systemProcs != null);
+assert(systemProcs.size == 1);
+assert(systemProcs[0].id == 101);
+
+let unknownProcs = processMap["UnknownProcess"];
+assert(unknownProcs != null);
+assert(unknownProcs[0].cpuUsage == 0.5);
+
+// Test finding highest CPU
+let highest = getHighestCpuProcess(processes);
+assert(highest != null);
+assert(highest.name == "App");
+assert(highest.cpuUsage == 45.2);
+assert(highest.memUsage == 2048);
+
+// Iterating over map keys
+let totalMem = 0;
+foreach(k: processMap.keys()) {
+    let procs = processMap[k];
+    if (procs != null) {
+        foreach(p: procs) {
+            totalMem = totalMem + p.memUsage;
+        }
+    }
+}
+
+// 1024 + 2048 + 128 = 3200
+assert(totalMem == 3200);
+
+// Test removals and clearing data structures
+processes.remove(0);
+assert(processes.size == 2);
+assert(processes[0].name == "App");
+
+processMap.remove("root");
+assert(processMap.size == 3);
+
+processMap.clear();
+assert(processMap.size == 0);
+assert(processMap.isEmpty());
+
+// Edge case on function returning null
+let emptyResult = getHighestCpuProcess([]);
+assert(emptyResult == null);
+
+output("System monitor test completed successfully.");
