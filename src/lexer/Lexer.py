@@ -1,5 +1,4 @@
 from src.ast.SourceLocation import SourceLocation
-from src.diagnostics.exceptions.lexer.FalxLexerException import FalxLexerException
 from src.diagnostics.exceptions.lexer.syntax.InvalidCharacterException import InvalidCharacterException
 from src.diagnostics.exceptions.lexer.syntax.InvalidEscapeSequenceException import InvalidEscapeSequenceException
 from src.diagnostics.exceptions.lexer.syntax.UnterminatedStringException import UnterminatedStringException

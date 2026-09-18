@@ -4,4 +4,4 @@ from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeE
 
 class DivisionByZeroException(FalxRuntimeException):
     def __init__(self, location: SourceLocation):
-        super().__init__(f"cannot divide by zero", location)
+        super().__init__("cannot divide by zero", location)

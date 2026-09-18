@@ -1,13 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
 from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException import CannotMinusFromValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
-from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValueException import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 

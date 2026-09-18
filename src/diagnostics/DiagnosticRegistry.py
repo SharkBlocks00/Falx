@@ -1,14 +1,18 @@
 from src.diagnostics.DiagnosticCode import DiagnosticCode
 from src.diagnostics.DiagnosticDefinition import DiagnosticDefinition
 from src.diagnostics.DiagnosticSeverity import DiagnosticSeverity
+from src.diagnostics.exceptions.cli.InvalidFileTypeException import InvalidFileTypeException
+from src.diagnostics.exceptions.cli.MissingFilenameException import MissingFilenameException
 from src.diagnostics.exceptions.lexer.syntax.InvalidCharacterException import InvalidCharacterException
 from src.diagnostics.exceptions.lexer.syntax.InvalidEscapeSequenceException import InvalidEscapeSequenceException
 from src.diagnostics.exceptions.lexer.syntax.UnterminatedStringException import UnterminatedStringException
-from src.diagnostics.exceptions.parser.context.BreakOutsideFunction import BreakOutsideFunctionException
+from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException import BreakOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
+from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.ObjectNotIterableException import ObjectNotIterableException
 from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
@@ -28,7 +32,7 @@ from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException 
 from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException import CannotMinusFromValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
-from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValue import CannotMultiplyByValueException
+from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValueException import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
@@ -481,5 +485,57 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         notes=(
             "An assertion fails when its condition evaluates to false.",
         )
-    )
+    ),
+
+    UnexpectedEndOfInputException: DiagnosticDefinition(
+        code=DiagnosticCode.UNEXPECTED_END_OF_INPUT,
+        severity=DiagnosticSeverity.ERROR,
+        title="unexpected end of input",
+        help=(
+            "Check for a missing closing delimiter such as `}`, `)`, or `]`.",
+            "Check that the statement or expression is complete before the file ends.",
+        ),
+        notes=(
+            "The parser reached the end of the input while still expecting more tokens.",
+            "This usually means a block, group, or expression was opened but never closed.",
+        )
+    ),
+
+    FalxRuntimeException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_OPERATION,
+        severity=DiagnosticSeverity.ERROR,
+        title="runtime error",
+        help=(
+            "Check the values and types involved in the expression that caused this error.",
+        ),
+        notes=(
+            "An unexpected error occurred during execution.",
+        )
+    ),
+
+    MissingFilenameException: DiagnosticDefinition(
+        code=DiagnosticCode.MISSING_FILENAME,
+        severity=DiagnosticSeverity.ERROR,
+        title="missing filename",
+        help=(
+            "Provide a path to a `.flx` file after the flag.",
+            "Example: `falx run main.flx`",
+        ),
+        notes=(
+            "The `--file`, `-f`, and `run` flags require a filename argument.",
+        )
+    ),
+
+    InvalidFileTypeException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_FILE_TYPE,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid file type",
+        help=(
+            "Make sure the file has a `.flx` extension.",
+            "Example: `falx run main.flx`",
+        ),
+        notes=(
+            "Falx can only execute files with the `.flx` extension.",
+        )
+    ),
 }

@@ -28,8 +28,7 @@ from src.ast.statements.ReturnStatement import ReturnStatement
 from src.ast.statements.StructDeclaration import StructDeclaration
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.WhileStatement import WhileStatement
-from src.diagnostics.exceptions.parser.FalxParserException import FalxParserException
-from src.diagnostics.exceptions.parser.context.BreakOutsideFunction import BreakOutsideFunctionException
+from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException import BreakOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException

@@ -3,10 +3,10 @@ from pathlib import Path
 import sys
 
 from src.ArgumentHandler import ArgumentHandler
-from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
 from src.diagnostics.DiagnosticFactory import createDiagnostic
 from src.diagnostics.DiagnosticPrinter import DiagnosticPrinter
+from src.diagnostics.exceptions.cli.FalxCLIException import FalxCLIException
 from src.diagnostics.exceptions.FalxException import FalxException
 from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
@@ -19,8 +19,11 @@ def main():
 
     try:
         scriptPath: Path | None = argumentHandler.handleArguments()
-    except Exception as e:
-        print(e, file=sys.stderr)
+    except FalxCLIException as e:
+        diagnostic = createDiagnostic(e)
+
+        printer = DiagnosticPrinter()
+        printer.print(diagnostic, "")
         return 1
 
     if scriptPath is None:

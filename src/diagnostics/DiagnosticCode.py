@@ -49,6 +49,7 @@ class DiagnosticCode(Enum):
     CONTINUE_OUTSIDE_LOOP = "E2003"
     BREAK_OUTSIDE_LOOP = "E2004"
     INVALID_ASSIGNMENT_TARGET = "E2005"
+    UNEXPECTED_END_OF_INPUT = "E2006"
 
     # Lexer errors
     INVALID_CHARACTER = "E3000"
@@ -58,3 +59,7 @@ class DiagnosticCode(Enum):
     # Module errors
     MODULE_NOT_FOUND = "E4000"
     CIRCULAR_MODULE_DEPENDENCY = "E4001"
+
+    # CLI errors
+    MISSING_FILENAME = "E5000"
+    INVALID_FILE_TYPE = "E5001"

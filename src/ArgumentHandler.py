@@ -2,6 +2,8 @@ import sys
 from pathlib import Path
 
 from src.TestRunner import TestRunner
+from src.diagnostics.exceptions.cli.MissingFilenameException import MissingFilenameException
+from src.diagnostics.exceptions.cli.InvalidFileTypeException import InvalidFileTypeException
 
 
 testRunner: TestRunner = TestRunner()
@@ -18,12 +20,12 @@ class ArgumentHandler:
                     sys.exit(0)
                 case "--file" | "-f" | "run":
                     if i + 1 >= len(self.arguments):
-                        raise Exception(f"Missing filename after '{self.arguments[i]}'")
+                        raise MissingFilenameException(self.arguments[i])
 
                     path: Path = Path(self.arguments[i + 1])
 
                     if path.suffix != ".flx":
-                        raise Exception(f"Invalid filetype after '{self.arguments[i]}'")
+                        raise InvalidFileTypeException(self.arguments[i])
                     return path
 
                 case "--test" | "-t":
