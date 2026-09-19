@@ -1,0 +1,6 @@
+func add = define(a, b) {
+    return a + b;
+}
+
+// Should fail because b is missing and has no default
+add(1);

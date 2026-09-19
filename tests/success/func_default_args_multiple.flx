@@ -1,0 +1,7 @@
+func greet = define(name, greeting = "Hello", punctuation = "!") {
+    return greeting + " " + name + punctuation;
+}
+
+assert(greet("Alice") == "Hello Alice!");
+assert(greet("Bob", "Hi") == "Hi Bob!");
+assert(greet("Charlie", "Hey", ".") == "Hey Charlie.");

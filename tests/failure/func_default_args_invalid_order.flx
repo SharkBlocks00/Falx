@@ -1,0 +1,4 @@
+// Should fail at parsing or definition because required 'b' is after optional 'a'
+func badDecl = define(a = 1, b) {
+    return a + b;
+}
