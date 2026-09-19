@@ -1,1 +1,1 @@
-let v = require("_probe12");
+let v = (5,1,2);
