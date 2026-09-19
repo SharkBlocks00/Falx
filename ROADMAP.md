@@ -11,7 +11,7 @@ Have an opinion on ordering or want to pick something up? Open an issue - see [`
 Features currently in development:
 
 - [ ] **Default function arguments** - allow functions to define default values for parameters
-- [ ] **REPL mode** - running `falx` with no arguments or `falx -c` should go into an interactive REPL
+- [x] **REPL mode** - running `falx` with no arguments or `falx -c` should go into an interactive REPL
 - [ ] **Expanded stdlib** - math functions, random methods, networking modules
 
 ## Planned
