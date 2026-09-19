@@ -17,6 +17,7 @@ from src.ast.expressions.literals.MapLiteral import MapLiteral
 from src.ast.expressions.literals.NullLiteral import NullLiteral
 from src.ast.expressions.literals.NumberLiteral import NumberLiteral
 from src.ast.expressions.literals.StringLiteral import StringLiteral
+from src.ast.expressions.literals.TupleLiteral import TupleLiteral
 from src.ast.statements.BlockStatement import BlockStatement
 from src.ast.statements.BreakStatement import BreakStatement
 from src.ast.statements.ContinueStatement import ContinueStatement
@@ -277,6 +278,29 @@ class Parser:
         self._consumeRightBrace()
         return MapLiteral(location, elements)
 
+    def _tupleLiteral(self) -> Expression:
+        location: SourceLocation = self._previous().location
+
+        if self._match(TokenKind.COMMA):
+            self._consume(TokenKind.COMMA, "Expected ',' to complete an empty tuple '(,,)'")
+            self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after an empty tuple '(,,)'")
+            return TupleLiteral(location, [])
+
+        first: Expression = self._expression()
+
+        if not self._match(TokenKind.COMMA):
+            self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after an expression")
+            return first
+
+        elements: list[Expression] = [first]
+
+        while not self._check(TokenKind.RIGHT_PAREN):
+            elements.append(self._expression())
+            if not self._match(TokenKind.COMMA): break
+
+        self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after tuple elements")
+        return TupleLiteral(location, elements)
+
     def _expression(self) -> Expression:
         return self._assignment()
 
@@ -456,9 +480,7 @@ class Parser:
         if self._match(TokenKind.BOOLEAN):
             return BooleanLiteral(self._previous())
         if self._match(TokenKind.LEFT_PAREN):
-            expression: Expression = self._expression()
-            self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after an expression")
-            return expression
+            return self._tupleLiteral()
         if self._match(TokenKind.LEFT_BRACKET):
             return self._arrayLiteral()
         if self._match(TokenKind.LEFT_BRACE):

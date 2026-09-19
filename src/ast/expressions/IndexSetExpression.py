@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional
 from src.ast.expressions.BinaryExpression import BinaryExpression
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
+from src.diagnostics.exceptions.runtime.typing.ImmutableValueException import ImmutableValueException
 from src.tokens.Token import Token
 
 if TYPE_CHECKING:
@@ -37,6 +38,8 @@ class IndexSetExpression(Expression):
             return evaluatedValue
         except InvalidIndexTypeException as e:
             raise InvalidIndexTypeException(e.__str__()).withLocation(self.location)
+        except ImmutableValueException as e:
+            raise e.withLocation(self.location)
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
 

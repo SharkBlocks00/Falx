@@ -39,6 +39,7 @@ from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException impor
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
 from src.diagnostics.exceptions.runtime.indexing.ObjectIsNotIndexableException import ObjectIsNotIndexableException
+from src.diagnostics.exceptions.runtime.typing.ImmutableValueException import ImmutableValueException
 from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
 from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
@@ -550,6 +551,19 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         ),
         notes=(
             "You cannot have a required parameter after an optional parameter.",
+        )
+    ),
+
+    ImmutableValueException: DiagnosticDefinition(
+        code=DiagnosticCode.IMMUTABLE_VALUE,
+        severity=DiagnosticSeverity.ERROR,
+        title="immutable value",
+        help=(
+            "Create a new value instead of modifying the existing one.",
+            "Use an array if the contents need to change after creation.",
+        ),
+        notes=(
+            "Some data types like tuples are immutable so their elements cannot be assigned, added or removed once it has been created.",
         )
     )
 }

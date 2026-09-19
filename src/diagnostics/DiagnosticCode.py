@@ -12,6 +12,7 @@ class DiagnosticCode(Enum):
     RECURSION_DEPTH_EXCEEDED = "E1024"
     OBJECT_NOT_ITERABLE = "E1025"
     ASSERTION_FAILED = "E1027"
+    IMMUTABLE_VALUE = "E1028"
 
     # Type errors
     UNEXPECTED_TYPE = "E1026"
