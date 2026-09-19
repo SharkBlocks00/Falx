@@ -42,6 +42,7 @@ from src.diagnostics.exceptions.runtime.indexing.ObjectIsNotIndexableException i
 from src.diagnostics.exceptions.runtime.typing.ImmutableValueException import ImmutableValueException
 from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
 from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
+from src.diagnostics.exceptions.runtime.variables.DestructureCountException import DestructureCountException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.diagnostics.exceptions.runtime.AssertionFailedException import AssertionFailedException
@@ -564,6 +565,19 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         ),
         notes=(
             "Some data types like tuples are immutable so their elements cannot be assigned, added or removed once it has been created.",
+        )
+    ),
+
+    DestructureCountException: DiagnosticDefinition(
+        code=DiagnosticCode.DESTRUCTURE_COUNT_MISMATCH,
+        severity=DiagnosticSeverity.ERROR,
+        title="destructuring count mismatch",
+        help=(
+            "Use exactly one variable for each element in the tuple.",
+            "Check the size of the tuple with `.size` if it is not known ahead of time.",
+        ),
+        notes=(
+            "Destructuring a tuple does not truncate values, so the counts must match.",
         )
     )
 }

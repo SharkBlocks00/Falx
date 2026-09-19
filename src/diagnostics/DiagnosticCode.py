@@ -13,6 +13,7 @@ class DiagnosticCode(Enum):
     OBJECT_NOT_ITERABLE = "E1025"
     ASSERTION_FAILED = "E1027"
     IMMUTABLE_VALUE = "E1028"
+    DESTRUCTURE_COUNT_MISMATCH = "E1029"
 
     # Type errors
     UNEXPECTED_TYPE = "E1026"
