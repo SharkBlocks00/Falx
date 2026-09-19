@@ -6,6 +6,7 @@ from src.runtime.objects.FalxNull import FalxNull
 from src.runtime.objects.FalxValue import FalxValue
 from src.runtime.values.ParameterDefinition import ParameterDefinition
 from src.runtime.values.ReturnException import ReturnException
+from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
 
 
 class UserFunction(Callable):
@@ -23,6 +24,9 @@ class UserFunction(Callable):
         return len(self.parameters)
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
+        if len(arguments) > len(self.parameters):
+            raise InvalidArgumentCountException(len(arguments), len(self.parameters))
+
         local: Environment = Environment(self.closure)
 
         for i in range(len(self.parameters)):
@@ -37,6 +41,8 @@ class UserFunction(Callable):
                 local.define(self.parameters[i].name, self.parameters[i].defaultValue.evaluate(interpreter,local), True)
             elif argExists:
                 local.define(self.parameters[i].name, arguments[i], True)
+            else:
+                raise InvalidArgumentCountException(len(arguments), len(self.parameters))
 
 
 
