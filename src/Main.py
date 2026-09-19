@@ -11,8 +11,41 @@ from src.diagnostics.exceptions.FalxException import FalxException
 from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
 from src.runtime.Interpreter import Interpreter
+from src.runtime.methods.repl.ReplExitFunction import ReplExitFunction
 from src.tokens.Token import Token
 
+
+def repl() -> None:
+    interpreter = Interpreter(Path.cwd())
+    interpreter.globals.define("exit", ReplExitFunction(), False)
+    
+    print("Falx REPL")
+    print("Type 'exit()' to exit")
+    
+    while True:
+        try:
+            line = input(">> ")
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+            
+        if not line.strip():
+            continue
+            
+        try:
+            lexer: Lexer = Lexer(line)
+            tokens: list[Token] = lexer.lex()
+
+            parser: Parser = Parser(tokens)
+            statements: list[Statement] = parser.parse()
+
+            interpreter.interpret(statements)
+        except FalxException as e:
+            diagnostic = createDiagnostic(e)
+            printer = DiagnosticPrinter()
+            printer.print(diagnostic, line)
+        except Exception:
+            traceback.print_exc()
 
 def main():
     argumentHandler: ArgumentHandler = ArgumentHandler(sys.argv)
@@ -27,6 +60,7 @@ def main():
         return 1
 
     if scriptPath is None:
+        repl()
         return 0
 
     source: str = scriptPath.read_text(encoding="utf-8")
