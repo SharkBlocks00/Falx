@@ -1,0 +1,18 @@
+func makeArray = define(first, second = 2, third = "three", fourth = false) {
+    let arr = [];
+    arr.push(first);
+    arr.push(second);
+    arr.push(third);
+    arr.push(fourth);
+    return arr;
+}
+
+let res1 = makeArray(1);
+assert(res1[0] == 1);
+assert(res1[1] == 2);
+assert(res1[2] == "three");
+assert(res1[3] == false);
+
+let res2 = makeArray("one", "two");
+assert(res2[0] == "one");
+assert(res2[1] == "two");

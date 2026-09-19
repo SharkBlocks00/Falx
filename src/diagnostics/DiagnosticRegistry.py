@@ -10,6 +10,8 @@ from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException imp
 from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
+from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import \
+    InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
@@ -538,4 +540,16 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
             "Falx can only execute files with the `.flx` extension.",
         )
     ),
+
+    InvalidDefaultValueCreationException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_DEFAULT_CREATION,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid default value",
+        help=(
+            "Remove the non default value/s after parameters with default values.",
+        ),
+        notes=(
+            "You cannot have a required parameter after an optional parameter.",
+        )
+    )
 }

@@ -1,0 +1,8 @@
+func compute = define(x = 2, y = 3, z = 4) {
+    return (x + y) * z;
+}
+
+assert(compute() == 20);
+assert(compute(5) == 32);
+assert(compute(5, 5) == 40);
+assert(compute(5, 5, 2) == 20);

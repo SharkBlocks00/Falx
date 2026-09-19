@@ -3,7 +3,7 @@ from src.ast.Expression import Expression
 
 class FieldDefinition:
     """Class for all fields inside a struct, moreso when they are defined in the base struct"""
-    def __init__(self, name: str, defaultValue: Expression):
+    def __init__(self, name: str, defaultValue: Expression | None = None):
         self.name = name
         self.defaultValue = defaultValue
 

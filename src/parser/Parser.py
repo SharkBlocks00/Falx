@@ -32,9 +32,12 @@ from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException imp
 from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
+from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import \
+    InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.runtime.values.FieldDefinition import FieldDefinition
+from src.runtime.values.ParameterDefinition import ParameterDefinition
 from src.tokens.Token import Token
 from src.tokens.TokenKind import TokenKind
 
@@ -101,12 +104,22 @@ class Parser:
         self._consume(TokenKind.DEFINE, "Expected 'define' after function")
         self._consume(TokenKind.LEFT_PAREN, "Expected '(' after function 'define'")
 
-        parameters: list[str] = []
+        parameters: list[ParameterDefinition] = []
 
         if not self._check(TokenKind.RIGHT_PAREN):
+            defaultCreated: bool = False
             while True:
                 parameter: Token = self._consume(TokenKind.IDENTIFIER, "Expected parameter name")
-                parameters.append(parameter.lexeme)
+
+                defaultValue: Expression | None = None
+
+                if self._match(TokenKind.EQUAL):
+                    defaultValue = self._expression()
+                    defaultCreated = True
+                elif not self._match(TokenKind.EQUAL) and defaultCreated:
+                    raise InvalidDefaultValueCreationException(self._previous().lexeme, self._previous().location)
+
+                parameters.append(ParameterDefinition(parameter.lexeme, defaultValue))
                 if not self._match(TokenKind.COMMA): break
 
         self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after function parameters")
@@ -129,7 +142,7 @@ class Parser:
             if self._peek().tokenKind == TokenKind.IDENTIFIER:
                 field: Token = self._consume(TokenKind.IDENTIFIER, "Expected field name")
 
-                defaultValue: Expression = None
+                defaultValue: Expression | None = None
 
                 if self._match(TokenKind.EQUAL):
                     defaultValue = self._expression()

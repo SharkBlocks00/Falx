@@ -1,0 +1,6 @@
+func calculate = define(a = 1, b = 2) {
+    return a + b;
+}
+
+// Should fail because there are too many arguments
+calculate(10, 20, 30);

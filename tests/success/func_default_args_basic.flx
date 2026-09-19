@@ -1,0 +1,6 @@
+func add = define(a, b = 10) {
+    return a + b;
+}
+
+assert(add(5) == 15);
+assert(add(5, 20) == 25);
