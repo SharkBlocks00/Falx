@@ -1,5 +1,1 @@
-func test = define(a, b = 2) {
-    return a + b;
-}
-
-output(test(100, 190));
+let v = require("_probe12");

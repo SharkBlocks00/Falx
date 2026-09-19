@@ -32,6 +32,8 @@ from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException imp
 from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
+from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import \
+    InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.runtime.values.FieldDefinition import FieldDefinition
@@ -105,6 +107,7 @@ class Parser:
         parameters: list[ParameterDefinition] = []
 
         if not self._check(TokenKind.RIGHT_PAREN):
+            defaultCreated: bool = False
             while True:
                 parameter: Token = self._consume(TokenKind.IDENTIFIER, "Expected parameter name")
 
@@ -112,6 +115,9 @@ class Parser:
 
                 if self._match(TokenKind.EQUAL):
                     defaultValue = self._expression()
+                    defaultCreated = True
+                elif not self._match(TokenKind.EQUAL) and defaultCreated:
+                    raise InvalidDefaultValueCreationException(self._previous().lexeme, self._previous().location)
 
                 parameters.append(ParameterDefinition(parameter.lexeme, defaultValue))
                 if not self._match(TokenKind.COMMA): break
