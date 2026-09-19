@@ -10,7 +10,7 @@ class ReplExitFunction(NativeFunction):
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, ReplExitFunction)
     def isStrict(self) -> bool:
-        return False
+        return True
     def arity(self) -> int:
         return 0
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:

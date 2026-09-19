@@ -60,7 +60,8 @@ def main():
         return 1
 
     if scriptPath is None:
-        repl()
+        if len(sys.argv) == 1:
+            repl()
         return 0
 
     source: str = scriptPath.read_text(encoding="utf-8")
