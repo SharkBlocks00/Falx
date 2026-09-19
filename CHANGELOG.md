@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - REPL mode
 - Default values for function parameters
+- Tuples
 
 ## [0.2.0]
 
