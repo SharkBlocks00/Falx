@@ -1,0 +1,35 @@
+// returning several values from a function
+func divmod = define(a, b) {
+    return (a / b - a % b / b, a % b);
+}
+
+let (quotient, remainder) = divmod(17, 5);
+assert(quotient == 3);
+assert(remainder == 2);
+
+// destructuring inside a function, updating a variable from the enclosing scope
+let total = 0;
+func addPair = define(pair) {
+    let (left, right) = pair;
+    (total, left) = (total + left + right, 0);
+}
+addPair((1, 2));
+addPair((3, 4));
+assert(total == 10);
+
+// fibonacci, the classic use of a swap
+let (prev, curr) = (0, 1);
+let i = 0;
+while (i < 10) {
+    (prev, curr) = (curr, prev + curr);
+    i += 1;
+}
+assert(prev == 55);
+
+// destructuring each element while iterating
+let sum = 0;
+foreach (pair : ((1, 2), (3, 4), (5, 6))) {
+    let (x, y) = pair;
+    sum += x * y;
+}
+assert(sum == 44);

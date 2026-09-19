@@ -3,6 +3,7 @@ from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
 from src.ast.expressions.AssignmentExpression import AssignmentExpression
 from src.ast.expressions.BinaryExpression import BinaryExpression
+from src.ast.expressions.DestructureAssignmentExpression import DestructureAssignmentExpression
 from src.ast.expressions.FunctionCallExpression import FunctionCallExpression
 from src.ast.expressions.GetExpression import GetExpression
 from src.ast.expressions.IndexExpression import IndexExpression
@@ -17,9 +18,11 @@ from src.ast.expressions.literals.MapLiteral import MapLiteral
 from src.ast.expressions.literals.NullLiteral import NullLiteral
 from src.ast.expressions.literals.NumberLiteral import NumberLiteral
 from src.ast.expressions.literals.StringLiteral import StringLiteral
+from src.ast.expressions.literals.TupleLiteral import TupleLiteral
 from src.ast.statements.BlockStatement import BlockStatement
 from src.ast.statements.BreakStatement import BreakStatement
 from src.ast.statements.ContinueStatement import ContinueStatement
+from src.ast.statements.DestructureDeclaration import DestructureDeclaration
 from src.ast.statements.ExpressionStatement import ExpressionStatement
 from src.ast.statements.ForeachStatement import ForeachStatement
 from src.ast.statements.FunctionDeclaration import FunctionDeclaration
@@ -88,7 +91,9 @@ class Parser:
 
         return ExpressionStatement(expression._location, expression)
 
-    def _variableDeclaration(self, mutable: bool) -> VariableDeclaration:
+    def _variableDeclaration(self, mutable: bool) -> VariableDeclaration | DestructureDeclaration:
+        if self._match(TokenKind.LEFT_PAREN): return self._destructureDeclaration(mutable)
+
         name: Token = self._consumeIdentifier()
 
         self._consume(TokenKind.EQUAL, "Expected '=' after variable name")
@@ -96,6 +101,26 @@ class Parser:
         self._consume(TokenKind.SEMICOLON, "Expected ';' after variable declaration")
 
         return VariableDeclaration(name.location, name.lexeme, initializer, mutable)
+
+    def _destructureDeclaration(self, mutable: bool) -> DestructureDeclaration:
+        location: SourceLocation = self._previous().location
+        targets: list[VariableExpression] = self._destructureTargets(self._tupleLiteral())
+
+        self._consume(TokenKind.EQUAL, "Expected '=' after destructuring pattern")
+        initializer: Expression = self._expression()
+        self._consume(TokenKind.SEMICOLON, "Expected ';' after variable declaration")
+
+        return DestructureDeclaration(location, targets, initializer, mutable)
+
+    def _destructureTargets(self, pattern: Expression) -> list[VariableExpression]:
+        if not isinstance(pattern, TupleLiteral):
+            raise InvalidAssignmentTargetException("A destructuring pattern must be a tuple, use '(a,)' for a single variable", pattern.location)
+
+        for element in pattern.elements:
+            if not isinstance(element, VariableExpression):
+                raise InvalidAssignmentTargetException("Only variable names can appear in a destructuring pattern", element.location)
+
+        return pattern.elements
 
     def _functionDeclaration(self) -> FunctionDeclaration:
         name: Token = self._consumeIdentifier()
@@ -277,6 +302,29 @@ class Parser:
         self._consumeRightBrace()
         return MapLiteral(location, elements)
 
+    def _tupleLiteral(self) -> Expression:
+        location: SourceLocation = self._previous().location
+
+        if self._match(TokenKind.COMMA):
+            self._consume(TokenKind.COMMA, "Expected ',' to complete an empty tuple '(,,)'")
+            self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after an empty tuple '(,,)'")
+            return TupleLiteral(location, [])
+
+        first: Expression = self._expression()
+
+        if not self._match(TokenKind.COMMA):
+            self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after an expression")
+            return first
+
+        elements: list[Expression] = [first]
+
+        while not self._check(TokenKind.RIGHT_PAREN):
+            elements.append(self._expression())
+            if not self._match(TokenKind.COMMA): break
+
+        self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after tuple elements")
+        return TupleLiteral(location, elements)
+
     def _expression(self) -> Expression:
         return self._assignment()
 
@@ -323,6 +371,8 @@ class Parser:
             return SetExpression(location, target.obj, target._property, value)
         if isinstance(target, IndexExpression):
             return IndexSetExpression(location, target.obj, target.index, value)
+        if isinstance(target, TupleLiteral):
+            return DestructureAssignmentExpression(location, self._destructureTargets(target), value)
         raise InvalidAssignmentTargetException(target.__class__.__name__, location)
 
     def _buildCompoundAssignment(self, target: Expression, location, operator: Token, rhs: Expression) -> Expression:
@@ -456,9 +506,7 @@ class Parser:
         if self._match(TokenKind.BOOLEAN):
             return BooleanLiteral(self._previous())
         if self._match(TokenKind.LEFT_PAREN):
-            expression: Expression = self._expression()
-            self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after an expression")
-            return expression
+            return self._tupleLiteral()
         if self._match(TokenKind.LEFT_BRACKET):
             return self._arrayLiteral()
         if self._match(TokenKind.LEFT_BRACE):

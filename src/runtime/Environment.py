@@ -36,6 +36,20 @@ class Environment:
 
         raise UndefinedVariableException(name)
 
+    def checkAssignable(self, name: str) -> None:
+        variable: Variable = self.variables.get(name)
+
+        if variable is not None:
+            if not variable.mutable:
+                raise AssignToConstantException(name)
+            return
+
+        if self.parent is not None:
+            self.parent.checkAssignable(name)
+            return
+
+        raise UndefinedVariableException(name)
+
     def get(self, name: str) -> FalxValue:
         variable: Variable = self.variables.get(name)
 
@@ -46,5 +60,3 @@ class Environment:
             return self.parent.get(name)
 
         raise UndefinedVariableException(name)
-
-
