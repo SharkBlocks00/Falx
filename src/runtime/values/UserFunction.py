@@ -42,7 +42,7 @@ class UserFunction(Callable):
             elif argExists:
                 local.define(self.parameters[i].name, arguments[i], True)
             else:
-                raise InvalidArgumentCountException(len(arguments), len(self.parameters))
+                raise InvalidArgumentCountException(len(arguments), sum(parameter.defaultValue is None for parameter in self.parameters))
 
 
 
