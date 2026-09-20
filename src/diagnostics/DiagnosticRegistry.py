@@ -6,8 +6,8 @@ from src.diagnostics.exceptions.cli.MissingFilenameException import MissingFilen
 from src.diagnostics.exceptions.lexer.syntax.InvalidCharacterException import InvalidCharacterException
 from src.diagnostics.exceptions.lexer.syntax.InvalidEscapeSequenceException import InvalidEscapeSequenceException
 from src.diagnostics.exceptions.lexer.syntax.UnterminatedStringException import UnterminatedStringException
-from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException import BreakOutsideFunctionException
-from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
+from src.diagnostics.exceptions.parser.context.BreakOutsideLoopException import BreakOutsideLoopException
+from src.diagnostics.exceptions.parser.context.ContinueOutsideLoopException import ContinueOutsideLoopException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
 from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import \
@@ -87,7 +87,7 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         )
     ),
 
-    ContinueOutsideFunctionException: DiagnosticDefinition(
+    ContinueOutsideLoopException: DiagnosticDefinition(
         code=DiagnosticCode.CONTINUE_OUTSIDE_LOOP,
         severity=DiagnosticSeverity.ERROR,
         title="continue outside loop",
@@ -99,7 +99,7 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         )
     ),
 
-    BreakOutsideFunctionException: DiagnosticDefinition(
+    BreakOutsideLoopException: DiagnosticDefinition(
         code=DiagnosticCode.BREAK_OUTSIDE_LOOP,
         severity=DiagnosticSeverity.ERROR,
         title="break outside loop",
