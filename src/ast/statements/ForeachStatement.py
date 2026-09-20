@@ -28,11 +28,10 @@ class ForeachStatement(Statement):
             loopEnv: Environment = Environment(environment)
             loopEnv.define(self.variable, element, False)
 
-            for stmt in self.body:
-                try:
+            try:
+                for stmt in self.body:
                     stmt.execute(interpreter, loopEnv)
-                except BreakException:
-                    break
-                except ContinueException:
-                    continue
-                    
+            except ContinueException:
+                continue
+            except BreakException:
+                break

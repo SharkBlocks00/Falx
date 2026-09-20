@@ -31,12 +31,11 @@ from src.ast.statements.ReturnStatement import ReturnStatement
 from src.ast.statements.StructDeclaration import StructDeclaration
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.WhileStatement import WhileStatement
-from src.diagnostics.exceptions.parser.context.BreakOutsideFunctionException import BreakOutsideFunctionException
-from src.diagnostics.exceptions.parser.context.ContinueOutsideFunctionException import ContinueOutsideFunctionException
+from src.diagnostics.exceptions.parser.context.BreakOutsideLoopException import BreakOutsideLoopException
+from src.diagnostics.exceptions.parser.context.ContinueOutsideLoopException import ContinueOutsideLoopException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
-from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import \
-    InvalidDefaultValueCreationException
+from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.runtime.values.FieldDefinition import FieldDefinition
@@ -72,10 +71,10 @@ class Parser:
         if self._match(TokenKind.WHILE): return self._whileStatement()
         if self._match(TokenKind.FOREACH): return self._foreachStatement()
         if self._match(TokenKind.BREAK):
-            if not self._insideLoop: raise BreakOutsideFunctionException(self._previous().location)
+            if not self._insideLoop: raise BreakOutsideLoopException(self._previous().location)
             return self._breakStatement()
         if self._match(TokenKind.CONTINUE):
-            if not self._insideLoop: raise ContinueOutsideFunctionException(self._previous().location)
+            if not self._insideLoop: raise ContinueOutsideLoopException(self._previous().location)
             return self._continueStatement()
         if self._match(TokenKind.RETURN):
             if not self._insideFunction: raise ReturnOutsideFunctionException(self._previous().location)
@@ -151,10 +150,13 @@ class Parser:
         self._consumeLeftBrace()
 
         old: bool = self._insideFunction
+        inLoop: bool = self._insideLoop
         self._insideFunction = True
+        self._insideLoop = False
         body: list[Statement] = self._block()
 
         self._insideFunction = old
+        self._insideLoop = inLoop
         return FunctionDeclaration(name.location, name.lexeme, parameters, body)
 
     def _structDeclaration(self) -> StructDeclaration:
@@ -231,7 +233,6 @@ class Parser:
             raise UnexpectedEndOfInputException("}", self._peek().location)
 
     def _foreachStatement(self) -> ForeachStatement:
-        self._insideLoop = True
         location: SourceLocation = self._previous().location
 
         self._consume(TokenKind.LEFT_PAREN, "Expected '(' after foreach statement")
@@ -241,9 +242,11 @@ class Parser:
         iterable: Expression = self._expression()
         self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after foreach iterable")
         self._consumeLeftBrace()
+        old = self._insideLoop
+        self._insideLoop = True
         body: list[Statement] = self._block()
 
-        self._insideLoop = False
+        self._insideLoop = old
         return ForeachStatement(location, variable, iterable, body)
 
     def _returnStatement(self) -> ReturnStatement:

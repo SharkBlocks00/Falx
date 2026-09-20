@@ -1,0 +1,6 @@
+while (true) {
+    func f = define() { break; }
+    f();
+    output("after");
+    break;
+}
