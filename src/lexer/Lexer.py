@@ -106,9 +106,9 @@ class Lexer:
                 else:
                     raise InvalidCharacterException("Expected '&&', found '&'.", SourceLocation("", self.line, self.column-1))
             case _:
-                if c.isdigit(): self._number()
+                if c.isdigit() and c.isascii(): self._number()
                 elif c.isalpha(): self._identifier()
-                else: raise InvalidCharacterException(f"Invalid character '{c}.'", SourceLocation("", self.line, self.column-1))
+                else: raise InvalidCharacterException(f"Invalid character '{c}'.", SourceLocation("", self.line, self.column-1))
 
 
 
@@ -150,12 +150,12 @@ class Lexer:
         start: int = self.start
         self.startColumn = self.column
 
-        while not self._isAtEnd() and self._peek().isdigit():
+        while not self._isAtEnd() and self._peek().isdigit() and self._peek().isascii():
             self._advance()
 
-        if self._peek() == "." and self._peekNext().isdigit():
+        if self._peek() == "." and self._peekNext().isdigit() and self._peekNext().isascii():
             self._advance()
-            while not self._isAtEnd() and self._peek().isdigit():
+            while not self._isAtEnd() and self._peek().isdigit() and self._peek().isascii():
                 self._advance()
 
         text: str = self.source[start:self.current]
@@ -201,9 +201,14 @@ class Lexer:
     def _peekNext(self) -> str:
         if self._isAtEnd():
             return "\0"
-        return self.source[self.current + 1]
+        try:
+            return self.source[self.current + 1]
+        except IndexError:
+            return "\0"
 
     def _advance(self) -> str:
+        if self._isAtEnd():
+            return "\0"
         c: str = self.source[self.current]
         self.current += 1
         self.column += 1

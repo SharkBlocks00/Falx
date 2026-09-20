@@ -38,6 +38,7 @@ from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException i
 from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.runtime.values.FieldDefinition import FieldDefinition
 from src.runtime.values.ParameterDefinition import ParameterDefinition
 from src.tokens.Token import Token
@@ -54,8 +55,11 @@ class Parser:
     def parse(self) -> list[Statement]:
         statements: list[Statement] = []
 
-        while not self._isAtEnd():
-            statements.append(self._declaration())
+        try:
+            while not self._isAtEnd():
+                statements.append(self._declaration())
+        except RecursionError:
+            raise RecursionDepthExceededException(20, self._peek().location)
         return statements
 
     def _declaration(self) -> Statement:
