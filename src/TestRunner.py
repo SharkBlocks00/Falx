@@ -3,7 +3,9 @@ import sys
 import time
 from contextlib import redirect_stdout, redirect_stderr
 from enum import Enum, auto
+from multiprocessing import Process, Queue
 from pathlib import Path
+from queue import Empty
 
 from src.ast.Statement import Statement
 from src.diagnostics.DiagnosticCode import DiagnosticCode
@@ -14,7 +16,6 @@ from src.parser.Parser import Parser
 from src.runtime.Interpreter import Interpreter
 from src.tokens.Token import Token
 
-
 class ExpectedResult(Enum):
     SUCCESS = auto(),
     FAILURE = auto(),
@@ -23,6 +24,45 @@ DIAGNOSTIC_CODE_REGISTRY = {
     definition.code: exception
     for exception, definition in DIAGNOSTIC_REGISTRY.items()
 }
+
+def _executeTest(path: Path) -> dict:
+    sink = io.StringIO()
+
+    try:
+        with redirect_stdout(sink), redirect_stderr(sink):
+            source: str = path.read_text(encoding="utf-8")
+
+            lexer: Lexer = Lexer(source, filename=path.name)
+            tokens: list[Token] = lexer.lex()
+
+            parser: Parser = Parser(tokens)
+            statements: list[Statement] = parser.parse()
+
+            interpreter: Interpreter = Interpreter(path.parent)
+            interpreter.interpret(statements)
+
+        return {
+            "success": True,
+            "exception": None,
+            "output": sink.getvalue(),
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "exception": e.__class__.__name__,
+            "message": str(e),
+            "output": sink.getvalue(),
+        }
+
+def _testWorker(testQueue: Queue, resultQueue: Queue) -> None:
+    while True:
+        path: Path = testQueue.get()
+        if path is None:
+            break
+
+        resultQueue.put(_executeTest(path))
+
 
 class TestRunner:
     def __init__(self):
@@ -33,6 +73,9 @@ class TestRunner:
         self.YELLOW: str = "\u001B[33m"
         self.CYAN: str = "\u001B[36m"
 
+
+        self.TEST_TIMEOUT: float = 1.0 # one second
+
     def runAll(self) -> None:
         directory: Path = Path(__file__).parent.parent / "tests"
 
@@ -42,6 +85,16 @@ class TestRunner:
         failed: int = 0
 
         suiteStart: float = time.perf_counter_ns()
+
+        testQueue: Queue = Queue()
+        resultQueue: Queue = Queue()
+
+        process = Process(
+            target=_testWorker,
+            args=(testQueue, resultQueue),
+        )
+
+        process.start()
 
         for path in files:
             relative: Path = path.relative_to(directory)
@@ -55,52 +108,65 @@ class TestRunner:
                 case _:
                     raise ValueError(f"Unknown test category '{category}'")
 
-            threw: bool = False
-            exception: Exception | None = None
-
-            # string buffers to catch output
-            sink = io.StringIO()
+            source: str = path.read_text(encoding="utf-8")
+            expectedCode: str | None = self.getExpectedCode(source)
 
             start: float = time.perf_counter_ns()
 
-            expectedCode: str | None = None
+            testQueue.put(path)
 
             try:
-                with redirect_stdout(sink), redirect_stderr(sink):
-                    source: str = path.read_text(encoding="utf-8")
+                testResult = resultQueue.get(timeout=self.TEST_TIMEOUT)
 
-                    expectedCode = self.getExpectedCode(source)
+                elapsed: int = int(
+                    (time.perf_counter_ns() - start) / 1_000_000
+                )
 
-                    lexer: Lexer = Lexer(source)
-                    tokens: list[Token] = lexer.lex()
+                timed_out = False
 
-                    parser: Parser = Parser(tokens)
-                    statements: list[Statement] = parser.parse()
+                threw: bool = not testResult["success"]
 
-                    interpreter: Interpreter = Interpreter(path.parent)
-                    interpreter.interpret(statements)
-            except FalxException as e:
-                threw = True
-                exception = e
-            except Exception as e:
-                threw = True
-                exception = e
+                exceptionName: str | None = testResult["exception"]
+                exceptionMessage: str | None = testResult.get("message")
 
-            # time conversion to ms from ns
-            elapsed: int = int((time.perf_counter_ns() - start) / 1_000_000)
+                ex: DiagnosticCode | None = None
+                expectedException: type[FalxException] | None = None
 
+                if expectedCode is not None:
+                    ex = DiagnosticCode(expectedCode)
+                    expectedException = DIAGNOSTIC_CODE_REGISTRY[ex]
 
-            ex: DiagnosticCode | None = None
-            expectedException: FalxException | None = None
-            if expectedCode is not None:
-                ex = DiagnosticCode(expectedCode)
-                expectedException = DIAGNOSTIC_CODE_REGISTRY[ex]
+                expectedExceptionName = (expectedException.__name__ if expectedException is not None else None)
 
-            test_passed: bool = (
-                expected == ExpectedResult.SUCCESS and not threw) or (
-                expected == ExpectedResult.FAILURE and threw) and exception.__class__ is expectedException
+                test_passed = (expected == ExpectedResult.SUCCESS and not threw) or (
+                    expected == ExpectedResult.FAILURE and threw and exceptionName == expectedExceptionName
+                )
 
-            relStr: str =str(relative)
+                exception = (exceptionMessage if exceptionMessage is not None else None)
+
+            except Empty:
+                elapsed: int = int(
+                    (time.perf_counter_ns() - start) / 1_000_000
+                )
+
+                timed_out = True
+                test_passed = False
+                exception = None
+
+                process.terminate()
+                process.join()
+
+                testQueue = Queue()
+                resultQueue = Queue()
+
+                process = Process(
+                    target=_testWorker,
+                    args=(testQueue, resultQueue),
+                )
+
+                process.start()
+
+            relStr: str = str(relative)
 
             if test_passed:
                 passed += 1
@@ -109,10 +175,18 @@ class TestRunner:
                 failed += 1
                 print(f"{self.RED}[FAIL]{self.RESET} {relStr:-<45} {self.CYAN}({elapsed} ms){self.RESET}")
 
-                if expected == ExpectedResult.SUCCESS:
+                if timed_out:
+                    print(
+                        f"       Test exceeded "
+                        f"{self.TEST_TIMEOUT:g} second timeout"
+                    )
+                elif expected == ExpectedResult.SUCCESS:
                     print(f"       {exception}")
                 else:
                     print("       Expected an exception but none was thrown")
+
+        testQueue.put(None)
+        process.join()
 
         suiteTime: int = int((time.perf_counter_ns() - suiteStart) / 1_000_000)
 
@@ -146,3 +220,6 @@ class TestRunner:
             return None
 
         return firstLine.split(":",1)[1].strip().split()[0]
+
+if __name__ == "__main__":
+    TestRunner().runAll()
