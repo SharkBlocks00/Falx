@@ -55,7 +55,9 @@ def _executeTest(path: Path) -> dict:
             "output": sink.getvalue(),
         }
 
-def _testWorker(testQueue: Queue, resultQueue: Queue) -> None:
+def _testWorker(testQueue: Queue, resultQueue: Queue, readyQueue: Queue) -> None:
+    readyQueue.put(True)
+
     while True:
         path: Path = testQueue.get()
         if path is None:
@@ -84,17 +86,19 @@ class TestRunner:
         passed: int = 0
         failed: int = 0
 
-        suiteStart: float = time.perf_counter_ns()
-
         testQueue: Queue = Queue()
         resultQueue: Queue = Queue()
+        readyQueue: Queue = Queue()
 
         process = Process(
             target=_testWorker,
-            args=(testQueue, resultQueue),
+            args=(testQueue, resultQueue, readyQueue),
         )
 
         process.start()
+        readyQueue.get()
+
+        suiteStart: float = time.perf_counter_ns()
 
         for path in files:
             relative: Path = path.relative_to(directory)
@@ -158,13 +162,15 @@ class TestRunner:
 
                 testQueue = Queue()
                 resultQueue = Queue()
+                readyQueue = Queue()
 
                 process = Process(
                     target=_testWorker,
-                    args=(testQueue, resultQueue),
+                    args=(testQueue, resultQueue, readyQueue),
                 )
 
                 process.start()
+                readyQueue.get()
 
             relStr: str = str(relative)
 
