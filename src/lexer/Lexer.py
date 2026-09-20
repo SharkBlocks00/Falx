@@ -116,6 +116,9 @@ class Lexer:
         value: str = ""
         self.startColumn = self.column
 
+        if self._isAtEnd():
+            raise UnterminatedStringException(SourceLocation("", self.line, self.column-1))
+
         while not self._isAtEnd():
             c: str = self._peek()
 
@@ -144,7 +147,7 @@ class Lexer:
             else:
                 value += self._advance()
             if self._isAtEnd():
-                raise UnterminatedStringException("Unterminated string.", SourceLocation("", self.line, self.column-1))
+                raise UnterminatedStringException(SourceLocation("", self.line, self.column-1))
 
     def _number(self) -> None:
         start: int = self.start
