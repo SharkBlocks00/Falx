@@ -166,6 +166,8 @@ class Parser:
         methods: list[FunctionDeclaration] = []
 
         while not self._check(TokenKind.RIGHT_BRACE):
+            if self._isAtEnd():
+                raise UnexpectedEndOfInputException("}", self._peek().location)
             if self._peek().tokenKind == TokenKind.IDENTIFIER:
                 field: Token = self._consume(TokenKind.IDENTIFIER, "Expected field name")
 
@@ -182,6 +184,8 @@ class Parser:
                 if self._match(TokenKind.FUNC):
                     function: FunctionDeclaration = self._functionDeclaration()
                     methods.append(function)
+                else:
+                    raise UnexpectedTokenException("Expected field or method in struct body", self._peek().location)
 
         self._consumeRightBrace()
         return StructDeclaration(name.location, name.lexeme, fields, methods)
