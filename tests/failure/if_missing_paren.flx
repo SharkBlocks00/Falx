@@ -1,1 +1,5 @@
-if true { output(1); }
+// Expects: E2001
+
+if true {
+    output(1);
+}

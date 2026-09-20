@@ -6,6 +6,8 @@ from enum import Enum, auto
 from pathlib import Path
 
 from src.ast.Statement import Statement
+from src.diagnostics.DiagnosticCode import DiagnosticCode
+from src.diagnostics.DiagnosticRegistry import DIAGNOSTIC_REGISTRY
 from src.diagnostics.exceptions.FalxException import FalxException
 from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
@@ -16,6 +18,11 @@ from src.tokens.Token import Token
 class ExpectedResult(Enum):
     SUCCESS = auto(),
     FAILURE = auto(),
+
+DIAGNOSTIC_CODE_REGISTRY = {
+    definition.code: exception
+    for exception, definition in DIAGNOSTIC_REGISTRY.items()
+}
 
 class TestRunner:
     def __init__(self):
@@ -56,9 +63,13 @@ class TestRunner:
 
             start: float = time.perf_counter_ns()
 
+            expectedCode: str | None = None
+
             try:
                 with redirect_stdout(sink), redirect_stderr(sink):
                     source: str = path.read_text(encoding="utf-8")
+
+                    expectedCode = self.getExpectedCode(source)
 
                     lexer: Lexer = Lexer(source)
                     tokens: list[Token] = lexer.lex()
@@ -78,9 +89,16 @@ class TestRunner:
             # time conversion to ms from ns
             elapsed: int = int((time.perf_counter_ns() - start) / 1_000_000)
 
+
+            ex: DiagnosticCode | None = None
+            expectedException: FalxException | None = None
+            if expectedCode is not None:
+                ex = DiagnosticCode(expectedCode)
+                expectedException = DIAGNOSTIC_CODE_REGISTRY[ex]
+
             test_passed: bool = (
                 expected == ExpectedResult.SUCCESS and not threw) or (
-                expected == ExpectedResult.FAILURE and threw)
+                expected == ExpectedResult.FAILURE and threw) and exception.__class__ is expectedException
 
             relStr: str =str(relative)
 
@@ -119,3 +137,12 @@ class TestRunner:
 
         if failed > 0:
             sys.exit(1)
+
+
+    def getExpectedCode(self, source: str) -> str | None:
+        firstLine: str = source.splitlines()[0]
+
+        if not firstLine.startswith("// Expects:"):
+            return None
+
+        return firstLine.split(":",1)[1].strip().split()[0]

@@ -5,3 +5,8 @@ output(arr.contains(3));
 output(arr.isEmpty());
 let copy = arr.copy();
 output(copy.size);
+
+assert(arr.size == 6);
+assert(arr.contains(3));
+assert(!arr.isEmpty());
+assert(copy.size == 6);

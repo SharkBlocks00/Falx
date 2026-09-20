@@ -1,1 +1,3 @@
+// Expects: E1008
+
 let x = true + 5;

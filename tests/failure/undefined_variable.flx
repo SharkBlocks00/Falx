@@ -1,1 +1,3 @@
+// Expects: E1000
+
 let x = undefinedVar + 5;

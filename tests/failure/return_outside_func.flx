@@ -1,1 +1,3 @@
+// Expects: E2002
+
 return 1;

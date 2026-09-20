@@ -1,1 +1,4 @@
-func greet = define(a) return a;
+// Expects: E2001
+
+func greet = define(a)
+    return a;

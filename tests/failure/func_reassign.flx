@@ -1,1 +1,7 @@
-func f = define() { return 1; }; f = 2;
+// Expects: E1004
+
+func f = define() {
+    return 1;
+}
+
+f = 2;

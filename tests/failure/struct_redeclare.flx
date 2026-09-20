@@ -1,2 +1,4 @@
+// Expects: E1005
+
 struct S { x; }
 struct S { y; }

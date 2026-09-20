@@ -1,1 +1,3 @@
+// Expects: E1025
+
 foreach (x: null) { output(x); }

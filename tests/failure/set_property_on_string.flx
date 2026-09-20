@@ -1,2 +1,4 @@
+// Expects: E1014
+
 let x = "hello";
 x.value = "test";

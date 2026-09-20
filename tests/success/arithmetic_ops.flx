@@ -16,3 +16,10 @@ output("compound: " + compound);
 
 let neg = -a;
 output("neg: " + neg);
+
+assert(sum == 19);
+assert(diff == 11);
+assert(prod == 60);
+assert(quot == 3);
+assert(compound == 18);
+assert(neg == -15);

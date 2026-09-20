@@ -1,2 +1,4 @@
+// Expects: E2001
+
 let a = 10
 output(a);

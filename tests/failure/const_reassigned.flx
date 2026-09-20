@@ -1,1 +1,4 @@
-const c = 1; c = 2;
+// Expects: E1004
+
+const c = 1;
+c = 2;

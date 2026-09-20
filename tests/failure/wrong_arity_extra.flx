@@ -1,2 +1,6 @@
-func greet = define() { return 1; }
+// Expects: E1021
+
+func greet = define() {
+    return 1;
+}
 greet(1, 2, 3);

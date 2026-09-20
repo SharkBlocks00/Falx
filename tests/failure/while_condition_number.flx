@@ -1,1 +1,5 @@
-while (42) { break; }
+// Expects: E1011
+
+while (42) {
+    break;
+}

@@ -1,2 +1,6 @@
-func add = define(a, b) { return a + b; }
+// Expects: E1021
+
+func add = define(a, b) {
+    return a + b;
+}
 add(1);

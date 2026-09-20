@@ -1,1 +1,8 @@
-let x = 1; { let x = 2; output(x); } output(x);
+let x = 1;
+{
+    let x = 2;
+    output(x);
+}
+
+output(x);
+assert(x == 1);

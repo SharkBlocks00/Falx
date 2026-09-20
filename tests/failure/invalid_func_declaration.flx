@@ -1,3 +1,5 @@
+// Expects: E2001
+
 func myFunc(a, b) {
     return a + b;
 }

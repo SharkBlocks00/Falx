@@ -1,2 +1,4 @@
+// Expects: E1004
+
 const x = 10;
 x = 20;

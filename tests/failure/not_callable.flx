@@ -1,2 +1,4 @@
+// Expects: E1020
+
 let num = 42;
 num();

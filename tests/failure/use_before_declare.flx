@@ -1,2 +1,4 @@
+// Expects: E1000
+
 output(x);
 let x = 10;

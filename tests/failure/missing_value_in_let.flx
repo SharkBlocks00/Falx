@@ -1,1 +1,3 @@
+// Expects: E2001
+
 let x = ;

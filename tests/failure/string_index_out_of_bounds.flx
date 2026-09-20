@@ -1,2 +1,4 @@
+// Expects: E1018
+
 let s = "hi";
 output(s[10]);

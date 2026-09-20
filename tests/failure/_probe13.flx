@@ -1,3 +1,5 @@
+// Expects: E1004
+
 func f = define() {
     return 5;
 }

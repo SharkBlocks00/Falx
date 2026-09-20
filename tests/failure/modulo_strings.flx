@@ -1,1 +1,3 @@
+// Expects: E1009
+
 let x = "hello" % "world";

@@ -1,3 +1,5 @@
+// Expects: E1021
+
 func add = define(a, b) {
     return a + b;
 }

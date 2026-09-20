@@ -1,1 +1,3 @@
+// Expects: E1006
+
 let x = null * 2;

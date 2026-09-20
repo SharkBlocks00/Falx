@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
+from src.diagnostics.exceptions.runtime.operations.CannotInvertValueException import CannotInvertValueException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -23,12 +25,13 @@ class UnaryExpression(Expression):
         self.expression: Expression = expression
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
+        value: FalxValue = self.expression.evaluate(interpreter, environment)
         try:
-            value: FalxValue = self.expression.evaluate(interpreter, environment)
-
             match self.operator.tokenKind:
                 case TokenKind.MINUS: return FalxNumber(-value.asNumber())
                 case TokenKind.BANG: return FalxBoolean(not value.asBool())
                 case _: return value
+        except CannotConvertToTypeException as e:
+            raise CannotInvertValueException(value.asString(), self.location) from e
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
