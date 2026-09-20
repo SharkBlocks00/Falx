@@ -151,10 +151,13 @@ class Parser:
         self._consumeLeftBrace()
 
         old: bool = self._insideFunction
+        inLoop: bool = self._insideLoop
         self._insideFunction = True
+        self._insideLoop = False
         body: list[Statement] = self._block()
 
         self._insideFunction = old
+        self._insideLoop = inLoop
         return FunctionDeclaration(name.location, name.lexeme, parameters, body)
 
     def _structDeclaration(self) -> StructDeclaration:
@@ -231,7 +234,6 @@ class Parser:
             raise UnexpectedEndOfInputException("}", self._peek().location)
 
     def _foreachStatement(self) -> ForeachStatement:
-        self._insideLoop = True
         location: SourceLocation = self._previous().location
 
         self._consume(TokenKind.LEFT_PAREN, "Expected '(' after foreach statement")
@@ -241,9 +243,11 @@ class Parser:
         iterable: Expression = self._expression()
         self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after foreach iterable")
         self._consumeLeftBrace()
+        old = self._insideLoop
+        self._insideLoop = True
         body: list[Statement] = self._block()
 
-        self._insideLoop = False
+        self._insideLoop = old
         return ForeachStatement(location, variable, iterable, body)
 
     def _returnStatement(self) -> ReturnStatement:
