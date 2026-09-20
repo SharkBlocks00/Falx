@@ -78,7 +78,7 @@ class TestRunner:
 
         self.TEST_TIMEOUT: float = 1.0 # one second
 
-    def runAll(self) -> None:
+    def runAll(self, updateSnapshots: bool = False) -> None:
         directory: Path = Path(__file__).parent.parent / "tests"
 
         files: list[Path] = sorted([item for item in directory.rglob("*") if item.is_file() and item.__str__().endswith(".flx")])
@@ -115,12 +115,24 @@ class TestRunner:
             source: str = path.read_text(encoding="utf-8")
             expectedCode: str | None = self.getExpectedCode(source)
 
+            outputMatches: bool = False
+            expectedOutput: str | None = None
+
             start: float = time.perf_counter_ns()
 
             testQueue.put(path)
 
             try:
                 testResult = resultQueue.get(timeout=self.TEST_TIMEOUT)
+                actualOutput: str = testResult["output"]
+
+                expectedOutput: str | None = self.getExpectedOutput(path)
+
+                if updateSnapshots and expected == ExpectedResult.SUCCESS and testResult["success"]:
+                    self.updateSnapshot(path, actualOutput)
+                    expectedOutput = actualOutput
+
+                outputMatches = (expectedOutput is not None and actualOutput == expectedOutput)
 
                 elapsed: int = int(
                     (time.perf_counter_ns() - start) / 1_000_000
@@ -142,9 +154,12 @@ class TestRunner:
 
                 expectedExceptionName = (expectedException.__name__ if expectedException is not None else None)
 
-                test_passed = (expected == ExpectedResult.SUCCESS and not threw) or (
+                test_passed = (expected == ExpectedResult.SUCCESS and not threw and outputMatches) or (
                     expected == ExpectedResult.FAILURE and threw and exceptionName == expectedExceptionName
                 )
+
+                if expected == ExpectedResult.SUCCESS and expectedOutput is None:
+                    test_passed = False
 
                 exception = (exceptionMessage if exceptionMessage is not None else None)
 
@@ -187,7 +202,12 @@ class TestRunner:
                         f"{self.TEST_TIMEOUT:g} second timeout"
                     )
                 elif expected == ExpectedResult.SUCCESS:
-                    print(f"       {exception}")
+                    if expectedOutput is None:
+                        print("       Missing snapshot ")
+                    elif not outputMatches:
+                        print("       Output mismatch")
+                    else:
+                        print(f"       {exception}")
                 else:
                     print("       Expected an exception but none was thrown")
 
@@ -226,6 +246,21 @@ class TestRunner:
             return None
 
         return firstLine.split(":",1)[1].strip().split()[0]
+
+    def getOutputPath(self, testPath: Path) -> Path:
+        return testPath.with_suffix(".out")
+
+    def updateSnapshot(self, testPath: Path, output: str) -> None:
+        outputPath: Path = self.getOutputPath(testPath)
+        outputPath.write_text(output, encoding="utf-8")
+
+    def getExpectedOutput(self, testPath: Path) -> str | None:
+        outputPath: Path = self.getOutputPath(testPath)
+
+        if not outputPath.exists():
+            return None
+
+        return outputPath.read_text(encoding="utf-8")
 
 if __name__ == "__main__":
     TestRunner().runAll()
