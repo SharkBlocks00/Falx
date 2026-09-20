@@ -7,7 +7,7 @@ from src.tokens.TokenKind import TokenKind
 
 
 class Lexer:
-    def __init__(self, source: str):
+    def __init__(self, source: str, filename: str = ""):
         self.source: str = source
         self.current: int = 0
         self.line: int = 1
@@ -16,20 +16,20 @@ class Lexer:
         self.startColumn: int = 0
         self.tokens: list[Token] = []
         self.KEYWORDS: dict[str, TokenKind] = initKeywords()
+        self.filename: str = filename
 
     def lex(self) -> list[Token]:
         while not self._isAtEnd():
             self.start = self.current
             self._scanToken()
 
-        self.tokens.append(Token(TokenKind.EOF, "", None, SourceLocation("", self.line, self.column)))
+        self.tokens.append(Token(TokenKind.EOF, "", None, SourceLocation(self.filename, self.line, self.column)))
         return self.tokens
 
     def _scanToken(self) -> None:
+        self.startColumn = self.column
         c: str = self._advance()
 
-
-        self.startColumn = self.column
         match c:
             case " " | "\r" | "\t":
                 pass # already advanced and had column updated in _advance()
@@ -99,16 +99,16 @@ class Lexer:
                 if self._match("|"):
                     self._addToken(TokenKind.OR)
                 else:
-                    raise InvalidCharacterException("Expected '||', found '|'.", SourceLocation("", self.line, self.column-1))
+                    raise InvalidCharacterException("Expected '||', found '|'.", SourceLocation(self.filename, self.line, self.column-1))
             case "&":
                 if self._match("&"):
                     self._addToken(TokenKind.AND)
                 else:
-                    raise InvalidCharacterException("Expected '&&', found '&'.", SourceLocation("", self.line, self.column-1))
+                    raise InvalidCharacterException("Expected '&&', found '&'.", SourceLocation(self.filename, self.line, self.column-1))
             case _:
                 if c.isdigit() and c.isascii(): self._number()
                 elif c.isalpha(): self._identifier()
-                else: raise InvalidCharacterException(f"Invalid character '{c}'.", SourceLocation("", self.line, self.column-1))
+                else: raise InvalidCharacterException(f"Invalid character '{c}'.", SourceLocation(self.filename, self.line, self.column-1))
 
 
 
@@ -117,7 +117,7 @@ class Lexer:
         self.startColumn = self.column
 
         if self._isAtEnd():
-            raise UnterminatedStringException(SourceLocation("", self.line, self.column-1))
+            raise UnterminatedStringException(SourceLocation(self.filename, self.line, self.column-1))
 
         while not self._isAtEnd():
             c: str = self._peek()
@@ -143,11 +143,11 @@ class Lexer:
                     case "b": value += "\n"
                     case '"': value += '"'
                     case "\\": value += '\\'
-                    case _: raise InvalidEscapeSequenceException(f"Invalid escape character: {escaped}", SourceLocation("", self.line, self.column-1))
+                    case _: raise InvalidEscapeSequenceException(f"Invalid escape character: {escaped}", SourceLocation(self.filename, self.line, self.column-1))
             else:
                 value += self._advance()
             if self._isAtEnd():
-                raise UnterminatedStringException(SourceLocation("", self.line, self.column-1))
+                raise UnterminatedStringException(SourceLocation(self.filename, self.line, self.column-1))
 
     def _number(self) -> None:
         start: int = self.start
@@ -193,7 +193,7 @@ class Lexer:
         lexeme: str = self.source[self.start:self.current]
         self.tokens.append(Token(
             kind, lexeme, literal,
-            SourceLocation("", self.line, self.startColumn)
+            SourceLocation(self.filename, self.line, self.startColumn)
         ))
 
     def _peek(self) -> str:

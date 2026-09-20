@@ -34,7 +34,7 @@ class ModuleLoader:
 
             source = path.read_text(encoding="utf-8")
 
-            tokens = Lexer(source).lex()
+            tokens = Lexer(source, filename=path.name).lex()
             statements = Parser(tokens).parse()
 
             environment = Environment(self.interpreter.globals)
