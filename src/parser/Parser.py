@@ -38,6 +38,7 @@ from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException i
 from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.runtime.values.FieldDefinition import FieldDefinition
 from src.runtime.values.ParameterDefinition import ParameterDefinition
 from src.tokens.Token import Token
@@ -54,8 +55,11 @@ class Parser:
     def parse(self) -> list[Statement]:
         statements: list[Statement] = []
 
-        while not self._isAtEnd():
-            statements.append(self._declaration())
+        try:
+            while not self._isAtEnd():
+                statements.append(self._declaration())
+        except RecursionError:
+            raise RecursionDepthExceededException(20, self._peek().location)
         return statements
 
     def _declaration(self) -> Statement:
@@ -166,6 +170,8 @@ class Parser:
         methods: list[FunctionDeclaration] = []
 
         while not self._check(TokenKind.RIGHT_BRACE):
+            if self._isAtEnd():
+                raise UnexpectedEndOfInputException("}", self._peek().location)
             if self._peek().tokenKind == TokenKind.IDENTIFIER:
                 field: Token = self._consume(TokenKind.IDENTIFIER, "Expected field name")
 
@@ -182,6 +188,8 @@ class Parser:
                 if self._match(TokenKind.FUNC):
                     function: FunctionDeclaration = self._functionDeclaration()
                     methods.append(function)
+                else:
+                    raise UnexpectedTokenException("Expected field or method in struct body", self._peek().location)
 
         self._consumeRightBrace()
         return StructDeclaration(name.location, name.lexeme, fields, methods)
