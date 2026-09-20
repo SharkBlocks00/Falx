@@ -151,7 +151,6 @@ class Lexer:
 
     def _number(self) -> None:
         start: int = self.start
-        self.startColumn = self.column
 
         while not self._isAtEnd() and self._peek().isdigit() and self._peek().isascii():
             self._advance()
@@ -167,7 +166,7 @@ class Lexer:
 
     def _identifier(self) -> None:
         start: int = self.start
-        self.startColumn = self.column
+
         while not self._isAtEnd() and (self._peek().isalnum() or self._peek() == "_"):
             self._advance()
 
