@@ -33,7 +33,7 @@ def repl() -> None:
             continue
             
         try:
-            lexer: Lexer = Lexer(line)
+            lexer: Lexer = Lexer(line, filename="REPL")
             tokens: list[Token] = lexer.lex()
 
             parser: Parser = Parser(tokens)
@@ -67,7 +67,7 @@ def main():
     source: str = scriptPath.read_text(encoding="utf-8")
 
     try:
-        lexer: Lexer = Lexer(source)
+        lexer: Lexer = Lexer(source, filename=scriptPath.name)
         tokens: list[Token] = lexer.lex()
 
         parser: Parser = Parser(tokens)
@@ -75,6 +75,7 @@ def main():
 
         interpreter: Interpreter = Interpreter(scriptPath.parent)
         interpreter.interpret(statements)
+        return None
 
     except FalxException as e:
         diagnostic = createDiagnostic(e)
