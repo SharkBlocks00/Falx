@@ -9,5 +9,6 @@ class FalxException(Exception):
         self.cause = cause
 
     def withLocation(self, location: SourceLocation) -> "FalxException":
-        self.location = location
+        if self.location is None:
+            self.location = location
         return self

@@ -1,0 +1,6 @@
+func f = define() {
+    let x = 1 / 0;
+}
+
+output("start");
+f();
