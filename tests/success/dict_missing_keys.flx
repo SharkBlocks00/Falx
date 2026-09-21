@@ -1,0 +1,6 @@
+let m = {a: 1};
+output(m["zzz"]);
+output(m.zzz);
+output(typeof(m["zzz"]));
+let n = {size: 5};
+output(n.size);

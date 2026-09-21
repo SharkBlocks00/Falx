@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting an improvement to Falx! Check [ROADMAP.md](https://github.com/SharkBlocks00/Falx/blob/master/ROADMAP.md) first — it may already be tracked, or flagged as a non-goal.
+        Thanks for suggesting an improvement to Falx! Check [ROADMAP.md](https://github.com/SharkBlocks00/Falx/blob/master/ROADMAP.md) first - it may already be tracked, or flagged as a non-goal.
 
   - type: textarea
     id: problem
@@ -20,7 +20,7 @@ body:
     id: solution
     attributes:
       label: Proposed solution
-      description: What you'd like to see added — new syntax, a new built-in, a CLI flag, etc. Include example .flx code if it helps illustrate.
+      description: What you'd like to see added - new syntax, a new built-in, a CLI flag, etc. Include example .flx code if it helps illustrate.
       render: text
     validations:
       required: true
@@ -39,7 +39,7 @@ body:
       label: Does this appear in ROADMAP.md already?
       options:
         - "No, this isn't listed there"
-        - "Yes, it's listed — I'm requesting it be prioritized sooner"
+        - "Yes, it's listed - I'm requesting it be prioritized sooner"
         - "I haven't checked"
     validations:
       required: true
