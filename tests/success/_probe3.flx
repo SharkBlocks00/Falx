@@ -1,3 +1,8 @@
+let in = false;
+
 if (5 != 3) {
     output("not equal");
+    in = true;
 }
+
+assert(in == true);

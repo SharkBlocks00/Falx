@@ -1,0 +1,26 @@
+=== Starting Task Scheduler Test ===
+Added task 1: Write tests (Priority: 5)
+Added task 2: Fix parser bug (Priority: 10)
+Added task 3: Refactor lexer (Priority: 2)
+Added task 4: Update documentation (Priority: 5)
+--- Scheduler Status ---
+Total tasks ever created: 4
+Pending tasks: 4
+ - [1] Write tests (Pri: 5)
+ - [2] Fix parser bug (Pri: 10)
+ - [3] Refactor lexer (Pri: 2)
+ - [4] Update documentation (Pri: 5)
+------------------------
+Processing highest priority task...
+Completed task 2: Fix parser bug
+Processing highest priority task...
+Completed task 1: Write tests
+Completed task 4: Update documentation
+--- Scheduler Status ---
+Total tasks ever created: 4
+Pending tasks: 1
+ - [3] Refactor lexer (Pri: 2)
+------------------------
+Processing highest priority task...
+Completed task 3: Refactor lexer
+No pending tasks.

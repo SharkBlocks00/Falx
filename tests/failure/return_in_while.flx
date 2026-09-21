@@ -1,1 +1,5 @@
-while (true) { return 5; }
+// Expects: E2002
+
+while (true) {
+    return 5;
+}

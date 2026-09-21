@@ -1,1 +1,3 @@
+// Expects: E4001
+
 let a = require("_probe11");

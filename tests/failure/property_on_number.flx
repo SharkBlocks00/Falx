@@ -1,2 +1,4 @@
+// Expects: E1012
+
 let x = 42;
 output(x.length);

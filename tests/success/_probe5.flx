@@ -3,3 +3,5 @@ while (i != 5) {
     output(i);
     i = i + 1;
 }
+
+assert(i == 5);

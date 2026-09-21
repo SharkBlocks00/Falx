@@ -1,1 +1,3 @@
+// Expects: E2006
+
 struct A { x;

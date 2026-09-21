@@ -1,3 +1,5 @@
+// Expects: E1014
+
 struct Point { x; y; }
 let p = Point();
 p.z = 10;

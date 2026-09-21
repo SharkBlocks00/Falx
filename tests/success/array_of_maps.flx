@@ -1,3 +1,6 @@
 let items = [{ name: "a" }, { name: "b" }];
 output(items[0].name);
 output(items[1].name);
+
+assert(items[0].name == "a");
+assert(items[1].name == "b");

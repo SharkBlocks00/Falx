@@ -1,10 +1,16 @@
 let a = 3;
+
+let in = false;
+
 if (a == 1) {
     output("one");
 } elseif (a == 2) {
     output("two");
 } elseif (a == 3) {
     output("three");
+    in = true;
 } else {
     output("other");
 }
+
+assert(in == true);

@@ -1,1 +1,4 @@
-if (true) output("missing");
+// Expects: E2001
+
+if (true)
+    output("missing");

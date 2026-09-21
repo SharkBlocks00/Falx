@@ -1,7 +1,13 @@
 let a = 3;
 let b = 5;
+
+let diff = false;
+
 if (a != b) {
     output("different");
+    diff = true;
 } else {
     output("same");
 }
+
+assert(diff == true);

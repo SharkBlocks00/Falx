@@ -1,1 +1,3 @@
+// Expects: E1004
+
 typeof = 42;

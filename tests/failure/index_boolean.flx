@@ -1,2 +1,4 @@
+// Expects: E1013
+
 let x = true;
 let y = x[0];

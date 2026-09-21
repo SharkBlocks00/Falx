@@ -32,6 +32,7 @@ from src.diagnostics.exceptions.runtime.operations.CannotCompareToException impo
 from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
 from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
+from src.diagnostics.exceptions.runtime.operations.CannotInvertValueException import CannotInvertValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException import CannotMinusFromValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValueException import CannotMultiplyByValueException
@@ -578,6 +579,15 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         ),
         notes=(
             "Destructuring a tuple does not truncate values, so the counts must match.",
+        )
+    ),
+
+    CannotInvertValueException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_INVERT_VALUE,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot invert value",
+        help=(
+            "Check that the type of the value you are inverting can be inverted",
         )
     )
 }

@@ -1,3 +1,5 @@
+// Expects: E2004
+
 while (true) {
     func f = define() { break; }
     f();

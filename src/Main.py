@@ -13,25 +13,26 @@ from src.parser.Parser import Parser
 from src.runtime.Interpreter import Interpreter
 from src.runtime.methods.repl.ReplExitFunction import ReplExitFunction
 from src.tokens.Token import Token
+from src.TestRunner import TestRunner
 
 
 def repl() -> None:
     interpreter = Interpreter(Path.cwd())
     interpreter.globals.define("exit", ReplExitFunction(), False)
-    
+
     print("Falx REPL")
     print("Type 'exit()' to exit")
-    
+
     while True:
         try:
             line = input(">> ")
         except (EOFError, KeyboardInterrupt):
             print()
             break
-            
+
         if not line.strip():
             continue
-            
+
         try:
             lexer: Lexer = Lexer(line, filename="REPL")
             tokens: list[Token] = lexer.lex()
@@ -40,30 +41,17 @@ def repl() -> None:
             statements: list[Statement] = parser.parse()
 
             interpreter.interpret(statements)
+
         except FalxException as e:
             diagnostic = createDiagnostic(e)
             printer = DiagnosticPrinter()
             printer.print(diagnostic, line)
+
         except Exception:
             traceback.print_exc()
 
-def main():
-    argumentHandler: ArgumentHandler = ArgumentHandler(sys.argv)
 
-    try:
-        scriptPath: Path | None = argumentHandler.handleArguments()
-    except FalxCLIException as e:
-        diagnostic = createDiagnostic(e)
-
-        printer = DiagnosticPrinter()
-        printer.print(diagnostic, "")
-        return 1
-
-    if scriptPath is None:
-        if len(sys.argv) == 1:
-            repl()
-        return 0
-
+def runFile(scriptPath: Path) -> int:
     source: str = scriptPath.read_text(encoding="utf-8")
 
     try:
@@ -75,17 +63,46 @@ def main():
 
         interpreter: Interpreter = Interpreter(scriptPath.parent)
         interpreter.interpret(statements)
-        return None
+
+        return 0
 
     except FalxException as e:
         diagnostic = createDiagnostic(e)
 
         printer = DiagnosticPrinter()
         printer.print(diagnostic, source)
+
         return 1
-    except Exception: # baseline for actual language bug exceptions (all in language ones are from FalxRuntimeException/FalxException)
+
+    except Exception:
         traceback.print_exc()
         return 1
+
+
+def main() -> int:
+    argumentHandler: ArgumentHandler = ArgumentHandler(sys.argv)
+
+    try:
+        arguments = argumentHandler.handleArguments()
+
+    except FalxCLIException as e:
+        diagnostic = createDiagnostic(e)
+
+        printer = DiagnosticPrinter()
+        printer.print(diagnostic, "")
+
+        return 1
+
+    if arguments.command == "run":
+        return runFile(arguments.file)
+
+    if arguments.command == "test":
+        TestRunner().runAll(arguments.update_snapshots, arguments.filter)
+        return 0
+
+    repl()
+
+    return 0
 
 
 if __name__ == "__main__":

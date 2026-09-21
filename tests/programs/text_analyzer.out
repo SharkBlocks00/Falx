@@ -1,0 +1,12 @@
+=== Starting Text Analyzer Test ===
+Sample text: Falx is a programming language. Falx is designed to be simple, yet powerful! Is Falx fast? Yes, it is. Writing code in Falx is fun.
+--- Text Analysis Report ---
+Total words: 25
+Unique words: 18
+Most frequent word: 'is' (5 times)
+----------------------------
+Specific word frequencies:
+'falx' appears 4 times.
+'is' appears 5 times.
+'simple' appears 1 times.
+'python' does not appear in the text.

@@ -1,1 +1,3 @@
+// Expects: E1007
+
 let x = "a" / "b";

@@ -1,2 +1,4 @@
+// Expects: E1017
+
 let arr = [1, 2, 3];
 output(arr[10]);

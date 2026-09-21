@@ -1,1 +1,2 @@
+// Expects: E4001
 let v = require("_probe12");

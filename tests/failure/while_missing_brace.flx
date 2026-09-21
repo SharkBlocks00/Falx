@@ -1,1 +1,4 @@
-while (true) output("missing");
+// Expects: E2001
+
+while (true)
+    output("missing");

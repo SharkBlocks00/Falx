@@ -1,1 +1,3 @@
+// Expects: E1011
+
 let x = 5 > null;

@@ -1,0 +1,8 @@
+--- Calculator Engine Test ---
+10 + 5 = 15
+10 - 5 = 5
+10 * 5 = 50
+10 / 5 = 2
+Scaled Add (10 + 5) * 2 = 30
+Scaled Multiply (10 * 5) * 0.5 = 25.0
+Complex expression ((100 * 25) + (100 / 25)) = 2504

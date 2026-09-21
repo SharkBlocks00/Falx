@@ -1,1 +1,3 @@
+// Expects: E3002
+
 let x = "abc\

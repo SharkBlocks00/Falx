@@ -1,1 +1,5 @@
-if (true) { return 5; }
+// Expects: E2002
+
+if (true) {
+    return 5;
+}
