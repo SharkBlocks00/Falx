@@ -59,6 +59,9 @@ class FalxString(FalxValue, FalxIterable):
 
         return self.value == other.value
 
+    def getType(self) -> str:
+        return "string"
+
     def __str__(self):
         return self.value
 

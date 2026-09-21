@@ -17,6 +17,9 @@ class UserFunction(Callable):
         self.body: list[Statement] = body
         self.closure: Environment = closure
 
+    def getTypeName(self) -> str:
+        return "function"
+
     def isStrict(self) -> bool:
         return False
 
