@@ -1,0 +1,3 @@
+output(true);
+output(true > true);
+output(true < true);

@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
+from src.diagnostics.exceptions.runtime.operations.CannotCompareToException import CannotCompareToException
 from src.diagnostics.exceptions.runtime.operations.CannotDivideByValueException import CannotDivideByValueException
 from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException import CannotMinusFromValueException
@@ -47,6 +48,8 @@ class BinaryExpression(Expression):
             raise CannotEvaluateValueException(leftValue.asString(), rightValue.asString()).withLocation(self.location)
         except CannotMinusFromValueException:
             raise CannotMinusFromValueException(leftValue.asString(), rightValue.asString(), self.location) from None
+        except CannotCompareToException as e:
+            raise e.withLocation(self.location) from e
         except RuntimeError as e:
             raise FalxRuntimeException(str(e), self.location) from None
         except ZeroDivisionError:

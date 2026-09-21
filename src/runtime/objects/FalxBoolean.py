@@ -6,11 +6,6 @@ class FalxBoolean(FalxValue):
         super().__init__()
         self.value: bool = value
 
-    def compareTo(self, other: FalxValue) -> int:
-        a: float = self.asFloat()
-        b: float = other.asFloat()
-
-        return a == b
 
     def equalsValue(self, other: FalxValue) -> bool:
         if not isinstance(other, FalxBoolean):
@@ -18,7 +13,7 @@ class FalxBoolean(FalxValue):
         return self.value == other.value
 
     def asString(self) -> str:
-        return str(self.value)
+        return self.__str__()
 
     def asFloat(self) -> float:
         return float(self.value)
@@ -36,10 +31,10 @@ class FalxBoolean(FalxValue):
         return hash(self.value)
 
     def __str__(self) -> str:
-        return str(self.value)
+        return "true" if self.value else "false"
 
     def __repr__(self) -> str:
-        return str(self.value)
+        return self.__str__()
 
     def getTypeName(self) -> str:
         return "boolean"
