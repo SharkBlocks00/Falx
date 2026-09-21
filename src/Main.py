@@ -97,7 +97,7 @@ def main() -> int:
         return runFile(arguments.file)
 
     if arguments.command == "test":
-        TestRunner().runAll(arguments.update_snapshots)
+        TestRunner().runAll(arguments.update_snapshots, arguments.filter)
         return 0
 
     repl()

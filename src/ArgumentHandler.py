@@ -41,4 +41,9 @@ class ArgumentHandler:
             action="store_true"
         )
 
+        testParser.add_argument(
+            "--filter",
+            type=str
+        )
+
         return parser.parse_args(self.arguments[1:])

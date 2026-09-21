@@ -78,10 +78,13 @@ class TestRunner:
 
         self.TEST_TIMEOUT: float = 1.0 # one second
 
-    def runAll(self, updateSnapshots: bool = False) -> None:
+    def runAll(self, updateSnapshots: bool = False, filter: str | None = None) -> None:
         directory: Path = Path(__file__).parent.parent / "tests"
 
         files: list[Path] = sorted([item for item in directory.rglob("*") if item.is_file() and item.__str__().endswith(".flx")])
+
+        if filter is not None:
+            files = [path for path in files if filter.lower() in str(path.relative_to(directory)).lower()]
 
         passed: int = 0
         failed: int = 0
@@ -110,7 +113,7 @@ class TestRunner:
                 case "failure":
                     expected = ExpectedResult.FAILURE
                 case _:
-                    expected = ExpectedResult.SUCCESS
+                    raise ValueError(f"Unknown test category '{category}'")
 
             source: str = path.read_text(encoding="utf-8")
             expectedCode: str | None = self.getExpectedCode(source)
