@@ -120,6 +120,9 @@ class TestRunner:
 
             outputMatches: bool = False
             expectedOutput: str | None = None
+            exceptionName: str | None = None
+            expectedExceptionName: str | None = None
+            threw: bool = False
 
             start: float = time.perf_counter_ns()
 
@@ -143,7 +146,7 @@ class TestRunner:
 
                 timed_out = False
 
-                threw: bool = not testResult["success"]
+                threw = not testResult["success"]
 
                 exceptionName: str | None = testResult["exception"]
                 exceptionMessage: str | None = testResult.get("message")
@@ -212,7 +215,13 @@ class TestRunner:
                     else:
                         print(f"       {exception}")
                 else:
-                    print("       Expected an exception but none was thrown")
+                    if not threw:
+                        print("       Expected an exception but none was thrown")
+                    elif exceptionName != expectedExceptionName:
+                        print(f"       Expected exception: {expectedExceptionName}")
+                        print(f"       Actual exception:    {exceptionName}")
+                    else:
+                        print(f"       Unexpected exception: {exceptionName}")
 
         testQueue.put(None)
         process.join()
@@ -243,7 +252,11 @@ class TestRunner:
 
 
     def getExpectedCode(self, source: str) -> str | None:
-        firstLine: str = source.splitlines()[0]
+        lines: list[str] = source.splitlines()
+
+        if not lines: return None
+
+        firstLine: str = lines[0]
 
         if not firstLine.startswith("// Expects:"):
             return None
