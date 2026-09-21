@@ -110,7 +110,7 @@ class TestRunner:
                 case "failure":
                     expected = ExpectedResult.FAILURE
                 case _:
-                    raise ValueError(f"Unknown test category '{category}'")
+                    expected = ExpectedResult.SUCCESS
 
             source: str = path.read_text(encoding="utf-8")
             expectedCode: str | None = self.getExpectedCode(source)
