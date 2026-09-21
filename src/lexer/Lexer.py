@@ -139,8 +139,8 @@ class Lexer:
                     case "n": value += "\n"
                     case "t": value += "\t"
                     case "r": value += "\r"
-                    case "f": value += "\n"
-                    case "b": value += "\n"
+                    case "f": value += "\f"
+                    case "b": value += "\b"
                     case '"': value += '"'
                     case "\\": value += '\\'
                     case _: raise InvalidEscapeSequenceException(f"Invalid escape character: {escaped}", SourceLocation(self.filename, self.line, self.column-1))
