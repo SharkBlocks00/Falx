@@ -11,6 +11,7 @@ from src.runtime.methods.maps.RemoveMethod import RemoveMethod
 from src.runtime.methods.maps.ValuesMethod import ValuesMethod
 from src.runtime.objects.FalxArray import FalxArray
 from src.runtime.objects.FalxIterable import FalxIterable
+from src.runtime.objects.FalxNull import FalxNull
 from src.runtime.objects.FalxNumber import FalxNumber
 from src.runtime.objects.FalxString import FalxString
 from src.runtime.objects.FalxValue import FalxValue
@@ -31,17 +32,20 @@ class FalxMap(FalxValue, FalxIterable):
         self._methods["entries"] = EntriesMethod(self)
 
     def get(self, name: str) -> FalxValue:
-        try:
-            # use the base FalxValue class's get first
-            return super().get(name)
-        except FalxException:
-            return self.values.get(FalxString(name))
-        except RuntimeError:
-            # fallback to this class's values dict
-            return self.values.get(FalxString(name))
+        if FalxString(name) not in self.values:
+            try:
+                # use the base FalxValue class's get first
+                return super().get(name)
+            except FalxException:
+                return self.values.get(FalxString(name), FalxNull())
+            except RuntimeError:
+                # fallback to this class's values dict
+                return self.values.get(FalxString(name), FalxNull())
+
+        return self.values.get(FalxString(name), FalxNull())
 
     def index(self, index: FalxValue) -> FalxValue:
-        return self.values.get(index)
+        return self.values.get(index, FalxNull())
 
     def indexAssign(self, key: FalxValue, value: FalxValue) -> None:
         self.values[key] = value
@@ -64,8 +68,6 @@ class FalxMap(FalxValue, FalxIterable):
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, FalxMap) and self.values == other.values
 
-    def __hash__(self) -> int:
-        return hash(self.values)
 
     def __str__(self) -> str:
         return self.values.__str__()

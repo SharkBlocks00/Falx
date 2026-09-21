@@ -18,7 +18,7 @@ class TypeOfFunction(NativeFunction):
         return 1
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
-        return FalxString(arguments[0].__class__.__name__) # returns the string value of the type
+        return FalxString(arguments[0].getTypeName()) # returns the string value of the type
 
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, TypeOfFunction)

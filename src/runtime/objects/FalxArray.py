@@ -63,10 +63,10 @@ class FalxArray(FalxValue, FalxIterable):
         return "array"
 
     def __str__(self) -> str:
-        return str(self.values)
+        return self.__repr__()
 
     def __repr__(self) -> str:
-        return ", ".join(repr(val) for val in self.values)
+        return "[" + ",".join(repr(v) for v in self.values) + "]"
 
     def push(self, value: FalxValue) -> None:
         self.values.append(value)

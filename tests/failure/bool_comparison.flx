@@ -1,0 +1,5 @@
+// Expects: E1010
+
+output(true);
+output(true > true);
+output(true < true);

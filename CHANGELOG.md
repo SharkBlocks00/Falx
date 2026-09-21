@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - REPL mode
 - Default values for function parameters
 - Tuples
+- Added improvements to testing
+- Fixed parser hanging on unterminated structs
+- Fixed parser and lexer throwing raw Python traceback
 
 ## [0.2.0]
 
@@ -26,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Runtime errors now provide more specific diagnostic information instead of using Python erros
+- Runtime errors now provide more specific diagnostic information instead of using Python errors
 - Error messages now include the relevant source location where available
 
 ## [0.1.0]

@@ -22,3 +22,6 @@ class Callable(FalxValue, ABC):
     @abstractmethod
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         pass
+
+    def getTypeName(self) -> str:
+        return "callable"

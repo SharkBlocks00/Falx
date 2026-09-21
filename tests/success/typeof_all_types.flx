@@ -3,3 +3,5 @@ output(typeof("hello"));
 output(typeof(true));
 output(typeof([1, 2]));
 output(typeof({ key: "val" }));
+output(typeof(typeof));
+output(typeof(output));

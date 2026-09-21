@@ -1,5 +1,7 @@
-FalxNumber
-FalxString
-FalxBoolean
-FalxArray
-FalxMap
+number
+string
+boolean
+array
+map
+callable
+callable
