@@ -3,3 +3,5 @@ object
 boolean
 array
 map
+callable
+callable
