@@ -24,24 +24,21 @@ class LogicalExpression(Expression):
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
         leftValue: FalxValue = self.left.evaluate(interpreter, environment)
-        rightValue: FalxValue = self.right.evaluate(interpreter, environment)
 
         try:
-            if self.operator.tokenKind == TokenKind.OR:
-                if isTruthy(leftValue):
-                    return leftValue
+            if self.operator.tokenKind == TokenKind.OR and isTruthy(leftValue):
+                return leftValue
 
-                return rightValue
+            if self.operator.tokenKind == TokenKind.AND and not isTruthy(leftValue):
+                return leftValue
 
-            if self.operator.tokenKind == TokenKind.AND:
-                if not isTruthy(leftValue):
-                    return leftValue
-                return rightValue
-
-            return leftValue
         except CannotConvertToTypeException:
-            raise CannotEvaluateValueException(leftValue.asString(), rightValue.asString()).withLocation(self.location)
+            raise CannotEvaluateValueException(
+                leftValue.asString(),
+                self.operator.tokenKind.name
+            ).withLocation(self.location)
 
+        return self.right.evaluate(interpreter, environment)
 
 
 def isTruthy(value: FalxValue) -> bool:
