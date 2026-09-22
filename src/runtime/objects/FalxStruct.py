@@ -1,4 +1,3 @@
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException

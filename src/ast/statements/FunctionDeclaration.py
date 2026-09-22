@@ -1,6 +1,5 @@
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException import DuplicateParameterException
 from src.diagnostics.exceptions.runtime.variables.FunctionAlreadyExistsException import FunctionAlreadyExistsException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException

@@ -1,7 +1,6 @@
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
 from src.ast.statements.FunctionDeclaration import FunctionDeclaration
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.runtime.Environment import Environment
