@@ -26,14 +26,12 @@ class FalxStruct(FalxValue):
     def get(self, name: str) -> FalxValue:
         if name in self.methods:
             return self.methods[name]
-        try:
-            return self.env.get(name)
-        except RuntimeError:
-            return super().get(name)
+
+        return self.env.getLocal(name)
 
     def set(self, name: str, value: FalxValue) -> None:
         try:
-            self.env.assign(name, value)
+            self.env.assignLocal(name, value)
         except UndefinedVariableException:
             raise CannotSetPropertyException(self.definition.name, name)
 

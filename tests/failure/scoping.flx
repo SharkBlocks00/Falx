@@ -1,0 +1,8 @@
+// Expects: E1014
+
+let counter = 0;
+struct A { x = 1;}
+let a = A();
+a.counter = 99;
+output(counter);
+output(a.output);

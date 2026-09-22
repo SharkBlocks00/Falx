@@ -49,7 +49,7 @@ python -m src.Main --version
 Run the test suite:
 
 ```bash
-python -m src.Main --test
+python -m src.Main test
 ```
 
 ## Project status

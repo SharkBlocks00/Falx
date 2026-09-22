@@ -1,4 +1,5 @@
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
+from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.runtime.Environment import Environment
 from src.runtime.objects.FalxValue import FalxValue
 
@@ -11,8 +12,8 @@ class FalxModule(FalxValue):
 
     def get(self, name: str) -> FalxValue:
         try:
-            return self.environment.get(name)
-        except RuntimeError:
+            return self.environment.getLocal(name)
+        except UndefinedVariableException:
             raise CannotAccessPropertyException(
                 f"Module '{self.name}' has no property '{name}'"
             ) from None
