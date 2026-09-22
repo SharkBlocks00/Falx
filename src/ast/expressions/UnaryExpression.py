@@ -33,5 +33,3 @@ class UnaryExpression(Expression):
                 case _: return value
         except CannotConvertToTypeException as e:
             raise CannotInvertValueException(value.asString(), self.location) from e
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None

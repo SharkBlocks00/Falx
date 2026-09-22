@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
+from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -24,8 +25,10 @@ class GetExpression(Expression):
             return value.get(self._property)
         except CannotAccessPropertyException:
             raise CannotAccessPropertyException(f"'{self.obj}' has no property '{self._property}'", self.location)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except UndefinedVariableException as e:
+            raise e.withLocation(self.location)
+        except FalxRuntimeException as e:
+            raise e.__class__(e.message, self.location) from e
 
     def __str__(self):
         return f"GetExpression({self.obj}, {self._property})"

@@ -2,6 +2,8 @@ from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException import DuplicateParameterException
+from src.diagnostics.exceptions.runtime.variables.FunctionAlreadyExistsException import FunctionAlreadyExistsException
+from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
 from src.runtime.values.ParameterDefinition import ParameterDefinition
@@ -28,8 +30,8 @@ class FunctionDeclaration(Statement):
         try:
             function: UserFunction = UserFunction(self.parameters, self.body, environment)
             environment.define(self.name, function, False)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except VariableAlreadyExistsException:
+            raise FunctionAlreadyExistsException(self.name, self.location)
 
     def __str__(self) -> str:
         return f"{self.name}({self.parameters}) -> {self.body}"

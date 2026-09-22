@@ -50,8 +50,6 @@ class BinaryExpression(Expression):
             raise CannotMinusFromValueException(leftValue.asString(), rightValue.asString(), self.location) from None
         except CannotCompareToException as e:
             raise e.withLocation(self.location) from e
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
         except ZeroDivisionError:
             raise DivisionByZeroException(self.location) from None
 

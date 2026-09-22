@@ -1,3 +1,5 @@
+from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.properties.CannotAccessPropertyException import CannotAccessPropertyException
 from src.diagnostics.exceptions.runtime.properties.CannotSetPropertyException import CannotSetPropertyException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.runtime.objects.FalxNull import FalxNull
@@ -27,7 +29,10 @@ class FalxStruct(FalxValue):
         if name in self.methods:
             return self.methods[name]
 
-        return self.env.getLocal(name)
+        try:
+            return self.env.getLocal(name)
+        except UndefinedVariableException:
+            raise CannotAccessPropertyException(name)
 
     def set(self, name: str, value: FalxValue) -> None:
         try:

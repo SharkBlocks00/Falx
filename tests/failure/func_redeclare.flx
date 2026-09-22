@@ -1,4 +1,4 @@
-// Expects: E1005
+// Expects: E1031
 
 func f = define() {
     return 1;

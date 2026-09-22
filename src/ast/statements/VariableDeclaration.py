@@ -27,8 +27,6 @@ class VariableDeclaration(Statement):
             raise CannotConvertToTypeException(self.name, e.expected).withLocation(self.location)
         except RecursionError:
             raise RecursionDepthExceededException(20, self.location)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
 
     def __str__(self):
         return f"{self.name} = {self.initializer}"

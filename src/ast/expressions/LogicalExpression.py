@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
+from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -22,23 +24,24 @@ class LogicalExpression(Expression):
         self.right: Expression = right
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
-        try:
-            leftValue: FalxValue = self.left.evaluate(interpreter, environment)
+        leftValue: FalxValue = self.left.evaluate(interpreter, environment)
+        rightValue: FalxValue = self.right.evaluate(interpreter, environment)
 
+        try:
             if self.operator.tokenKind == TokenKind.OR:
                 if isTruthy(leftValue):
                     return leftValue
 
-                return self.right.evaluate(interpreter, environment)
+                return rightValue
 
             if self.operator.tokenKind == TokenKind.AND:
                 if not isTruthy(leftValue):
                     return leftValue
-                return self.right.evaluate(interpreter, environment)
+                return rightValue
 
             return leftValue
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except CannotConvertToTypeException:
+            raise CannotEvaluateValueException(leftValue.asString(), rightValue.asString()).withLocation(self.location)
 
 
 

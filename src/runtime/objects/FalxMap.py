@@ -38,9 +38,7 @@ class FalxMap(FalxValue, FalxIterable):
                 return super().get(name)
             except FalxException:
                 return self.values.get(FalxString(name), FalxNull())
-            except RuntimeError:
-                # fallback to this class's values dict
-                return self.values.get(FalxString(name), FalxNull())
+
 
         return self.values.get(FalxString(name), FalxNull())
 

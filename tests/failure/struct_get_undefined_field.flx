@@ -1,4 +1,4 @@
-// Expects: E1000
+// Expects: E1012
 
 struct Point { x; y; }
 let p = Point();

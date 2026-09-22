@@ -1,0 +1,5 @@
+// Expects: E1012
+
+struct P { x =1; }
+let p = P();
+output(p.nope);
