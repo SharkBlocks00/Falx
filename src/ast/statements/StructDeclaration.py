@@ -1,7 +1,8 @@
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
 from src.ast.statements.FunctionDeclaration import FunctionDeclaration
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
+from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
 from src.runtime.values.FieldDefinition import FieldDefinition
@@ -28,5 +29,7 @@ class StructDeclaration(Statement):
             constructor: StructConstructor = StructConstructor(definition)
 
             environment.define(self.name, constructor, False)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except VariableAlreadyExistsException as e:
+            raise e.withLocation(self.location)
+        except UndefinedVariableException as e:
+            raise e.withLocation(self.location)

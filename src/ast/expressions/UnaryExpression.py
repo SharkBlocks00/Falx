@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.diagnostics.exceptions.runtime.operations.CannotInvertValueException import CannotInvertValueException
 
@@ -33,5 +32,3 @@ class UnaryExpression(Expression):
                 case _: return value
         except CannotConvertToTypeException as e:
             raise CannotInvertValueException(value.asString(), self.location) from e
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None

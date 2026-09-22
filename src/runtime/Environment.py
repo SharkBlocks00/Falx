@@ -60,3 +60,22 @@ class Environment:
             return self.parent.get(name)
 
         raise UndefinedVariableException(name)
+
+    def getLocal(self, name: str) -> FalxValue:
+        variable: Variable = self.variables.get(name)
+
+        if variable is not None:
+            return variable.value
+
+        raise UndefinedVariableException(name)
+
+    def assignLocal(self, name: str, value: FalxValue) -> None:
+        variable: Variable = self.variables.get(name)
+
+        if variable is not None:
+            if not variable.mutable:
+                raise AssignToConstantException(name)
+            variable.value = value
+            return
+
+        raise UndefinedVariableException(name)

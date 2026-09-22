@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
+from src.diagnostics.exceptions.runtime.indexing.ObjectIsNotIndexableException import ObjectIsNotIndexableException
 from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
 
 if TYPE_CHECKING:
@@ -32,6 +32,6 @@ class IndexExpression(Expression):
             raise StringIndexInvalidException(_idx.asInt(), len(_obj.asString())).withLocation(self.location)
         except InvalidIndexTypeException as e:
             raise InvalidIndexTypeException(e.__str__(), self.location)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except ObjectIsNotIndexableException as e:
+            raise e.withLocation(self.location)
     

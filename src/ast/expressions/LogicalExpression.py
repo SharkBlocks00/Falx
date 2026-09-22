@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
+from src.diagnostics.exceptions.runtime.operations.CannotEvaluateValueException import CannotEvaluateValueException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -22,24 +23,22 @@ class LogicalExpression(Expression):
         self.right: Expression = right
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
+        leftValue: FalxValue = self.left.evaluate(interpreter, environment)
+
         try:
-            leftValue: FalxValue = self.left.evaluate(interpreter, environment)
+            if self.operator.tokenKind == TokenKind.OR and isTruthy(leftValue):
+                return leftValue
 
-            if self.operator.tokenKind == TokenKind.OR:
-                if isTruthy(leftValue):
-                    return leftValue
+            if self.operator.tokenKind == TokenKind.AND and not isTruthy(leftValue):
+                return leftValue
 
-                return self.right.evaluate(interpreter, environment)
+        except CannotConvertToTypeException:
+            raise CannotEvaluateValueException(
+                leftValue.asString(),
+                self.operator.tokenKind.name
+            ).withLocation(self.location)
 
-            if self.operator.tokenKind == TokenKind.AND:
-                if not isTruthy(leftValue):
-                    return leftValue
-                return self.right.evaluate(interpreter, environment)
-
-            return leftValue
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
-
+        return self.right.evaluate(interpreter, environment)
 
 
 def isTruthy(value: FalxValue) -> bool:

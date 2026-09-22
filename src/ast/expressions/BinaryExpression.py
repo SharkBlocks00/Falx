@@ -9,7 +9,6 @@ from src.diagnostics.exceptions.runtime.operations.CannotMinusFromValueException
 from src.diagnostics.exceptions.runtime.operations.CannotModWithValueException import CannotModWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotMultiplyByValueException import CannotMultiplyByValueException
 from src.diagnostics.exceptions.runtime.operations.DivisionByZeroException import DivisionByZeroException
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -50,8 +49,6 @@ class BinaryExpression(Expression):
             raise CannotMinusFromValueException(leftValue.asString(), rightValue.asString(), self.location) from None
         except CannotCompareToException as e:
             raise e.withLocation(self.location) from e
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
         except ZeroDivisionError:
             raise DivisionByZeroException(self.location) from None
 

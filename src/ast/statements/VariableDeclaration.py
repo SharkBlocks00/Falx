@@ -1,7 +1,6 @@
 from src.ast.Expression import Expression
 from src.ast.SourceLocation import SourceLocation
 from src.ast.Statement import Statement
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.diagnostics.exceptions.runtime.operations.CannotConvertToTypeException import CannotConvertToTypeException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
@@ -27,8 +26,6 @@ class VariableDeclaration(Statement):
             raise CannotConvertToTypeException(self.name, e.expected).withLocation(self.location)
         except RecursionError:
             raise RecursionDepthExceededException(20, self.location)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
 
     def __str__(self):
         return f"{self.name} = {self.initializer}"

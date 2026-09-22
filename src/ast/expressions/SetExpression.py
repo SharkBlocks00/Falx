@@ -44,5 +44,5 @@ class SetExpression(Expression):
             raise e.withLocation(self.location)
         except ImmutableValueException as e:
             raise e.withLocation(self.location)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except FalxRuntimeException as e:
+            raise e.__class__(str(e), self.location) from e

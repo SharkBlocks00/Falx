@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
+from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -20,8 +20,8 @@ class VariableExpression(Expression):
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
         try:
             return environment.get(self.name)
-        except RuntimeError as e:
-            raise FalxRuntimeException(str(e), self.location) from None
+        except UndefinedVariableException as e:
+            raise e.withLocation(self.location)
 
     def __str__(self):
         return self.name

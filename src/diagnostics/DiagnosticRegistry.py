@@ -44,6 +44,7 @@ from src.diagnostics.exceptions.runtime.typing.ImmutableValueException import Im
 from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
 from src.diagnostics.exceptions.runtime.variables.AssignToConstantException import AssignToConstantException
 from src.diagnostics.exceptions.runtime.variables.DestructureCountException import DestructureCountException
+from src.diagnostics.exceptions.runtime.variables.FunctionAlreadyExistsException import FunctionAlreadyExistsException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.diagnostics.exceptions.runtime.AssertionFailedException import AssertionFailedException
@@ -194,6 +195,19 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         ),
         notes=(
             "A variable cannot be declared more than once in the same environment.",
+        )
+    ),
+
+    FunctionAlreadyExistsException: DiagnosticDefinition(
+        code=DiagnosticCode.FUNCTION_ALREADY_EXISTS,
+        severity=DiagnosticSeverity.ERROR,
+        title="function already exists",
+        help=(
+            "Choose a different function name than the one you are assigning to.",
+        ),
+        notes=(
+            "A function cannot be declared more than once in the same environment.",
+            "A function is immutable, so you must declare a new function instead of assigning a new value."
         )
     ),
 
