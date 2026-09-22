@@ -1,0 +1,13 @@
+// Expects: E1021
+
+struct P { x; }
+let p = P(1,2,3,4);
+output(p.x);
+
+func make = define() {
+    let base = 10;
+    struct S { v = base; }
+    return S();
+}
+
+output(make().v);

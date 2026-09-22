@@ -1,2 +1,4 @@
+// Expects: E1000
+
 if (true) { let inner = 1; }
 output(inner);

@@ -1,3 +1,4 @@
+from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
 from src.packages.Callable import Callable
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
@@ -20,11 +21,15 @@ class StructConstructor(Callable):
         return len(self.definition.fields)
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
+
+        requiredFields: int = len([field for field in self.definition.fields if field.defaultValue is None])
+
+        if len(arguments) != requiredFields and len(arguments) > len(self.definition.fields):
+            raise InvalidArgumentCountException(len(arguments), len(self.definition.fields))
+
         struct: FalxStruct = FalxStruct(self.definition)
 
         fields: list[FieldDefinition] = self.definition.fields
-
-        env: Environment = Environment(interpreter.environment)
 
         i = 0
         while i < len(fields):
@@ -35,7 +40,7 @@ class StructConstructor(Callable):
             if i < len(arguments):
                 value: FalxValue = arguments[i]
             elif field.defaultValue is not None:
-                value: FalxValue = field.defaultValue.evaluate(interpreter, env)
+                value: FalxValue = field.defaultValue.evaluate(interpreter, Environment(self.definition.closure))
             else:
                 value: FalxValue = FalxNull()
 
