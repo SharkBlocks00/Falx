@@ -16,8 +16,9 @@ class IfStatement(Statement):
 
     def execute(self, interpreter: Interpreter, environment: Environment) -> None:
         if isTruthy(self.condition.evaluate(interpreter, environment)):
+            scope: Environment = Environment(environment)
             for stmt in self.body:
-                stmt.execute(interpreter, environment)
+                stmt.execute(interpreter, scope)
 
         elif self.elseBody is not None:
             self.elseBody.execute(interpreter, environment)
