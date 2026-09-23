@@ -20,11 +20,13 @@ class ModuleLoader:
         self.loadingModules: list[Path] = []
         self.cachedModules: dict[Path, FalxModule] = {}
 
-    def load(self, name: str) -> FalxModule:
+    def load(self, name: str, relativeTo: Path | None = None) -> FalxModule:
         from src.parser.Parser import Parser
+        from src.packages.builtins.RequireFunction import RequireFunction
 
-        relative_to = self.loadingModules[-1] if self.loadingModules else None
-        path = self._resolve(name, relative_to)
+        if relativeTo is None:
+            relativeTo = self.loadingModules[-1] if self.loadingModules else None
+        path = self._resolve(name, relativeTo)
 
         if path in self.loadingModules:
             raise CircularModuleDependencyException(path, self.loadingModules)
@@ -32,7 +34,9 @@ class ModuleLoader:
         if path in self.cachedModules:
             return self.cachedModules[path]
 
-        environment = Environment(self.interpreter.globals)
+        moduleGlobals: Environment = Environment(self.interpreter.globals)
+        moduleGlobals.define("require", RequireFunction(self, path), False)
+        environment = Environment(moduleGlobals)
         module = FalxModule(name, environment)
 
         self.cachedModules[path] = module

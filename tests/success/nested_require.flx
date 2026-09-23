@@ -1,0 +1,4 @@
+let s1 = require("nested/shared");
+let s2 = require("nested/../nested/shared");
+output(s1 == s2);
+assert(s1 == s2, "Two of the same module should be equal!");
