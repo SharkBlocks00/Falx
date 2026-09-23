@@ -23,7 +23,7 @@ class RequireFunction(NativeFunction):
         return hash(self.__class__)
 
     def __eq__(self, other) -> bool:
-        return isinstance(other, RequireFunction) and self.moduleLoader is other.moduleLoader
+        return isinstance(other, RequireFunction) and self.moduleLoader is other.moduleLoader and self.relativeTo is other.relativeTo
 
     def isStrict(self) -> bool:
         return True
