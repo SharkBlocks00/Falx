@@ -1,6 +1,8 @@
 from typing import Iterable
 
 from src.diagnostics.exceptions.FalxException import FalxException
+from src.diagnostics.exceptions.runtime.indexing.MapIndexInvalidException import MapIndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.CannotHashObjectException import CannotHashObjectException
 from src.runtime.methods.maps.ClearMethod import ClearMethod
 from src.runtime.methods.maps.ContainsMethod import ContainsMethod
 from src.runtime.methods.maps.CopyMethod import CopyMethod
@@ -46,7 +48,10 @@ class FalxMap(FalxValue, FalxIterable):
         return self.values.get(index, FalxNull())
 
     def indexAssign(self, key: FalxValue, value: FalxValue) -> None:
-        self.values[key] = value
+        try:
+            self.values[key] = value
+        except TypeError:
+            raise CannotHashObjectException(key.asString(), key.getTypeName())
 
     def getTypeName(self) -> str:
         return "map"
@@ -86,7 +91,10 @@ class FalxMap(FalxValue, FalxIterable):
         return self.values.copy()
 
     def remove(self, key: FalxValue) -> None:
-        self.values.pop(key)
+        try:
+            self.values.pop(key)
+        except KeyError:
+            raise MapIndexInvalidException(key.asString(), len(self.values))
 
     def clear(self) -> None:
         self.values = {}

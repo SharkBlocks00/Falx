@@ -14,12 +14,15 @@ from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationExcepti
     InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
+from src.diagnostics.exceptions.runtime.ExpectedValueException import ExpectedValueException
 from src.diagnostics.exceptions.runtime.FalxRuntimeException import FalxRuntimeException
 from src.diagnostics.exceptions.runtime.ObjectNotIterableException import ObjectNotIterableException
 from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.CannotHashObjectException import CannotHashObjectException
 from src.diagnostics.exceptions.runtime.indexing.IndexInvalidException import IndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
+from src.diagnostics.exceptions.runtime.indexing.MapIndexInvalidException import MapIndexInvalidException
 from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException import StringIndexInvalidException
 from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException import DuplicateParameterException
 from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
@@ -362,6 +365,18 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         )
     ),
 
+    MapIndexInvalidException: DiagnosticDefinition(
+        code=DiagnosticCode.MAP_INVALID_INDEX,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid index on map",
+        help=(
+            "Check that the index/key is within the valid range or keyset of the map.",
+        ),
+        notes=(
+            "A map index must refer to an element that exists within the map",
+        )
+    ),
+
     StringIndexInvalidException: DiagnosticDefinition(
         code=DiagnosticCode.STRING_INVALID_INDEX,
         severity=DiagnosticSeverity.ERROR,
@@ -602,6 +617,24 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         title="cannot invert value",
         help=(
             "Check that the type of the value you are inverting can be inverted",
+        )
+    ),
+
+    ExpectedValueException: DiagnosticDefinition(
+        code=DiagnosticCode.EXPECTED_VALUE,
+        severity=DiagnosticSeverity.ERROR,
+        title="expected value",
+        help=(
+            "Check that you are supplying the correct arguments",
+        )
+    ),
+
+    CannotHashObjectException: DiagnosticDefinition(
+        code=DiagnosticCode.CANNOT_HASH_OBJECT,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot hash object",
+        help=(
+            "Make sure you are not using a mutable object as a key",
         )
     )
 }

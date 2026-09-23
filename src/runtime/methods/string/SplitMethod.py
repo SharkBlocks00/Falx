@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.ExpectedValueException import ExpectedValueException
 from src.diagnostics.exceptions.runtime.typing.UnexpectedTypeException import UnexpectedTypeException
 
 if TYPE_CHECKING:
@@ -26,6 +27,8 @@ class SplitMethod(BoundNativeFunction):
             raise UnexpectedTypeException(FalxString.__class__.__name__, self.this.asString())
 
         string: FalxString = self.this
+        if arguments[0].asString() == "":
+            raise ExpectedValueException("Empty seperator on split method")
         arr: list[str] = string.asString().split(arguments[0].asString())
         output: list[FalxValue] = [FalxString(part) for part in arr]
         return FalxArray(output)

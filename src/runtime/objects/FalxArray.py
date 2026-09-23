@@ -14,6 +14,7 @@ from src.runtime.methods.array.RemoveMethod import RemoveMethod
 from src.runtime.methods.array.ReverseMethod import ReverseMethod
 from src.runtime.methods.array.SortMethod import SortMethod
 from src.runtime.objects.FalxIterable import FalxIterable
+from src.runtime.objects.FalxNull import FalxNull
 from src.runtime.objects.FalxValue import FalxValue
 from src.runtime.objects.FalxNumber import FalxNumber
 
@@ -45,6 +46,7 @@ class FalxArray(FalxValue, FalxIterable):
         return self.values[index.asInt()]
 
     def indexAssign(self, key: FalxValue, value: FalxValue) -> None:
+        ArrayIndexInvalidException.check(key.asInt(), len(self.values))
         self.values[key.asInt()] = value
 
     def equalsValue(self, other: FalxValue) -> bool:
@@ -56,8 +58,6 @@ class FalxArray(FalxValue, FalxIterable):
     def __eq__(self, other: FalxValue) -> bool:
         return isinstance(other, FalxArray) and self.values == other.values
 
-    def __hash__(self) -> int:
-        return hash(self.values)
 
     def getTypeName(self) -> str:
         return "array"
@@ -72,12 +72,15 @@ class FalxArray(FalxValue, FalxIterable):
         self.values.append(value)
 
     def pop(self) -> FalxValue:
+        if len(self.values) == 0: return FalxNull()
         return self.values.pop()
 
     def insert(self, index: int, value: FalxValue) -> None:
+        ArrayIndexInvalidException.check(index, len(self.values))
         self.values.insert(index, value)
 
     def remove(self, index: int) -> FalxValue:
+        ArrayIndexInvalidException.check(index, len(self.values))
         return self.values.pop(index)
 
     def clear(self) -> None:

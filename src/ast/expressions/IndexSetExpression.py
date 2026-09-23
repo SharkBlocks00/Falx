@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from src.ast.expressions.BinaryExpression import BinaryExpression
+from src.diagnostics.exceptions.runtime.indexing.ArrayIndexInvalidException import ArrayIndexInvalidException
+from src.diagnostics.exceptions.runtime.indexing.CannotHashObjectException import CannotHashObjectException
 from src.diagnostics.exceptions.runtime.indexing.InvalidIndexTypeException import InvalidIndexTypeException
 from src.diagnostics.exceptions.runtime.indexing.ObjectIsNotIndexableException import ObjectIsNotIndexableException
 from src.diagnostics.exceptions.runtime.typing.ImmutableValueException import ImmutableValueException
@@ -41,6 +43,10 @@ class IndexSetExpression(Expression):
         except ImmutableValueException as e:
             raise e.withLocation(self.location)
         except ObjectIsNotIndexableException as e:
+            raise e.withLocation(self.location)
+        except CannotHashObjectException as e:
+            raise e.withLocation(self.location)
+        except ArrayIndexInvalidException as e:
             raise e.withLocation(self.location)
 
     def __str__(self):
