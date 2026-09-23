@@ -1,0 +1,3 @@
+let s1 = require("shared");
+let s2 = require("shared");
+output(s1 == s2);

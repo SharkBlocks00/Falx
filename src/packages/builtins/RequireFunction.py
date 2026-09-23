@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 
@@ -12,15 +14,16 @@ from src.runtime.objects.FalxValue import FalxValue
 class RequireFunction(NativeFunction):
     """require(module) loads a local .flx file/module"""
 
-    def __init__(self, moduleLoader: ModuleLoader):
+    def __init__(self, moduleLoader: ModuleLoader, relativeTo: Path | None = None):
         super().__init__()
         self.moduleLoader: ModuleLoader = moduleLoader
+        self.relativeTo: Path | None = relativeTo
 
     def __hash__(self) -> int:
         return hash(self.__class__)
 
     def __eq__(self, other) -> bool:
-        return isinstance(other, RequireFunction) and self.moduleLoader is other.moduleLoader
+        return isinstance(other, RequireFunction) and self.moduleLoader is other.moduleLoader and self.relativeTo is other.relativeTo
 
     def isStrict(self) -> bool:
         return True
@@ -31,7 +34,7 @@ class RequireFunction(NativeFunction):
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         moduleName = arguments[0].asString()
 
-        return self.moduleLoader.load(moduleName)
+        return self.moduleLoader.load(moduleName, self.relativeTo)
 
     def __str__(self) -> str:
         return "<require function>"
