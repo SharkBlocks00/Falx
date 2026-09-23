@@ -1,0 +1,5 @@
+assert(7 / 2 == 3, "7 / 2 should truncate to 3");
+assert(10 / 5 == 2, "10 / 5 should equal 2");
+assert(1 / 2 == 0, "1 / 2 should truncate to 0");
+assert(-7 / 2 == -3, "-7 / 2 should truncate toward zero");
+assert(7 / -2 == -3, "7 / -2 should truncate toward zero");
