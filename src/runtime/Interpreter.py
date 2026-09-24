@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from src.ast.Statement import Statement
@@ -18,9 +19,12 @@ class Interpreter:
 
         self.moduleLoader = ModuleLoader(self, projectDir)
 
+        self.maxRecursionDepth = 500
+        self.recursionDepth = 0
+
         self.registerBuiltins()
 
-        self.maxRecursionDepth = 20
+        sys.setrecursionlimit(5000)
 
     def interpret(self, program: list[Statement]):
         # Because of how all the statements and expressions are structured,
@@ -33,8 +37,8 @@ class Interpreter:
         for statement in program:
             try:
                 statement.execute(self, environment)
-            except RecursionError:
-                raise RecursionDepthExceededException(self.maxRecursionDepth, statement.location)
+            except RecursionDepthExceededException as e:
+                raise e.withLocation(statement.location)
 
 
     def registerBuiltins(self):

@@ -1,4 +1,5 @@
 from src.ast.Statement import Statement
+from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.packages.Callable import Callable
 from src.runtime.Environment import Environment
 from src.runtime.Interpreter import Interpreter
@@ -50,10 +51,17 @@ class UserFunction(Callable):
 
 
         try:
+            if interpreter.recursionDepth >= interpreter.maxRecursionDepth:
+                raise RecursionDepthExceededException(interpreter.maxRecursionDepth)
+
+            interpreter.recursionDepth += 1
+
             for stmt in self.body:
                 stmt.execute(interpreter, local)
         except ReturnException as r:
             return r.value
+        finally:
+            interpreter.recursionDepth -= 1
 
         return FalxNull()
 

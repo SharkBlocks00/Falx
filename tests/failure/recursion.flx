@@ -1,0 +1,6 @@
+// Expects: E1024
+
+func f = define(n) { if (n == 0) { return 0; } return 1 + f(n - 1); }
+output(f(50));
+output(f(200));
+output(f(3999));
