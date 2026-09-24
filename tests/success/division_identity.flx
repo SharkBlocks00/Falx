@@ -1,0 +1,9 @@
+let a = -17;
+let b = 5;
+
+let quotient = a / b;
+let remainder = a % b;
+
+assert(quotient == -3, "-17 / 5 should equal -3");
+assert(remainder == -2, "-17 % 5 should equal -2");
+assert(quotient * b + remainder == a, "quotient and remainder should reconstruct the original value");

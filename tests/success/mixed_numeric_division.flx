@@ -1,0 +1,5 @@
+assert(7.0 / 2.0 == 3.5, "float division should produce a fractional result");
+assert(-7.0 / 2.0 == -3.5, "negative float division should remain fractional");
+assert(7 / 2.0 == 3.5, "mixed integer and float division should produce a float");
+assert(7.0 / 2 == 3.5, "mixed float and integer division should produce a float");
+assert(7.0 % 2.0 == 1.0, "float modulo should produce a float");

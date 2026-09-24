@@ -1,0 +1,5 @@
+let value = 9007199254740993;
+
+assert(value / 1 == 9007199254740993, "large integer division must preserve precision");
+assert(value / 3 == 3002399751580331, "large integer division must not convert integers to floats");
+assert(value % 3 == 0, "large integer remainder should remain exact");

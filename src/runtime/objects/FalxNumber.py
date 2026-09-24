@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 
 from src.runtime.objects.FalxValue import FalxValue
 
@@ -99,13 +100,25 @@ def _mul(a: int | float, b: int | float) -> int | float:
 
 def _div(a: int | float, b: int | float) -> int | float:
     if isinstance(a, int) and isinstance(b, int):
-        return int(a / b)
+        if b == 0: raise ZeroDivisionError()
+        q = abs(a) // abs(b)
+        if (a < 0) != (b < 0):
+            q = -q
+        return q
+
     return float(a) / float(b)
 
 def _mod(a: int | float, b: int | float) -> int | float:
     if isinstance(a, int) and isinstance(b, int):
-        return int(a % b)
-    return float(a) % b
+        if b == 0: raise ZeroDivisionError()
+        q = abs(a) // abs(b)
+        if (a < 0) != (b < 0):
+            q = -q
+        return a - (q * b)
+
+    if b == 0: raise ZeroDivisionError()
+
+    return math.fmod(float(a), float(b))
 
 
 
