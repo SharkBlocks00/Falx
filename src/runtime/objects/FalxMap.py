@@ -50,7 +50,7 @@ class FalxMap(FalxValue, FalxIterable):
     def indexAssign(self, key: FalxValue, value: FalxValue) -> None:
         try:
             self.values[key] = value
-        except TypeError:
+        except TypeError | KeyError:
             raise CannotHashObjectException(key.asString(), key.getTypeName())
 
     def getTypeName(self) -> str:
@@ -95,6 +95,8 @@ class FalxMap(FalxValue, FalxIterable):
             self.values.pop(key)
         except KeyError:
             raise MapIndexInvalidException(key.asString(), len(self.values))
+        except TypeError:
+            raise CannotHashObjectException(key.asString(), key.getTypeName())
 
     def clear(self) -> None:
         self.values = {}

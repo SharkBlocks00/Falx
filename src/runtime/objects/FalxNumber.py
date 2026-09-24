@@ -116,6 +116,8 @@ def _mod(a: int | float, b: int | float) -> int | float:
             q = -q
         return a - (q * b)
 
+    if b == 0: raise ZeroDivisionError()
+
     return math.fmod(float(a), float(b))
 
 
