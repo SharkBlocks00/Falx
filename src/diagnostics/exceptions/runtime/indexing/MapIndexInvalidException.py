@@ -7,5 +7,7 @@ class MapIndexInvalidException(IndexInvalidException):
 
     @staticmethod
     def check(index: int, size: int) -> None:
-        if index >= size:
+        if size == 0 and index == 0:
+            return
+        if index > size or index < -size:
             raise MapIndexInvalidException(index, size)
