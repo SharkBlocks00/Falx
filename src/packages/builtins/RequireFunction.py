@@ -34,7 +34,16 @@ class RequireFunction(NativeFunction):
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         moduleName = arguments[0].asString()
 
-        return self.moduleLoader.load(moduleName, self.relativeTo)
+        module: list[str] = moduleName.split("::")
+
+        if len(module) == 1:
+            return self.moduleLoader.load(moduleName, self.relativeTo)
+
+        if module[0] == "_internal":
+            return self.moduleLoader.loadInternal(moduleName.replace("_internal", "").replace("::", "/"))
+        else:
+            raise Exception
+
 
     def __str__(self) -> str:
         return "<require function>"

@@ -60,6 +60,12 @@ class ModuleLoader:
         finally:
             self.loadingModules.pop()
 
+    def loadInternal(self, name: str) -> FalxModule:
+        match name:
+            case "/math":
+                from src.modules.internal.math.MathEnvironment import MATH_ENVIRONMENT
+                return FalxModule("math", MATH_ENVIRONMENT)
+
     def _resolve(self, name: str, relative_to: Path | None = None) -> Path:
         if relative_to is None:
             base_directory = self.project_directory
