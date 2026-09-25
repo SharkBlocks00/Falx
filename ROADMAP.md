@@ -1,50 +1,75 @@
 # Falx Roadmap
 
-This is a rough picture of where Falx is heading. There are no promises with regards to releasing new features, as Falx is maintained
-in spare time, and as such, priorities will shift. Items move between sections as they're picked up; see [issues](https://github.com/SharkBlocks00/Falx/issues)
-and [`CHANGELOG.md`](CHANGELOG.md) for what will and has been implemented respectively.
+This is a rough picture of where Falx is heading. There are no promises regarding new features, as Falx is maintained in spare time, and priorities may shift. Items move between sections as they are picked up; see [Issues](https://github.com/SharkBlocks00/Falx/issues) and [`CHANGELOG.md`](CHANGELOG.md) for what will and has been implemented respectively.
 
-Have an opinion on ordering or want to pick something up? Open an issue - see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Have an opinion on the ordering, or want to pick something up? Open an issue or see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Now
 
-Features currently in development:
+Features currently in development or planned for the immediate future:
 
-- [x] **Default function arguments** - allow functions to define default values for parameters
-- [x] **REPL mode** - running `falx` with no arguments or `falx -c` should go into an interactive REPL
-- [ ] **Expanded stdlib** - math functions, random methods, networking modules
+* [ ] **Expanded standard library** - math functions, random methods, filesystem utilities and networking modules
+* [ ] **Improved module system** - continue improving module discovery, relative imports and module organization
+* [ ] **CLI improvements** - improve commands, help output, version information and developer experience
 
 ## Planned
 
-Larger features that fit the language's current direction:
+Larger features that fit Falx's current direction:
 
-- [ ] **Packaging** - make Falx either pip installable or a standalone executable rather than `python -m src.Main`
-- [ ] **Ternary operators** and possibly a `match`/`switch` style statement
-- [ ] **OOP** - classes, class inheritance, essentially upgraded structs with more features
+* [ ] **Packaging** - make Falx installable through `pip` or available as a standalone executable rather than requiring `python -m src.Main`
+* [ ] **Ternary operators** - add a concise conditional expression syntax
+* [ ] **Pattern matching** - potentially introduce a `match`/`switch`-style statement
+* [ ] **OOP** - classes, class inheritance, and upgraded structs with additional features
+* [ ] **File and process utilities** - provide a cleaner standard interface for interacting with the filesystem and processes
+* [ ] **Improved string functionality** - expand the built-in string API with additional manipulation and inspection methods
 
 ## Under consideration
 
 Bigger, less certain ideas:
 
-- [ ] Static/optional type annotations
-- [ ] Attributes/decorators, annotations such as `[decorator]` for functions and classes
-- [ ] A bytecode compiler and VM, faster alternative to the current tree walking interpreter
-- [ ] Editor tooling (syntax highlighting, an LSP)
-- [ ] A proper language specification / docs site, once syntax and ideas are stable
+* [ ] **Static/optional type annotations**
+* [ ] **Attributes/decorators** - annotations such as `[decorator]` for functions and classes
+* [ ] **Bytecode compiler and VM** - a compiled bytecode execution path as a faster alternative to the current tree-walking interpreter
+* [ ] **Editor tooling** - syntax highlighting and an LSP
+* [ ] **Language specification and documentation site** - a formal specification and dedicated documentation once the language syntax and semantics are stable
 
-## Later 
+## Later
 
-These will not be implemented any time soon, but worth putting on for consideration:
+These are not expected to be implemented soon, but are worth keeping on the roadmap:
 
-- [ ] Multi threading / concurrency primitives
-- [ ] A package manager or third party dependency ecosystem
-- [ ] Backwards compatibility guarantees - pre-1.0, breaking changes are expected
+* [ ] **Multithreading / concurrency primitives**
+* [ ] **Package manager and third-party dependency ecosystem**
+* [ ] **Backwards compatibility guarantees** - pre-1.0 breaking changes are expected
 
 ## Recently shipped
 
-- [x] Line/column aware runtime error messages
-- [x] Friendly parser errors
-- [x] Unique, separate errors instead of generic Python errors
-- [x] Module system
+### v0.3.0
 
-See [`CHANGELOG.md`](CHANGELOG.md) for the full history. 
+* [x] **Default function arguments**
+* [x] **REPL mode**
+* [x] **Tuples**
+* [x] **Tuple destructuring**
+* [x] **Improved module system**
+* [x] **Module caching and canonical module resolution**
+* [x] **Relative and nested module resolution**
+* [x] **Improved `falx test` command**
+* [x] **Test filtering**
+* [x] **Snapshot testing**
+* [x] **Expected diagnostic-code testing**
+* [x] **Test timeouts and multiprocessing**
+* [x] **Recursive test discovery**
+* [x] **Improved runtime diagnostics**
+* [x] **Improved lexical scoping**
+* [x] **Improved `break` and `continue` semantics**
+* [x] **Improved parser and lexer diagnostics**
+* [x] **Expanded runtime, parser, lexer and integration test coverage**
+* [x] **Numerous runtime and interpreter bug fixes**
+
+### Previous releases
+
+* [x] **Line/column-aware runtime error messages**
+* [x] **Friendly parser errors**
+* [x] **Unique, separate errors instead of generic Python errors**
+* [x] **Module system**
+
+See [`CHANGELOG.md`](CHANGELOG.md) for the complete history.

@@ -16,7 +16,7 @@ class ArgumentHandler:
             "--version",
             "-v",
             action="version",
-            version="Falx v0.2.0"
+            version="Falx v0.3.0"
         )
 
         subparsers = parser.add_subparsers(dest="command")
