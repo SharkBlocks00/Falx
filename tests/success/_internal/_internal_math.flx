@@ -1,0 +1,98 @@
+let math = require("_internal::math");
+
+assert(math.pi == 3.141592653589793, "math.pi is incorrect");
+assert(math.e == 2.718281828459045, "math.e is incorrect");
+assert(math.tau == 6.283185307179586, "math.tau is incorrect");
+assert(math.phi == 1.6180339887, "math.phi is incorrect");
+
+assert(math.sqrt2 == 1.4142135623730951, "math.sqrt2 is incorrect");
+assert(math.sqrt3 == 1.7320508075688772, "math.sqrt3 is incorrect");
+
+assert(math.ln2 == 0.6931471805599453, "math.ln2 is incorrect");
+assert(math.ln10 == 2.302585092994046, "math.ln10 is incorrect");
+assert(math.log2e == 1.44269504089, "math.log2e is incorrect");
+assert(math.log10e == 0.4342944819, "math.log10e is incorrect");
+
+
+
+let absPositive = math.abs(42);
+assert(absPositive == 42, "math.abs failed for positive number");
+
+let absNegative = math.abs(-42);
+assert(absNegative == 42, "math.abs failed for negative number");
+
+let absZero = math.abs(0);
+assert(absZero == 0, "math.abs failed for zero");
+
+
+let signPositive = math.sign(42);
+assert(signPositive == 1, "math.sign failed for positive number");
+
+let signNegative = math.sign(-42);
+assert(signNegative == -1, "math.sign failed for negative number");
+
+let signZero = math.sign(0);
+assert(signZero == 0, "math.sign failed for zero");
+
+
+let minValue = math.min(10, 20);
+assert(minValue == 10, "math.min failed");
+
+let minReversed = math.min(20, 10);
+assert(minReversed == 10, "math.min failed with reversed arguments");
+
+
+let maxValue = math.max(10, 20);
+assert(maxValue == 20, "math.max failed");
+
+let maxReversed = math.max(20, 10);
+assert(maxReversed == 20, "math.max failed with reversed arguments");
+
+
+
+let clampLow = math.clamp(-5, 0, 10);
+assert(clampLow == 0, "math.clamp failed for value below range");
+
+let clampHigh = math.clamp(15, 0, 10);
+assert(clampHigh == 10, "math.clamp failed for value above range");
+
+
+let floorPositive = math.floor(4.8);
+assert(floorPositive == 4, "math.floor failed for positive number");
+
+let floorNegative = math.floor(-4.2);
+assert(floorNegative == -5, "math.floor failed for negative number");
+
+
+let ceilPositive = math.ceil(4.2);
+assert(ceilPositive == 5, "math.ceil failed for positive number");
+
+let ceilNegative = math.ceil(-4.8);
+assert(ceilNegative == -4, "math.ceil failed for negative number");
+
+
+let truncPositive = math.trunc(4.8);
+assert(truncPositive == 4, "math.trunc failed for positive number");
+
+let truncNegative = math.trunc(-4.8);
+assert(truncNegative == -4, "math.trunc failed for negative number");
+
+
+let fracPositive = math.frac(4.75);
+assert(fracPositive == 0.75, "math.frac failed for positive number");
+
+let fracNegative = math.frac(-4.75);
+assert(fracNegative == -0.75, "math.frac failed for negative number");
+
+let fracInteger = math.frac(4);
+assert(fracInteger == 0, "math.frac failed for integer");
+
+
+let sqrtValue = math.sqrt(25);
+assert(sqrtValue == 5, "math.sqrt failed");
+
+let sqrtOne = math.sqrt(1);
+assert(sqrtOne == 1, "math.sqrt failed for one");
+
+let sqrtZero = math.sqrt(0);
+assert(sqrtZero == 0, "math.sqrt failed for zero");

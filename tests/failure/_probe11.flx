@@ -1,4 +1,2 @@
 // Expects: E4001
-let math = require("_internal::math");
-
-output(math.pi);
+let v = require("_probe12");

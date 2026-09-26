@@ -17,3 +17,9 @@ class NullLiteral(Expression):
 
     def evaluate(self, interpreter: Interpreter, environment: Environment) -> FalxValue:
         return FalxNull()
+
+    def __str__(self):
+        return "null"
+
+    def __repr__(self):
+        return "null"
