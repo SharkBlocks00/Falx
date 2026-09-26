@@ -65,6 +65,9 @@ class ModuleLoader:
             case "/math":
                 from src.modules.internal.math.MathEnvironment import MATH_ENVIRONMENT
                 return FalxModule("math", MATH_ENVIRONMENT)
+            case "/random":
+                from src.modules.internal.random.RandomEnvironment import RANDOM_ENVIRONMENT
+                return FalxModule("random", RANDOM_ENVIRONMENT)
 
     def _resolve(self, name: str, relative_to: Path | None = None) -> Path:
         if relative_to is None:

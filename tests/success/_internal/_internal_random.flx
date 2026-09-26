@@ -1,0 +1,12 @@
+let random = require("_internal::random");
+
+output(random.random());
+output(random.random_int(1,20));
+random.seed(40);
+output(random.random_int(1,20));
+output(random.random_int(1,20));
+output(random.get_state());
+let state = random.get_state();
+output(random.random_int(1,20));
+random.set_state(state);
+output(random.random_int(1,20));
