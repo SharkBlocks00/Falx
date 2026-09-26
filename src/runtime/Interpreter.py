@@ -24,12 +24,19 @@ class Interpreter:
 
         self.registerBuiltins()
 
+        self.currentFile: Path | None = None
+
         sys.setrecursionlimit(5000)
 
-    def interpret(self, program: list[Statement]):
+    def interpret(self, program: list[Statement], file: Path | None = None):
+        previousFile = self.currentFile
+        self.currentFile = file
         # Because of how all the statements and expressions are structured,
         # the interpreter gets to be extremely simple
-        self.execute(program, self.environment)
+        try:
+            self.execute(program, self.environment)
+        finally:
+            self.currentFile = previousFile
 
     def execute(self, program: list[Statement], environment: Environment):
         # doing this means that we can support interpreting with seperate environments,

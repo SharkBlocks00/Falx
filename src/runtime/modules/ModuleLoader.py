@@ -49,9 +49,15 @@ class ModuleLoader:
 
             statements = Parser(tokens).parse()
 
-            self.interpreter.execute(statements, environment)
+            previousFile = self.interpreter.currentFile
+            self.interpreter.currentFile = path
 
-            return module
+            try:
+                self.interpreter.execute(statements, environment)
+                return module
+            finally:
+                self.interpreter.currentFile = previousFile
+
 
         except Exception:
             del self.cachedModules[path]

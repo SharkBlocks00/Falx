@@ -62,7 +62,7 @@ def runFile(scriptPath: Path) -> int:
         statements: list[Statement] = parser.parse()
 
         interpreter: Interpreter = Interpreter(scriptPath.parent)
-        interpreter.interpret(statements)
+        interpreter.interpret(statements, scriptPath.resolve())
 
         return 0
 
