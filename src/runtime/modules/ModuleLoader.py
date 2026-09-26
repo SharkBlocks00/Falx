@@ -68,6 +68,9 @@ class ModuleLoader:
             case "/random":
                 from src.modules.internal.random.RandomEnvironment import RANDOM_ENVIRONMENT
                 return FalxModule("random", RANDOM_ENVIRONMENT)
+            case "/fio":
+                from src.modules.internal.fio.FIOEnvironment import FIO_ENVIRONMENT
+                return FalxModule("fio", FIO_ENVIRONMENT)
 
     def _resolve(self, name: str, relative_to: Path | None = None) -> Path:
         if relative_to is None:
