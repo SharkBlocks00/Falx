@@ -1,13 +1,7 @@
 import math
 
-from src.modules.internal.math.methods.AbsMethod import AbsMethod
 from src.modules.internal.math.methods.CeilMethod import CeilMethod
-from src.modules.internal.math.methods.ClampMethod import ClampMethod
 from src.modules.internal.math.methods.FloorMethod import FloorMethod
-from src.modules.internal.math.methods.FracMethod import FracMethod
-from src.modules.internal.math.methods.MaxMethod import MaxMethod
-from src.modules.internal.math.methods.MinMethod import MinMethod
-from src.modules.internal.math.methods.SignMethod import SignMethod
 from src.modules.internal.math.methods.SqrtMethod import SqrtMethod
 from src.modules.internal.math.methods.TruncMethod import TruncMethod
 from src.runtime.Environment import Environment
@@ -36,18 +30,10 @@ MATH_ENVIRONMENT.define("epsilon", FalxNumber(2.0 ** -52), False)
 # Functions
 
 # Basic operations
-MATH_ENVIRONMENT.define("abs", AbsMethod(FalxNull()), False)
-MATH_ENVIRONMENT.define("sign", SignMethod(FalxNull()), False)
-
-MATH_ENVIRONMENT.define("min", MinMethod(FalxNull()), False)
-MATH_ENVIRONMENT.define("max", MaxMethod(FalxNull()), False)
-MATH_ENVIRONMENT.define("clamp", ClampMethod(FalxNull()), False)
-
 MATH_ENVIRONMENT.define("floor", FloorMethod(FalxNull()), False)
 MATH_ENVIRONMENT.define("ceil", CeilMethod(FalxNull()), False)
 MATH_ENVIRONMENT.define("trunc", TruncMethod(FalxNull()), False)
 
-MATH_ENVIRONMENT.define("frac", FracMethod(FalxNull()), False)
 
 # Powers and roots
 MATH_ENVIRONMENT.define("sqrt", SqrtMethod(FalxNull()), False)

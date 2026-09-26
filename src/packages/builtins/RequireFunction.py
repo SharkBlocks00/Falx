@@ -41,6 +41,8 @@ class RequireFunction(NativeFunction):
 
         if module[0] == "_internal":
             return self.moduleLoader.loadInternal(moduleName.replace("_internal", "").replace("::", "/"))
+        elif module[0] == "std":
+            return self.moduleLoader.loadStd(moduleName.replace("std", "").replace("::", "/"))
         else:
             raise Exception
 

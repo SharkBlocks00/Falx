@@ -1,0 +1,110 @@
+let m = require("_internal::math");
+
+// CONSTANTS
+let pi = m.pi;
+let e = m.e;
+let tau = m.tau;
+let phi = m.phi;
+
+let sqrt2 = m.sqrt2;
+let sqrt3 = m.sqrt3;
+
+let ln2 = m.ln2;
+let ln10 = m.ln10;
+let log2e = m.log2e;
+let log10e = m.log10e;
+
+let epsilon = m.epsilon;
+
+// FUNCTIONS
+
+// PREDEFINED
+
+let floor = m.floor;
+let ceil = m.ceil;
+let trunc = m.trunc;
+let sqrt = m.sqrt;
+
+// CUSTOM
+
+// BASIC
+func abs = define(v) {
+    if (v < 0) {
+        return -v;
+    }
+
+    return v;
+}
+
+func sign = define(v) {
+    if (v > 0) {
+        return 1;
+    }
+
+    if (v < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+func min = define(a, b) {
+    if (a < b) {
+        return a;
+    }
+
+    return b;
+}
+
+func max = define(a, b) {
+    if (a > b) {
+        return a;
+    }
+
+    return b;
+}
+
+func clamp = define(v, min, max) {
+    if (v < min) {
+        return min;
+    }
+
+    if (v > max) {
+        return max;
+    }
+
+    return v;
+}
+
+func frac = define(v) {
+    return v - floor(v);
+}
+
+// ADVANCED
+
+func lerp = define(a, b, t) {
+    return a + (b - a) * t;
+}
+
+func inverseLerp = define(a, b, v) {
+    return (v - a) / (b - a);
+}
+
+func remap = define(v, fromMin, fromMax, toMin, toMax) {
+    let t = inverseLerp(fromMin, fromMax, v);
+
+    return lerp(toMin, toMax, t);
+}
+
+func isEven = define(v) {
+    return v % 2 == 0;
+}
+
+func isOdd = define(v) {
+    return v % 2 != 0;
+}
+
+func approximately = define(a, b, eps = epsilon) {
+    return abs(a-b) <= eps;
+}
+

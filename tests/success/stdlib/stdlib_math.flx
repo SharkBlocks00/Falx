@@ -1,0 +1,290 @@
+let math = require("std::math");
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+
+assert(math.pi > 3.14159, "math.pi is wrong!");
+assert(math.pi < 3.14160, "math.pi is wrong!");
+
+assert(math.e > 2.71828, "math.e is wrong!");
+assert(math.e < 2.71829, "math.e is wrong!");
+
+assert(math.tau > 6.28318, "math.tau is wrong!");
+assert(math.tau < 6.28319, "math.tau is wrong!");
+
+assert(math.phi > 1.61803, "math.phi is wrong!");
+assert(math.phi < 1.61804, "math.phi is wrong!");
+
+assert(math.sqrt2 > 1.41421, "math.sqrt2 is wrong!");
+assert(math.sqrt2 < 1.41422, "math.sqrt2 is wrong!");
+
+assert(math.sqrt3 > 1.73205, "math.sqrt3 is wrong!");
+assert(math.sqrt3 < 1.73206, "math.sqrt3 is wrong!");
+
+assert(math.ln2 > 0.69314, "math.ln2 is wrong!");
+assert(math.ln2 < 0.69315, "math.ln2 is wrong!");
+
+assert(math.ln10 > 2.30258, "math.ln10 is wrong!");
+assert(math.ln10 < 2.30259, "math.ln10 is wrong!");
+
+assert(math.log2e > 1.44269, "math.log2e is wrong!");
+assert(math.log2e < 1.44270, "math.log2e is wrong!");
+
+assert(math.log10e > 0.43429, "math.log10e is wrong!");
+assert(math.log10e < 0.43430, "math.log10e is wrong!");
+
+assert(math.epsilon > 0.0, "math.epsilon should be positive!");
+
+
+// ============================================================
+// BASIC FUNCTIONS
+// ============================================================
+
+// abs
+
+assert(math.abs(5) == 5, "math.abs positive failed!");
+assert(math.abs(-5) == 5, "math.abs negative failed!");
+assert(math.abs(0) == 0, "math.abs zero failed!");
+
+assert(
+    math.approximately(math.abs(-5.5), 5.5),
+    "math.abs floating-point failed!"
+);
+
+
+// sign
+
+assert(math.sign(20) == 1, "math.sign positive failed!");
+assert(math.sign(-20) == -1, "math.sign negative failed!");
+assert(math.sign(0) == 0, "math.sign zero failed!");
+
+
+// min
+
+assert(math.min(5, 10) == 5, "math.min first value failed!");
+assert(math.min(10, 5) == 5, "math.min second value failed!");
+assert(math.min(-5, -10) == -10, "math.min negative values failed!");
+assert(math.min(5.5, 10.5) == 5.5, "math.min floating-point failed!");
+
+
+// max
+
+assert(math.max(5, 10) == 10, "math.max second value failed!");
+assert(math.max(10, 5) == 10, "math.max first value failed!");
+assert(math.max(-5, -10) == -5, "math.max negative values failed!");
+assert(math.max(5.5, 10.5) == 10.5, "math.max floating-point failed!");
+
+
+// clamp
+
+assert(math.clamp(5, 0, 10) == 5, "math.clamp inside range failed!");
+assert(math.clamp(-5, 0, 10) == 0, "math.clamp lower bound failed!");
+assert(math.clamp(15, 0, 10) == 10, "math.clamp upper bound failed!");
+
+assert(
+    math.approximately(math.clamp(5.5, 0.0, 10.0), 5.5),
+    "math.clamp floating-point failed!"
+);
+
+
+// frac
+
+assert(math.frac(5.25) == 0.25, "math.frac failed!");
+assert(math.frac(10.75) == 0.75, "math.frac failed!");
+assert(math.frac(5.0) == 0.0, "math.frac whole number failed!");
+
+
+// ============================================================
+// PREDEFINED / NATIVE FUNCTIONS
+// ============================================================
+
+// floor
+
+assert(math.floor(5.9) == 5, "math.floor positive failed!");
+assert(math.floor(5.1) == 5, "math.floor positive failed!");
+assert(math.floor(-5.1) == -6, "math.floor negative failed!");
+assert(math.floor(5.0) == 5, "math.floor whole number failed!");
+
+
+// ceil
+
+assert(math.ceil(5.1) == 6, "math.ceil positive failed!");
+assert(math.ceil(5.9) == 6, "math.ceil positive failed!");
+assert(math.ceil(-5.1) == -5, "math.ceil negative failed!");
+assert(math.ceil(5.0) == 5, "math.ceil whole number failed!");
+
+
+// trunc
+
+assert(math.trunc(5.9) == 5, "math.trunc positive failed!");
+assert(math.trunc(5.1) == 5, "math.trunc positive failed!");
+assert(math.trunc(-5.9) == -5, "math.trunc negative failed!");
+assert(math.trunc(5.0) == 5, "math.trunc whole number failed!");
+
+
+// sqrt
+
+assert(math.sqrt(4.0) == 2.0, "math.sqrt 4 failed!");
+assert(math.sqrt(9.0) == 3.0, "math.sqrt 9 failed!");
+assert(math.sqrt(16.0) == 4.0, "math.sqrt 16 failed!");
+
+assert(
+    math.approximately(math.sqrt(2.0), math.sqrt2),
+    "math.sqrt2 constant does not match sqrt!"
+);
+
+assert(
+    math.approximately(math.sqrt(3.0), math.sqrt3),
+    "math.sqrt3 constant does not match sqrt!"
+);
+
+
+// ============================================================
+// ADVANCED FUNCTIONS
+// ============================================================
+
+// lerp
+
+assert(math.lerp(0.0, 10.0, 0.0) == 0.0, "math.lerp start failed!");
+assert(math.lerp(0.0, 10.0, 1.0) == 10.0, "math.lerp end failed!");
+assert(math.lerp(0.0, 10.0, 0.5) == 5.0, "math.lerp midpoint failed!");
+
+assert(math.lerp(10.0, 20.0, 0.25) == 12.5, "math.lerp quarter failed!");
+assert(math.lerp(10.0, 20.0, 0.75) == 17.5, "math.lerp three-quarter failed!");
+
+
+// inverseLerp
+
+assert(
+    math.inverseLerp(0.0, 10.0, 0.0) == 0.0,
+    "math.inverseLerp lower bound failed!"
+);
+
+assert(
+    math.inverseLerp(0.0, 10.0, 10.0) == 1.0,
+    "math.inverseLerp upper bound failed!"
+);
+
+assert(
+    math.inverseLerp(0.0, 10.0, 5.0) == 0.5,
+    "math.inverseLerp midpoint failed!"
+);
+
+assert(
+    math.inverseLerp(0.0, 10.0, 2.5) == 0.25,
+    "math.inverseLerp quarter failed!"
+);
+
+assert(
+    math.inverseLerp(0.0, 10.0, 7.5) == 0.75,
+    "math.inverseLerp three-quarter failed!"
+);
+
+
+// remap
+
+assert(
+    math.remap(0.0, 0.0, 10.0, 0.0, 100.0) == 0.0,
+    "math.remap lower bound failed!"
+);
+
+assert(
+    math.remap(10.0, 0.0, 10.0, 0.0, 100.0) == 100.0,
+    "math.remap upper bound failed!"
+);
+
+assert(
+    math.remap(5.0, 0.0, 10.0, 0.0, 100.0) == 50.0,
+    "math.remap midpoint failed!"
+);
+
+assert(
+    math.remap(2.5, 0.0, 10.0, 0.0, 100.0) == 25.0,
+    "math.remap quarter failed!"
+);
+
+assert(
+    math.remap(7.5, 0.0, 10.0, 0.0, 100.0) == 75.0,
+    "math.remap three-quarter failed!"
+);
+
+assert(
+    math.remap(5.0, 10.0, 0.0, 0.0, 100.0) == 50.0,
+    "math.remap reversed input range failed!"
+);
+
+
+// isEven
+
+assert(math.isEven(0), "math.isEven zero failed!");
+assert(math.isEven(2), "math.isEven positive failed!");
+assert(math.isEven(10), "math.isEven positive failed!");
+assert(math.isEven(-2), "math.isEven negative failed!");
+
+assert(!math.isEven(1), "math.isEven odd number failed!");
+assert(!math.isEven(5), "math.isEven odd number failed!");
+assert(!math.isEven(-3), "math.isEven negative odd number failed!");
+
+
+// isOdd
+
+assert(math.isOdd(1), "math.isOdd positive failed!");
+assert(math.isOdd(5), "math.isOdd positive failed!");
+assert(math.isOdd(-3), "math.isOdd negative failed!");
+
+assert(!math.isOdd(0), "math.isOdd zero failed!");
+assert(!math.isOdd(2), "math.isOdd positive failed!");
+assert(!math.isOdd(10), "math.isOdd positive failed!");
+assert(!math.isOdd(-2), "math.isOdd negative failed!");
+
+
+// approximately
+
+assert(
+    math.approximately(1.0, 1.0),
+    "math.approximately equal values failed!"
+);
+
+assert(
+    math.approximately(100.0, 100.00001, 0.001),
+    "math.approximately custom epsilon failed!"
+);
+
+assert(
+    !math.approximately(100.0, 100.1, 0.001),
+    "math.approximately should reject distant values!"
+);
+
+assert(
+    math.approximately(0.0, 0.0),
+    "math.approximately zero failed!"
+);
+
+
+// ============================================================
+// COMBINED TESTS
+// ============================================================
+
+assert(
+    math.lerp(0.0, 100.0, math.inverseLerp(0.0, 100.0, 25.0)) == 25.0,
+    "inverseLerp/lerp combination failed!"
+);
+
+assert(
+    math.remap(
+        25.0,
+        0.0,
+        100.0,
+        0.0,
+        1.0
+    ) == 0.25,
+    "math.remap normalized value failed!"
+);
+
+assert(
+    math.clamp(math.lerp(0.0, 20.0, 0.75), 0.0, 10.0) == 10.0,
+    "math.clamp/lerp combination failed!"
+);
+
+output("stdlib::math tests passed!");
