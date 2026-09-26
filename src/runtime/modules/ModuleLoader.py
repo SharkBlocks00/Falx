@@ -77,6 +77,11 @@ class ModuleLoader:
             case "/fio":
                 from src.modules.internal.fio.FIOEnvironment import FIO_ENVIRONMENT
                 return FalxModule("fio", FIO_ENVIRONMENT)
+            case "/time":
+                from src.modules.internal.time.TimeEnvironment import TIME_ENVIRONMENT
+                return FalxModule("time", TIME_ENVIRONMENT)
+            case _:
+                raise ModuleNotFoundException(name, "internal module directory")
 
     def _resolve(self, name: str, relative_to: Path | None = None) -> Path:
         if relative_to is None:

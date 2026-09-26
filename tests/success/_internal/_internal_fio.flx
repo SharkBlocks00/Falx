@@ -1,6 +1,0 @@
-let fio = require("_internal::fio");
-
-let file = fio.open("_internal_math.flx", "r");
-
-output(file);
-output(fio.read(file));

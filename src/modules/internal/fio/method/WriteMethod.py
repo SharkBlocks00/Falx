@@ -16,7 +16,7 @@ class WriteMethod(BoundNativeFunction):
         super().__init__(this)
 
     def arity(self) -> int:
-        return 1
+        return 2
 
     def isStrict(self) -> bool:
         return True

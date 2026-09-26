@@ -1,0 +1,22 @@
+let time = require("_internal::time");
+
+output(time.time());
+let start = time.monotonic();
+
+let i = 0;
+
+while (i < 50000) {
+    i += 1;
+}
+
+output(time.sleep(0.5));
+
+let finish = time.monotonic();
+
+output("Time taken: " + (finish - start));
+
+start = time.monotonic();
+time.sleep(1);
+finish = time.monotonic();
+let elapsed = finish - start;
+output("Slept for: " + elapsed + " seconds");
