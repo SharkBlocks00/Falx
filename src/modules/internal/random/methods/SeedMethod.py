@@ -21,7 +21,7 @@ class SeedMethod(BoundNativeFunction):
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         value = arguments[0]
 
-        if value is FalxNull:
+        if isinstance(value, FalxNull):
             random.seed(None)
         elif isinstance(value, FalxNumber):
             random.seed(value.asNumber())

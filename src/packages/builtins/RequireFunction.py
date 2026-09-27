@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.modules.ModuleNotFoundException import ModuleNotFoundException
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
@@ -44,7 +45,7 @@ class RequireFunction(NativeFunction):
         elif module[0] == "std":
             return self.moduleLoader.loadStd(moduleName.replace("std", "").replace("::", "/"))
         else:
-            raise Exception
+            raise ModuleNotFoundException(moduleName, module[0])
 
 
     def __str__(self) -> str:

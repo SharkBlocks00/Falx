@@ -26,7 +26,10 @@ class SetStateMethod(BoundNativeFunction):
                 f"Cannot set random with '{value.getTypeName()}'"
             )
 
-        random.setstate(_toPythonValue(value))
+        try:
+            random.setstate(_toPythonValue(value))
+        except (TypeError, ValueError) as e:
+            raise ExpectedValueException(f"Invalid random state: {e}") from e
         return value
 
     def __eq__(self, other: object) -> bool:

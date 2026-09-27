@@ -46,6 +46,8 @@ class ReadMethod(BoundNativeFunction):
             raise FileClosedException(file.file)
         except OSError as e:
             raise IOErrorException(e.__str__()) from e
+        finally:
+            file.file.close()
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, ReadMethod) and self.this == other.this

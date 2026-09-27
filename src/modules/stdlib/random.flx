@@ -20,7 +20,7 @@ func randomBool = define() {
    return false;
 }
 
-func randomSign() = define() {
+func randomSign = define() {
     let n = random();
     if (n > 0.5) {
         return -1;
@@ -28,7 +28,7 @@ func randomSign() = define() {
     return 1;
 }
 
-func chance() = define(prob) {
+func chance = define(prob) {
     let n = random();
     if (n <= prob) {
         return true;

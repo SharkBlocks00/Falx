@@ -77,7 +77,7 @@ func clamp = define(v, min, max) {
 }
 
 func frac = define(v) {
-    return v - floor(v);
+    return v - trunc(v);
 }
 
 // ADVANCED
