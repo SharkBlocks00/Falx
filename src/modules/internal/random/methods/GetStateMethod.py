@@ -6,7 +6,6 @@ from src.runtime.methods.common.BoundNativeFunction import BoundNativeFunction
 from src.runtime.objects.FalxBoolean import FalxBoolean
 from src.runtime.objects.FalxNull import FalxNull
 from src.runtime.objects.FalxNumber import FalxNumber
-from src.runtime.objects.FalxString import FalxString
 from src.runtime.objects.FalxTuple import FalxTuple
 from src.runtime.objects.FalxValue import FalxValue
 

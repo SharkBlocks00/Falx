@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.files.IOErrorException import IOErrorException
+from src.diagnostics.exceptions.files.modes.FileClosedException import FileClosedException
 from src.diagnostics.exceptions.runtime.ExpectedValueException import ExpectedValueException
 from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
 from src.runtime.methods.common.BoundNativeFunction import BoundNativeFunction
@@ -38,7 +40,12 @@ class ReadMethod(BoundNativeFunction):
         except IndexError:
             size = None
 
-        return FalxString(file.file.read(size))
+        try:
+            return FalxString(file.file.read(size))
+        except ValueError:
+            raise FileClosedException(file.file)
+        except OSError as e:
+            raise IOErrorException(e.__str__()) from e
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, ReadMethod) and self.this == other.this

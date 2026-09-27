@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.files.IOErrorException import IOErrorException
+from src.diagnostics.exceptions.files.PermissionDeniedException import PermissionDeniedException
+from src.diagnostics.exceptions.files.modes.FileClosedException import FileClosedException
 from src.diagnostics.exceptions.runtime.ExpectedValueException import ExpectedValueException
 from src.runtime.methods.common.BoundNativeFunction import BoundNativeFunction
 from src.runtime.objects.FalxFile import FalxFile
@@ -30,7 +33,14 @@ class WriteMethod(BoundNativeFunction):
                 f"Expected file, got '{file.getTypeName()}'"
             )
 
-        written = file.file.write(data)
+        try:
+            written = file.file.write(data)
+        except ValueError:
+            raise FileClosedException(file.file)
+        except PermissionError:
+            raise PermissionDeniedException(file.file)
+        except OSError as e:
+            raise IOErrorException(e.__str__()) from e
 
         return FalxNumber(written)
 
