@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.files.IOErrorException import IOErrorException
@@ -35,6 +36,8 @@ class WriteMethod(BoundNativeFunction):
 
         try:
             written = file.file.write(data)
+        except io.UnsupportedOperation:
+            raise IOErrorException(f"Unsupported operation: '{file.getTypeName()}'")
         except ValueError:
             raise FileClosedException(file.file)
         except PermissionError:

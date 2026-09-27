@@ -28,7 +28,7 @@ class SetStateMethod(BoundNativeFunction):
 
         try:
             random.setstate(_toPythonValue(value))
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError, IndexError) as e:
             raise ExpectedValueException(f"Invalid random state: {e}") from e
         return value
 

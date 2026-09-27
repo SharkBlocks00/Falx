@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 from typing import TYPE_CHECKING
 
 from src.diagnostics.exceptions.files.IOErrorException import IOErrorException
@@ -42,12 +43,13 @@ class ReadMethod(BoundNativeFunction):
 
         try:
             return FalxString(file.file.read(size))
+        except io.UnsupportedOperation:
+            raise IOErrorException(f"Unsupported operation: '{file.getTypeName()}'")
         except ValueError:
             raise FileClosedException(file.file)
         except OSError as e:
             raise IOErrorException(e.__str__()) from e
-        finally:
-            file.file.close()
+
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, ReadMethod) and self.this == other.this

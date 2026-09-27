@@ -3,7 +3,7 @@ from src.diagnostics.DiagnosticDefinition import DiagnosticDefinition
 from src.diagnostics.DiagnosticSeverity import DiagnosticSeverity
 from src.diagnostics.exceptions.cli.InvalidFileTypeException import InvalidFileTypeException
 from src.diagnostics.exceptions.cli.MissingFilenameException import MissingFilenameException
-from src.diagnostics.exceptions.files import IOErrorException
+from src.diagnostics.exceptions.files.IOErrorException import IOErrorException
 from src.diagnostics.exceptions.files.NotADirectoryException import NotADirectoryException
 from src.diagnostics.exceptions.files.NotAFileException import NotAFileException
 from src.diagnostics.exceptions.files.PermissionDeniedException import PermissionDeniedException
