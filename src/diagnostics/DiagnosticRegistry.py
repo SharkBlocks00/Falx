@@ -3,6 +3,15 @@ from src.diagnostics.DiagnosticDefinition import DiagnosticDefinition
 from src.diagnostics.DiagnosticSeverity import DiagnosticSeverity
 from src.diagnostics.exceptions.cli.InvalidFileTypeException import InvalidFileTypeException
 from src.diagnostics.exceptions.cli.MissingFilenameException import MissingFilenameException
+from src.diagnostics.exceptions.files.IOErrorException import IOErrorException
+from src.diagnostics.exceptions.files.NotADirectoryException import NotADirectoryException
+from src.diagnostics.exceptions.files.NotAFileException import NotAFileException
+from src.diagnostics.exceptions.files.PermissionDeniedException import PermissionDeniedException
+from src.diagnostics.exceptions.files.modes.FileClosedException import FileClosedException
+from src.diagnostics.exceptions.files.modes.InvalidFileModeException import InvalidFileModeException
+from src.diagnostics.exceptions.files.paths.FileAlreadyExistsException import FileAlreadyExistsException
+from src.diagnostics.exceptions.files.paths.FileNotFoundException import FileNotFoundException
+from src.diagnostics.exceptions.files.paths.InvalidPathException import InvalidPathException
 from src.diagnostics.exceptions.lexer.syntax.InvalidCharacterException import InvalidCharacterException
 from src.diagnostics.exceptions.lexer.syntax.InvalidEscapeSequenceException import InvalidEscapeSequenceException
 from src.diagnostics.exceptions.lexer.syntax.UnterminatedStringException import UnterminatedStringException
@@ -10,8 +19,7 @@ from src.diagnostics.exceptions.parser.context.BreakOutsideLoopException import 
 from src.diagnostics.exceptions.parser.context.ContinueOutsideLoopException import ContinueOutsideLoopException
 from src.diagnostics.exceptions.parser.context.ReturnOutsideFunctionException import ReturnOutsideFunctionException
 from src.diagnostics.exceptions.parser.syntax.InvalidAssignmentTargetException import InvalidAssignmentTargetException
-from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import \
-    InvalidDefaultValueCreationException
+from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationException import  InvalidDefaultValueCreationException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.diagnostics.exceptions.runtime.ExpectedValueException import ExpectedValueException
@@ -27,8 +35,7 @@ from src.diagnostics.exceptions.runtime.indexing.StringIndexInvalidException imp
 from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException import DuplicateParameterException
 from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
 from src.diagnostics.exceptions.runtime.methods.ObjectNotCallableException import ObjectNotCallableException
-from src.diagnostics.exceptions.runtime.modules.CircularModuleDependencyException import \
-    CircularModuleDependencyException
+from src.diagnostics.exceptions.runtime.modules.CircularModuleDependencyException import CircularModuleDependencyException
 from src.diagnostics.exceptions.runtime.modules.ModuleNotFoundException import ModuleNotFoundException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotCompareToException import CannotCompareToException
@@ -635,6 +642,121 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         title="cannot hash object",
         help=(
             "Make sure you are not using a mutable object as a key",
+        ),
+    ),
+
+    FileNotFoundException: DiagnosticDefinition(
+        code=DiagnosticCode.FILE_NOT_FOUND,
+        severity=DiagnosticSeverity.ERROR,
+        title="file not found",
+        help=(
+            "Check that the file path is correct and that the file exists.",
+            "Check that the file has not been moved, renamed, or deleted.",
+        ),
+        notes=(
+            "The requested file or path does not exist.",
+        ),
+    ),
+
+    PermissionDeniedException: DiagnosticDefinition(
+        code=DiagnosticCode.PERMISSION_DENIED,
+        severity=DiagnosticSeverity.ERROR,
+        title="permission denied",
+        help=(
+            "Check that you have permission to access the file or directory.",
+            "Check that the file is not restricted by the operating system or another security mechanism.",
+        ),
+        notes=(
+            "The operating system denied access to the requested file or directory.",
+        ),
+    ),
+
+    FileAlreadyExistsException: DiagnosticDefinition(
+        code=DiagnosticCode.FILE_ALREADY_EXISTS,
+        severity=DiagnosticSeverity.ERROR,
+        title="file already exists",
+        help=(
+            "Choose a different file path or use an operation that allows an existing file to be replaced.",
+        ),
+        notes=(
+            "The requested operation requires a file to not exist, but a file already exists at that path.",
+        ),
+    ),
+
+    NotAFileException: DiagnosticDefinition(
+        code=DiagnosticCode.NOT_A_FILE,
+        severity=DiagnosticSeverity.ERROR,
+        title="path is not a file",
+        help=(
+            "Check that the path refers to a file rather than a directory or another type of filesystem entry.",
+        ),
+        notes=(
+            "The specified path exists, but it does not refer to a regular file.",
+        ),
+    ),
+
+    NotADirectoryException: DiagnosticDefinition(
+        code=DiagnosticCode.NOT_A_DIRECTORY,
+        severity=DiagnosticSeverity.ERROR,
+        title="path is not a directory",
+        help=(
+            "Check that the path refers to a directory.",
+            "Check that the path has not been replaced by a file or another filesystem entry.",
+        ),
+        notes=(
+            "The specified path exists, but it does not refer to a directory.",
+        ),
+    ),
+
+    InvalidPathException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_PATH,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid file path",
+        help=(
+            "Check that the file path is correctly formatted and contains only valid path components.",
+            "Check for invalid characters or malformed path syntax.",
+        ),
+        notes=(
+            "The supplied path is not valid for the current filesystem or operating system.",
+        ),
+    ),
+
+    IOErrorException: DiagnosticDefinition(
+        code=DiagnosticCode.IO_ERROR,
+        severity=DiagnosticSeverity.ERROR,
+        title="file input/output error",
+        help=(
+            "Check that the file or directory is accessible and that the operation can be completed.",
+            "Check the underlying error information for more details.",
+        ),
+        notes=(
+            "The operating system reported an error while performing a file input/output operation.",
+        ),
+    ),
+
+    FileClosedException: DiagnosticDefinition(
+        code=DiagnosticCode.FILE_CLOSED,
+        severity=DiagnosticSeverity.ERROR,
+        title="file is closed",
+        help=(
+            "Open the file before attempting to read from or write to it.",
+            "Check that the file has not already been closed.",
+        ),
+        notes=(
+            "File operations cannot be performed on a file handle after it has been closed.",
+        ),
+    ),
+
+    InvalidFileModeException: DiagnosticDefinition(
+        code=DiagnosticCode.INVALID_FILE_MODE,
+        severity=DiagnosticSeverity.ERROR,
+        title="invalid file mode",
+        help=(
+            "Check that the file mode is valid and supported by Falx.",
+            "Use a mode appropriate for the intended file operation.",
+        ),
+        notes=(
+            "The supplied file mode is not valid or supported for opening a file.",
         )
     )
 }

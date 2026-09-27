@@ -71,3 +71,14 @@ class DiagnosticCode(Enum):
     # CLI errors
     MISSING_FILENAME = "E5000"
     INVALID_FILE_TYPE = "E5001"
+
+    # File errors
+    FILE_NOT_FOUND = "E6000"
+    PERMISSION_DENIED = "E6001"
+    FILE_ALREADY_EXISTS = "E6002"
+    NOT_A_FILE = "E6003"
+    NOT_A_DIRECTORY = "E6004"
+    INVALID_PATH = "E6005"
+    IO_ERROR = "E6006"
+    FILE_CLOSED = "E6007"
+    INVALID_FILE_MODE = "E6008"

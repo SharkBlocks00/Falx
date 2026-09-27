@@ -1,0 +1,5 @@
+const time = require("std::time");
+
+time.utcNow();
+time.millis();
+time.localNow();

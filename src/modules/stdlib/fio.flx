@@ -1,0 +1,30 @@
+let f = require("_internal::fio");
+
+// FUNCTIONS
+// PREDEFINED
+
+let open = f.open;
+let close = f.close;
+let read = f.read;
+let write = f.write;
+
+// CUSTOM
+
+func append = define(path, contents) {
+    let file = open(path, "a");
+    write(file, contents);
+    close(file);
+}
+
+func writeAll = define(path, contents) {
+    let file = open(path, "w");
+    write(file, contents);
+    close(file);
+}
+
+func readAll = define(path) {
+    let file = open(path, "r");
+    let contents = read(file);
+    close(file);
+    return contents;
+}

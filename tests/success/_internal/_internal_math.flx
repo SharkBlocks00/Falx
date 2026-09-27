@@ -1,0 +1,44 @@
+let math = require("_internal::math");
+
+assert(math.pi == 3.141592653589793, "math.pi is incorrect");
+assert(math.e == 2.718281828459045, "math.e is incorrect");
+assert(math.tau == 6.283185307179586, "math.tau is incorrect");
+assert(math.phi == 1.6180339887, "math.phi is incorrect");
+
+assert(math.sqrt2 == 1.4142135623730951, "math.sqrt2 is incorrect");
+assert(math.sqrt3 == 1.7320508075688772, "math.sqrt3 is incorrect");
+
+assert(math.ln2 == 0.6931471805599453, "math.ln2 is incorrect");
+assert(math.ln10 == 2.302585092994046, "math.ln10 is incorrect");
+assert(math.log2e == 1.44269504089, "math.log2e is incorrect");
+assert(math.log10e == 0.4342944819, "math.log10e is incorrect");
+
+
+let floorPositive = math.floor(4.8);
+assert(floorPositive == 4, "math.floor failed for positive number");
+
+let floorNegative = math.floor(-4.2);
+assert(floorNegative == -5, "math.floor failed for negative number");
+
+
+let ceilPositive = math.ceil(4.2);
+assert(ceilPositive == 5, "math.ceil failed for positive number");
+
+let ceilNegative = math.ceil(-4.8);
+assert(ceilNegative == -4, "math.ceil failed for negative number");
+
+
+let truncPositive = math.trunc(4.8);
+assert(truncPositive == 4, "math.trunc failed for positive number");
+
+let truncNegative = math.trunc(-4.8);
+assert(truncNegative == -4, "math.trunc failed for negative number");
+
+let sqrtValue = math.sqrt(25);
+assert(sqrtValue == 5, "math.sqrt failed");
+
+let sqrtOne = math.sqrt(1);
+assert(sqrtOne == 1, "math.sqrt failed for one");
+
+let sqrtZero = math.sqrt(0);
+assert(sqrtZero == 0, "math.sqrt failed for zero");
