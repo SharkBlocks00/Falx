@@ -1,0 +1,38 @@
+let r = require("_internal::random");
+
+// FUNCTIONS
+
+// PREDEFINED
+
+let random = r.random;
+let randomInt = r.random_int;
+let seed = r.seed;
+let getState = r.get_state;
+let setState = r.set_state;
+
+// CUSTOM
+
+func randomBool = define() {
+    let n = random();
+    if (n > 0.5) {
+        return true;
+   }
+   return false;
+}
+
+func randomSign() = define() {
+    let n = random();
+    if (n > 0.5) {
+        return -1;
+    }
+    return 1;
+}
+
+func chance() = define(prob) {
+    let n = random();
+    if (n <= prob) {
+        return true;
+    }
+    return false;
+}
+
