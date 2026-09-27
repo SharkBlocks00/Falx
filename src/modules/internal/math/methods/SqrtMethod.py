@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from src.diagnostics.exceptions.runtime.ExpectedValueException import ExpectedValueException
 from src.runtime.methods.common.BoundNativeFunction import BoundNativeFunction
 from src.runtime.objects.FalxNumber import FalxNumber
 from src.runtime.objects.FalxValue import FalxValue
@@ -21,7 +22,8 @@ class SqrtMethod(BoundNativeFunction):
         return True
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
-
+        if arguments[0].asNumber() < 0:
+            raise ExpectedValueException("Cannot square root a negative number.")
         return FalxNumber(math.sqrt(arguments[0].asNumber()))
 
     def __eq__(self, other: object) -> bool:

@@ -2,6 +2,7 @@ import math
 
 from src.modules.internal.math.methods.CeilMethod import CeilMethod
 from src.modules.internal.math.methods.FloorMethod import FloorMethod
+from src.modules.internal.math.methods.RoundMethod import RoundMethod
 from src.modules.internal.math.methods.SqrtMethod import SqrtMethod
 from src.modules.internal.math.methods.TruncMethod import TruncMethod
 from src.runtime.Environment import Environment
@@ -33,7 +34,7 @@ MATH_ENVIRONMENT.define("epsilon", FalxNumber(2.0 ** -52), False)
 MATH_ENVIRONMENT.define("floor", FloorMethod(FalxNull()), False)
 MATH_ENVIRONMENT.define("ceil", CeilMethod(FalxNull()), False)
 MATH_ENVIRONMENT.define("trunc", TruncMethod(FalxNull()), False)
-
+MATH_ENVIRONMENT.define("round", RoundMethod(FalxNull()), False)
 
 # Powers and roots
 MATH_ENVIRONMENT.define("sqrt", SqrtMethod(FalxNull()), False)
