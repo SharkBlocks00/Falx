@@ -1,0 +1,24 @@
+let t = require("_internal::time");
+
+// FUNCTIONS
+// PREDEFINED
+
+let time = t.time;
+let monotonic = t.monotonic;
+let sleep = t.sleep;
+let utcNow = t.utc_now;
+let localNow = t.local_now;
+
+// CUSTOM
+
+func millis = define() {
+    return time() * 1000.0;
+}
+
+func sleepMillis = define(ms) {
+    sleep(ms / 1000.0);
+}
+
+func elapsed = define(start) {
+    return monotonic() - start;
+}
