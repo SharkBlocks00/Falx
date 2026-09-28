@@ -1,4 +1,4 @@
-struct Player {
+export struct Player {
     health = 100;
 
     func takeDamage = define(amount) {
@@ -6,4 +6,4 @@ struct Player {
        }
 }
 
-let playerVersion = "1.0";
+export let playerVersion = "1.0";

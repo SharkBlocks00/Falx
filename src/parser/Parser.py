@@ -100,6 +100,10 @@ class Parser:
         return ExpressionStatement(expression._location, expression)
 
     def _exportDeclaration(self) -> Statement:
+        if self._insideFunction:
+            raise UnexpectedTokenException(f"Cannot use 'export' inside a function.", self._peek().location)
+        if self._insideLoop:
+            raise UnexpectedTokenException(f"Cannot use 'export' inside a loop.", self._peek().location)
         return self._varDeclaration(exported=True)
 
     def _variableDeclaration(self, mutable: bool, exported: bool = False) -> VariableDeclaration | DestructureDeclaration:

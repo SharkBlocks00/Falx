@@ -1,0 +1,3 @@
+let values = require("_fixtures/exports/public_values");
+
+output(values.double(6));

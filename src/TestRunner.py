@@ -82,7 +82,13 @@ class TestRunner:
     def runAll(self, updateSnapshots: bool = False, filter: str | None = None) -> None:
         directory: Path = Path(__file__).parent.parent / "tests"
 
-        files: list[Path] = sorted([item for item in directory.rglob("*") if item.is_file() and item.__str__().endswith(".flx")])
+        files: list[Path] = sorted([
+            item
+            for item in directory.rglob("*")
+            if item.is_file()
+            and item.suffix == ".flx"
+            and "_fixtures" not in item.relative_to(directory).parts
+        ])
 
         if filter is not None:
             files = [path for path in files if filter.lower() in str(path.relative_to(directory)).lower()]
