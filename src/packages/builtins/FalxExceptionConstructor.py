@@ -19,14 +19,18 @@ class FalxExceptionConstructor(NativeFunction):
         self.exceptionType = exceptionType
 
     def isStrict(self) -> bool:
-        return True
+        return False
 
     def arity(self) -> int:
         return 1
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
         exception = self.exceptionType.__new__(self.exceptionType)
-        FalxException.__init__(exception, arguments[0].asString())
+        try:
+            arg = arguments[0].asString()
+        except IndexError:
+            arg = ""
+        FalxException.__init__(exception, arg)
         return FalxExceptionValue(exception)
 
     def __eq__(self, other: object) -> bool:

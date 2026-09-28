@@ -14,13 +14,17 @@ class ExceptionFunction(NativeFunction):
     """Creates the base Falx exception value."""
 
     def isStrict(self) -> bool:
-        return True
+        return False
 
     def arity(self) -> int:
         return 1
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
-        return FalxThrowable(arguments[0].asString())
+        try:
+            argument = arguments[0].asString()
+        except IndexError:
+            argument = ""
+        return FalxThrowable(argument)
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, ExceptionFunction)

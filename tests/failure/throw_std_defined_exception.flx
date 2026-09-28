@@ -1,4 +1,4 @@
 // Expects: E1032
 
 let exceptions = require("std::exceptions");
-throw exceptions.DivisionByZeroException("Cannot divide by zero");
+throw exceptions.ExpectedValueException();

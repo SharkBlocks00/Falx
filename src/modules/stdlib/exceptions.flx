@@ -1,3 +1,31 @@
 let e = require("_internal::exceptions");
 
+const Exception = e.Exception;
+
 const DivisionByZeroException = e.DivisionByZeroException;
+const InvalidAssignmentTargetException = e.InvalidAssignmentTargetException;
+const InvalidCharacterException = e.InvalidCharacterException;
+
+const CannotMultiplyByValueException = e.CannotMultiplyByValueException;
+const CannotDivideByValueException = e.CannotDivideByValueException;
+const CannotAddWithValueException = e.CannotAddWithValueException;
+const CannotModWithValueException = e.CannotModWithValueException;
+const CannotMinusFromValueException = e.CannotMinusFromValueException;
+
+const CannotCompareToException = e.CannotCompareToException;
+const CannotConvertToTypeException = e.CannotConvertToTypeException;
+
+const IndexInvalidException = e.IndexInvalidException;
+const ArrayIndexInvalidException = e.ArrayIndexInvalidException;
+const MapIndexInvalidException = e.MapIndexInvalidException;
+const StringIndexInvalidException = e.StringIndexInvalidException;
+
+const InvalidArgumentCountException = e.InvalidArgumentCountException;
+const InvalidIndexTypeException = e.InvalidIndexTypeException;
+
+const ObjectNotIterableException = e.ObjectNotIterableException;
+const UnexpectedTypeException = e.UnexpectedTypeException;
+const ExpectedValueException = e.ExpectedValueException;
+
+const AssertionFailedException = e.AssertionFailedException;
+const CannotInvertValueException = e.CannotInvertValueException;
