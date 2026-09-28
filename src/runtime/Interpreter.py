@@ -40,12 +40,20 @@ class Interpreter:
         finally:
             self.currentFile = previousFile
 
-    def execute(self, program: list[Statement], environment: Environment):
+    def execute(self, program: list[Statement], environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None):
+        from src.ast.statements.DestructureDeclaration import DestructureDeclaration
+        from src.ast.statements.FunctionDeclaration import FunctionDeclaration
+        from src.ast.statements.StructDeclaration import StructDeclaration
+        from src.ast.statements.VariableDeclaration import VariableDeclaration
+
         # doing this means that we can support interpreting with seperate environments,
         # useful for doing modulation
         for statement in program:
             try:
-                statement.execute(self, environment)
+                if isinstance(statement, (DestructureDeclaration, FunctionDeclaration, StructDeclaration, VariableDeclaration)):
+                    statement.execute(self, environment, EXPORT_ENVIRONMENT)
+                else:
+                    statement.execute(self, environment)
             except RecursionDepthExceededException as e:
                 raise e.withLocation(statement.location)
 

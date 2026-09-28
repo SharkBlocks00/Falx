@@ -11,13 +11,14 @@ from src.runtime.values.StructDefinition import StructDefinition
 
 
 class StructDeclaration(Statement):
-    def __init__(self, location: SourceLocation, name: str, fields: list[FieldDefinition], methods: list[FunctionDeclaration]):
+    def __init__(self, location: SourceLocation, name: str, fields: list[FieldDefinition], methods: list[FunctionDeclaration], exported: bool = False):
         super().__init__(location)
         self.name = name
         self.fields = fields
         self.methods = methods
+        self.exported = exported
 
-    def execute(self, interpreter: Interpreter, environment: Environment) -> None:
+    def execute(self, interpreter: Interpreter, environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None) -> None:
         try:
             methods = {}
             for method in self.methods:
@@ -29,6 +30,8 @@ class StructDeclaration(Statement):
             constructor: StructConstructor = StructConstructor(definition)
 
             environment.define(self.name, constructor, False)
+            if EXPORT_ENVIRONMENT is not None and self.exported:
+                EXPORT_ENVIRONMENT.define(self.name, constructor, False)
         except VariableAlreadyExistsException as e:
             raise e.withLocation(self.location)
         except UndefinedVariableException as e:

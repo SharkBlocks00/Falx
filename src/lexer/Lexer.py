@@ -238,4 +238,5 @@ def initKeywords() -> dict[str, TokenKind]:
         "struct": TokenKind.STRUCT,
         "null": TokenKind.NULL,
         "throw": TokenKind.THROW,
+        "export": TokenKind.EXPORT,
     }

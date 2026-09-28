@@ -12,13 +12,14 @@ from src.runtime.values.UserFunction import UserFunction
 
 
 class FunctionDeclaration(Statement):
-    def __init__(self, location: SourceLocation, name: str, parameters: list[ParameterDefinition], body: list[Statement]):
+    def __init__(self, location: SourceLocation, name: str, parameters: list[ParameterDefinition], body: list[Statement], exported: bool = False):
         super().__init__(location)
         self.name = name
         self.parameters = parameters
         self.body = body
+        self.exported = exported
 
-    def execute(self, interpreter: Interpreter, environment: Environment) -> None:
+    def execute(self, interpreter: Interpreter, environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None) -> None:
 
         seen: set[str] = set()
 
@@ -31,6 +32,8 @@ class FunctionDeclaration(Statement):
         try:
             function: UserFunction = UserFunction(self.parameters, self.body, environment)
             environment.define(self.name, function, False)
+            if EXPORT_ENVIRONMENT is not None and self.exported:
+                EXPORT_ENVIRONMENT.define(self.name, function, False)
         except VariableAlreadyExistsException:
             existing: FalxValue = environment.getLocal(self.name)
             if isinstance(existing, (UserFunction, NativeFunction)):

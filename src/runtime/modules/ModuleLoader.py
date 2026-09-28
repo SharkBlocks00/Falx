@@ -100,7 +100,11 @@ class ModuleLoader:
             moduleGlobals,
             isStandardLibrary=path.is_relative_to(self.stdlib_directory),
         )
-        module = FalxModule(name, environment)
+        EXPORT_ENVIRONMENT = Environment(
+            moduleGlobals,
+            isStandardLibrary=path.is_relative_to(self.stdlib_directory),
+        )
+        module = FalxModule(name, EXPORT_ENVIRONMENT)
 
         self.cachedModules[path] = module
         self.loadingModules.append(path)
@@ -121,7 +125,8 @@ class ModuleLoader:
             try:
                 self.interpreter.execute(
                     statements,
-                    environment
+                    environment,
+                    EXPORT_ENVIRONMENT
                 )
 
                 return module

@@ -24,6 +24,7 @@ class TokenKind(Enum):
     STRUCT = auto()
     NULL = auto()
     THROW = auto()
+    EXPORT = auto()
 
     # Delimiters
     LEFT_PAREN = auto()

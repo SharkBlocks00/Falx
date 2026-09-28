@@ -64,11 +64,14 @@ class Parser:
         return statements
 
     def _declaration(self) -> Statement:
-        if self._match(TokenKind.LET): return self._variableDeclaration(True)
-        if self._match(TokenKind.CONST): return self._variableDeclaration(False)
-        if self._match(TokenKind.FUNC): return self._functionDeclaration()
-        if self._match(TokenKind.STRUCT): return self._structDeclaration()
+        if self._match(TokenKind.EXPORT): return self._exportDeclaration()
+        return self._varDeclaration()
 
+    def _varDeclaration(self, exported: bool = False) -> Statement:
+        if self._match(TokenKind.LET): return self._variableDeclaration(mutable=True, exported=exported)
+        if self._match(TokenKind.CONST): return self._variableDeclaration(mutable=False, exported=exported)
+        if self._match(TokenKind.FUNC): return self._functionDeclaration(exported=exported)
+        if self._match(TokenKind.STRUCT): return self._structDeclaration(exported=exported)
         return self._statement()
 
     def _statement(self) -> Statement:
@@ -96,8 +99,11 @@ class Parser:
 
         return ExpressionStatement(expression._location, expression)
 
-    def _variableDeclaration(self, mutable: bool) -> VariableDeclaration | DestructureDeclaration:
-        if self._match(TokenKind.LEFT_PAREN): return self._destructureDeclaration(mutable)
+    def _exportDeclaration(self) -> Statement:
+        return self._varDeclaration(exported=True)
+
+    def _variableDeclaration(self, mutable: bool, exported: bool = False) -> VariableDeclaration | DestructureDeclaration:
+        if self._match(TokenKind.LEFT_PAREN): return self._destructureDeclaration(mutable, exported)
 
         name: Token = self._consumeIdentifier()
 
@@ -105,9 +111,9 @@ class Parser:
         initializer: Expression = self._expression()
         self._consume(TokenKind.SEMICOLON, "Expected ';' after variable declaration")
 
-        return VariableDeclaration(name.location, name.lexeme, initializer, mutable)
+        return VariableDeclaration(name.location, name.lexeme, initializer, mutable, exported)
 
-    def _destructureDeclaration(self, mutable: bool) -> DestructureDeclaration:
+    def _destructureDeclaration(self, mutable: bool, exported: bool = False) -> DestructureDeclaration:
         location: SourceLocation = self._previous().location
         targets: list[VariableExpression] = self._destructureTargets(self._tupleLiteral())
 
@@ -115,7 +121,7 @@ class Parser:
         initializer: Expression = self._expression()
         self._consume(TokenKind.SEMICOLON, "Expected ';' after variable declaration")
 
-        return DestructureDeclaration(location, targets, initializer, mutable)
+        return DestructureDeclaration(location, targets, initializer, mutable, exported)
 
     def _destructureTargets(self, pattern: Expression) -> list[VariableExpression]:
         if not isinstance(pattern, TupleLiteral):
@@ -127,7 +133,7 @@ class Parser:
 
         return pattern.elements
 
-    def _functionDeclaration(self) -> FunctionDeclaration:
+    def _functionDeclaration(self, exported: bool = False) -> FunctionDeclaration:
         name: Token = self._consumeIdentifier()
 
         self._consume(TokenKind.EQUAL, "Expected '=' after function name")
@@ -163,9 +169,9 @@ class Parser:
 
         self._insideFunction = old
         self._insideLoop = inLoop
-        return FunctionDeclaration(name.location, name.lexeme, parameters, body)
+        return FunctionDeclaration(name.location, name.lexeme, parameters, body, exported=exported)
 
-    def _structDeclaration(self) -> StructDeclaration:
+    def _structDeclaration(self, exported: bool = False) -> StructDeclaration:
         name: Token = self._consume(TokenKind.IDENTIFIER, "Expected struct name after 'struct'")
         self._consumeLeftBrace()
         fields: list[FieldDefinition] = []
@@ -194,7 +200,7 @@ class Parser:
                     raise UnexpectedTokenException("Expected field or method in struct body", self._peek().location)
 
         self._consumeRightBrace()
-        return StructDeclaration(name.location, name.lexeme, fields, methods)
+        return StructDeclaration(name.location, name.lexeme, fields, methods, exported=exported)
 
     def _ifStatement(self) -> IfStatement:
         location: SourceLocation = self._previous().location
