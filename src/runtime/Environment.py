@@ -11,9 +11,13 @@ class Environment:
     as many copies of this class can be made as needed
     """
 
-    def __init__(self, parent: Environment = None):
+    def __init__(self, parent: Environment = None, isStandardLibrary: bool = False):
         self.parent: Environment = parent
         self.variables: dict[str, Variable] = {}
+
+        self.isStandardLibrary: bool = isStandardLibrary or (
+            parent is not None and parent.isStandardLibrary
+        )
 
     def define(self, name: str, value: FalxValue, mutable: bool = True) -> None:
         if self.variables.get(name) is not None:

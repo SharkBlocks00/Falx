@@ -96,7 +96,10 @@ class ModuleLoader:
             False
         )
 
-        environment = Environment(moduleGlobals)
+        environment = Environment(
+            moduleGlobals,
+            isStandardLibrary=path.is_relative_to(self.stdlib_directory),
+        )
         module = FalxModule(name, environment)
 
         self.cachedModules[path] = module

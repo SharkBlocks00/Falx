@@ -52,6 +52,7 @@ def _executeTest(path: Path) -> dict:
             "success": False,
             "exception": e.__class__.__name__,
             "message": str(e),
+            "location": e.location if isinstance(e, FalxException) else None,
             "output": sink.getvalue(),
         }
 
@@ -117,6 +118,7 @@ class TestRunner:
 
             source: str = path.read_text(encoding="utf-8")
             expectedCode: str | None = self.getExpectedCode(source)
+            expectedLocation: tuple[int, int] | None = self.getExpectedLocation(source)
 
             outputMatches: bool = False
             expectedOutput: str | None = None
@@ -150,6 +152,11 @@ class TestRunner:
 
                 exceptionName: str | None = testResult["exception"]
                 exceptionMessage: str | None = testResult.get("message")
+                actualLocation = testResult.get("location")
+                locationMatches = expectedLocation is None or (
+                    actualLocation is not None
+                    and (actualLocation.line, actualLocation.column) == expectedLocation
+                )
 
                 ex: DiagnosticCode | None = None
                 expectedException: type[FalxException] | None = None
@@ -161,7 +168,10 @@ class TestRunner:
                 expectedExceptionName = (expectedException.__name__ if expectedException is not None else None)
 
                 test_passed = (expected == ExpectedResult.SUCCESS and not threw and outputMatches) or (
-                    expected == ExpectedResult.FAILURE and threw and exceptionName == expectedExceptionName
+                    expected == ExpectedResult.FAILURE
+                    and threw
+                    and exceptionName == expectedExceptionName
+                    and locationMatches
                 )
 
                 if expected == ExpectedResult.SUCCESS and expectedOutput is None:
@@ -220,6 +230,12 @@ class TestRunner:
                     elif exceptionName != expectedExceptionName:
                         print(f"       Expected exception: {expectedExceptionName}")
                         print(f"       Actual exception:    {exceptionName}")
+                    elif not locationMatches:
+                        print(f"       Expected location: {expectedLocation}")
+                        print(
+                            "       Actual location:   "
+                            f"{None if actualLocation is None else (actualLocation.line, actualLocation.column)}"
+                        )
                     else:
                         print(f"       Unexpected exception: {exceptionName}")
 
@@ -262,6 +278,15 @@ class TestRunner:
             return None
 
         return firstLine.split(":",1)[1].strip().split()[0]
+
+    def getExpectedLocation(self, source: str) -> tuple[int, int] | None:
+        for line in source.splitlines():
+            if line.startswith("// Expects-Location:"):
+                location: str = line.split(":", 1)[1].strip()
+                expectedLine, expectedColumn = location.split(":", 1)
+                return int(expectedLine), int(expectedColumn)
+
+        return None
 
     def getOutputPath(self, testPath: Path) -> Path:
         return testPath.with_suffix(".out")

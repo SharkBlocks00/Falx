@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 from src.packages.Callable import Callable
 from src.runtime.Environment import Environment
 from src.runtime.objects.FalxValue import FalxValue
+from src.runtime.values.UserFunction import UserFunction
 from src.ast.Expression import Expression
 from src.ast.SourceLocation import SourceLocation
 
@@ -37,6 +38,9 @@ class FunctionCallExpression(Expression):
         try:
             return obj.call(interpreter, args)
         except FalxRuntimeException as e:
+            if isinstance(obj, UserFunction) and obj.isStandardLibrary:
+                e.location = self.location
+                raise e
             raise e.withLocation(self.location)
 
     def __str__(self):
