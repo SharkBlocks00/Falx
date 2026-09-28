@@ -1,3 +1,5 @@
 // Expects: E1035
 
+let Exception = require("std::exceptions").Exception;
+
 throw Exception("Something went wrong");
