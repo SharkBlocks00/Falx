@@ -58,8 +58,21 @@ from src.diagnostics.exceptions.runtime.variables.FunctionAlreadyExistsException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.diagnostics.exceptions.runtime.AssertionFailedException import AssertionFailedException
+from src.runtime.objects.FalxThrowable import FalxThrowable
 
 DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
+
+    FalxThrowable: DiagnosticDefinition(
+        code=DiagnosticCode.THROWN_EXCEPTION,
+        severity=DiagnosticSeverity.ERROR,
+        title="uncaught exception",
+        help=(
+            "Handle the exception when exception handling is available, or avoid the failing operation.",
+        ),
+        notes=(
+            "This exception was explicitly thrown by the Falx program.",
+        ),
+    ),
 
     UndefinedVariableException: DiagnosticDefinition(
         code=DiagnosticCode.UNDEFINED_VARIABLE,

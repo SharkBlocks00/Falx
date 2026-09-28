@@ -1,0 +1,3 @@
+// Expects: E1035
+
+throw Exception("Something went wrong");

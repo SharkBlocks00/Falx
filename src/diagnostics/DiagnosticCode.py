@@ -17,6 +17,7 @@ class DiagnosticCode(Enum):
     FUNCTION_ALREADY_EXISTS = "E1031"
     EXPECTED_VALUE = "E1032"
     CANNOT_HASH_OBJECT = "E1033"
+    THROWN_EXCEPTION = "E1035"
 
     # Type errors
     UNEXPECTED_TYPE = "E1026"

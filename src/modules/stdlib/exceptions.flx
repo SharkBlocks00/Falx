@@ -1,0 +1,3 @@
+let e = require("_internal::exceptions");
+
+const DivisionByZeroException = e.DivisionByZeroException;

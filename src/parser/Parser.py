@@ -29,6 +29,7 @@ from src.ast.statements.FunctionDeclaration import FunctionDeclaration
 from src.ast.statements.IfStatement import IfStatement
 from src.ast.statements.ReturnStatement import ReturnStatement
 from src.ast.statements.StructDeclaration import StructDeclaration
+from src.ast.statements.ThrowStatement import ThrowStatement
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.WhileStatement import WhileStatement
 from src.diagnostics.exceptions.parser.context.BreakOutsideLoopException import BreakOutsideLoopException
@@ -83,6 +84,7 @@ class Parser:
         if self._match(TokenKind.RETURN):
             if not self._insideFunction: raise ReturnOutsideFunctionException(self._previous().location)
             return self._returnStatement()
+        if self._match(TokenKind.THROW): return self._throwStatement()
         if self._match(TokenKind.LEFT_BRACE): return self._blockStatement()
 
         return self._expressionStatement()
@@ -264,6 +266,12 @@ class Parser:
         value: Expression = self._expression()
         self._consumeSemicolon()
         return ReturnStatement(location, value)
+
+    def _throwStatement(self) -> ThrowStatement:
+        location: SourceLocation = self._previous().location
+        value: Expression = self._expression()
+        self._consumeSemicolon()
+        return ThrowStatement(location, value)
 
     def _breakStatement(self) -> BreakStatement:
         location: SourceLocation = self._previous().location

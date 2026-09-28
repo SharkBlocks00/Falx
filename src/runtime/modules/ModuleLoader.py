@@ -55,6 +55,11 @@ class ModuleLoader:
 
                 return FalxModule("time", TIME_ENVIRONMENT)
 
+            case "/exceptions":
+                from src.modules.internal.exceptions.ExceptionEnvironment import EXCEPTION_ENVIRONMENT
+
+                return FalxModule("exceptions", EXCEPTION_ENVIRONMENT)
+
             case _:
                 raise ModuleNotFoundException(name, "internal module directory")
 

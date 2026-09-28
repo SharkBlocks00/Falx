@@ -23,6 +23,7 @@ class TokenKind(Enum):
     CONTINUE = auto()
     STRUCT = auto()
     NULL = auto()
+    THROW = auto()
 
     # Delimiters
     LEFT_PAREN = auto()

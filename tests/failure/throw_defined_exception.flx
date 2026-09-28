@@ -1,0 +1,3 @@
+// Expects: E1032
+
+throw ExpectedValueException("This is a custom exception message");
