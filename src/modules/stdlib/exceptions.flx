@@ -1,31 +1,31 @@
 let e = require("_internal::exceptions");
 
-const Exception = e.Exception;
+export const Exception = e.Exception;
 
-const DivisionByZeroException = e.DivisionByZeroException;
-const InvalidAssignmentTargetException = e.InvalidAssignmentTargetException;
-const InvalidCharacterException = e.InvalidCharacterException;
+export const DivisionByZeroException = e.DivisionByZeroException;
+export const InvalidAssignmentTargetException = e.InvalidAssignmentTargetException;
+export const InvalidCharacterException = e.InvalidCharacterException;
 
-const CannotMultiplyByValueException = e.CannotMultiplyByValueException;
-const CannotDivideByValueException = e.CannotDivideByValueException;
-const CannotAddWithValueException = e.CannotAddWithValueException;
-const CannotModWithValueException = e.CannotModWithValueException;
-const CannotMinusFromValueException = e.CannotMinusFromValueException;
+export const CannotMultiplyByValueException = e.CannotMultiplyByValueException;
+export const CannotDivideByValueException = e.CannotDivideByValueException;
+export const CannotAddWithValueException = e.CannotAddWithValueException;
+export const CannotModWithValueException = e.CannotModWithValueException;
+export const CannotMinusFromValueException = e.CannotMinusFromValueException;
 
-const CannotCompareToException = e.CannotCompareToException;
-const CannotConvertToTypeException = e.CannotConvertToTypeException;
+export const CannotCompareToException = e.CannotCompareToException;
+export const CannotConvertToTypeException = e.CannotConvertToTypeException;
 
-const IndexInvalidException = e.IndexInvalidException;
-const ArrayIndexInvalidException = e.ArrayIndexInvalidException;
-const MapIndexInvalidException = e.MapIndexInvalidException;
-const StringIndexInvalidException = e.StringIndexInvalidException;
+export const IndexInvalidException = e.IndexInvalidException;
+export const ArrayIndexInvalidException = e.ArrayIndexInvalidException;
+export const MapIndexInvalidException = e.MapIndexInvalidException;
+export const StringIndexInvalidException = e.StringIndexInvalidException;
 
-const InvalidArgumentCountException = e.InvalidArgumentCountException;
-const InvalidIndexTypeException = e.InvalidIndexTypeException;
+export const InvalidArgumentCountException = e.InvalidArgumentCountException;
+export const InvalidIndexTypeException = e.InvalidIndexTypeException;
 
-const ObjectNotIterableException = e.ObjectNotIterableException;
-const UnexpectedTypeException = e.UnexpectedTypeException;
-const ExpectedValueException = e.ExpectedValueException;
+export const ObjectNotIterableException = e.ObjectNotIterableException;
+export const UnexpectedTypeException = e.UnexpectedTypeException;
+export const ExpectedValueException = e.ExpectedValueException;
 
-const AssertionFailedException = e.AssertionFailedException;
-const CannotInvertValueException = e.CannotInvertValueException;
+export const AssertionFailedException = e.AssertionFailedException;
+export const CannotInvertValueException = e.CannotInvertValueException;

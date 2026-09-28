@@ -3,26 +3,26 @@ let f = require("_internal::fio");
 // FUNCTIONS
 // PREDEFINED
 
-let open = f.open;
-let close = f.close;
-let read = f.read;
-let write = f.write;
+export const open = f.open;
+export const close = f.close;
+export const read = f.read;
+export const write = f.write;
 
 // CUSTOM
 
-func append = define(path, contents) {
+export func append = define(path, contents) {
     let file = open(path, "a");
     write(file, contents);
     close(file);
 }
 
-func writeAll = define(path, contents) {
+export func writeAll = define(path, contents) {
     let file = open(path, "w");
     write(file, contents);
     close(file);
 }
 
-func readAll = define(path) {
+export func readAll = define(path) {
     let file = open(path, "r");
     let contents = read(file);
     close(file);

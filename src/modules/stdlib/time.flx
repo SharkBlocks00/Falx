@@ -1,24 +1,24 @@
-let t = require("_internal::time");
+const t = require("_internal::time");
 
 // FUNCTIONS
 // PREDEFINED
 
-let time = t.time;
-let monotonic = t.monotonic;
-let sleep = t.sleep;
-let utcNow = t.utc_now;
-let localNow = t.local_now;
+export let time = t.time;
+export let monotonic = t.monotonic;
+export let sleep = t.sleep;
+export let utcNow = t.utc_now;
+export let localNow = t.local_now;
 
 // CUSTOM
 
-func millis = define() {
+export func millis = define() {
     return time() * 1000.0;
 }
 
-func sleepMillis = define(ms) {
+export func sleepMillis = define(ms) {
     sleep(ms / 1000.0);
 }
 
-func elapsed = define(start) {
+export func elapsed = define(start) {
     return monotonic() - start;
 }
