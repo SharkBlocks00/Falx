@@ -68,6 +68,7 @@ class DiagnosticCode(Enum):
     # Module errors
     MODULE_NOT_FOUND = "E4000"
     CIRCULAR_MODULE_DEPENDENCY = "E4001"
+    EXPORT_MUTABLE = "E4002"
 
     # CLI errors
     MISSING_FILENAME = "E5000"

@@ -4,8 +4,6 @@ from pathlib import Path
 from src.ast.Statement import Statement
 from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
 from src.packages.builtins.AssertFunction import AssertFunction
-from src.packages.builtins.ExceptionFunction import ExceptionFunction
-from src.packages.builtins.FalxExceptionConstructor import FalxExceptionConstructor
 from src.packages.builtins.OutputFunction import OutputFunction
 from src.packages.builtins.RequestFunction import RequestFunction
 from src.packages.builtins.RequireFunction import RequireFunction

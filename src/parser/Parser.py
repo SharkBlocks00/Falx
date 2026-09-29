@@ -40,6 +40,7 @@ from src.diagnostics.exceptions.parser.syntax.InvalidDefaultValueCreationExcepti
 from src.diagnostics.exceptions.parser.syntax.UnexpectedEndOfInputException import UnexpectedEndOfInputException
 from src.diagnostics.exceptions.parser.syntax.UnexpectedTokenException import UnexpectedTokenException
 from src.diagnostics.exceptions.runtime.RecursionDepthExceededException import RecursionDepthExceededException
+from src.diagnostics.exceptions.runtime.modules.ExportMutableValueException import ExportMutableValueException
 from src.runtime.values.FieldDefinition import FieldDefinition
 from src.runtime.values.ParameterDefinition import ParameterDefinition
 from src.tokens.Token import Token
@@ -101,9 +102,13 @@ class Parser:
 
     def _exportDeclaration(self) -> Statement:
         if self._insideFunction:
-            raise UnexpectedTokenException(f"Cannot use 'export' inside a function.", self._peek().location)
+            raise UnexpectedTokenException("Cannot use 'export' inside a function.", self._peek().location)
         if self._insideLoop:
-            raise UnexpectedTokenException(f"Cannot use 'export' inside a loop.", self._peek().location)
+            raise UnexpectedTokenException("Cannot use 'export' inside a loop.", self._peek().location)
+        if self._peek().tokenKind == TokenKind.LET:
+            raise ExportMutableValueException(f"Cannot export a mutable value.", self._peek().location)
+        if self._peek().tokenKind not in (TokenKind.CONST, TokenKind.FUNC, TokenKind.STRUCT):
+            raise UnexpectedTokenException("Expected declaration after 'export'.", self._peek().location)
         return self._varDeclaration(exported=True)
 
     def _variableDeclaration(self, mutable: bool, exported: bool = False) -> VariableDeclaration | DestructureDeclaration:

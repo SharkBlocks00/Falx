@@ -1,9 +1,9 @@
 export func exportInside = define() {
-    export let exportedInside = 5;
+    let exportedInside = 5;
     return exportedInside;
 }
 
 func noExportInside = define() {
-    export let notExportedInside = 10;
+    let notExportedInside = 10;
     return notExportedInside;
 }
