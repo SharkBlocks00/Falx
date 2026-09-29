@@ -51,10 +51,10 @@ class UserFunction(Callable):
 
 
         try:
+            interpreter.recursionDepth += 1
+
             if interpreter.recursionDepth >= interpreter.maxRecursionDepth:
                 raise RecursionDepthExceededException(interpreter.maxRecursionDepth)
-
-            interpreter.recursionDepth += 1
 
             for stmt in self.body:
                 stmt.execute(interpreter, local)
@@ -74,5 +74,3 @@ class UserFunction(Callable):
     def __eq__(self, other: object) -> bool:
         return isinstance(other, UserFunction) and self.parameters == other.parameters and self.body == other.body
 
-    def __hash__(self) -> int:
-        return hash((self.parameters, self.body))
