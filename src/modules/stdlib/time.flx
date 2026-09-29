@@ -3,11 +3,11 @@ const t = require("_internal::time");
 // FUNCTIONS
 // PREDEFINED
 
-export let time = t.time;
-export let monotonic = t.monotonic;
-export let sleep = t.sleep;
-export let utcNow = t.utc_now;
-export let localNow = t.local_now;
+export const time = t.time;
+export const monotonic = t.monotonic;
+export const sleep = t.sleep;
+export const utcNow = t.utc_now;
+export const localNow = t.local_now;
 
 // CUSTOM
 

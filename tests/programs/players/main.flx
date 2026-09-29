@@ -1,4 +1,4 @@
-let player = require("player");
+const player = require("player");
 
 let p = player.Player();
 

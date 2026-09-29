@@ -1,4 +1,4 @@
-let e = require("_internal::exceptions");
+const e = require("_internal::exceptions");
 
 export const Exception = e.Exception;
 

@@ -1,4 +1,4 @@
-let f = require("_internal::fio");
+const f = require("_internal::fio");
 
 // FUNCTIONS
 // PREDEFINED

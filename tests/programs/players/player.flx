@@ -6,4 +6,4 @@ export struct Player {
        }
 }
 
-export let playerVersion = "1.0";
+export const playerVersion = "1.0";
