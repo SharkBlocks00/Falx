@@ -1,0 +1,31 @@
+const e = require("_internal::exceptions");
+
+export const Exception = e.Exception;
+
+export const DivisionByZeroException = e.DivisionByZeroException;
+export const InvalidAssignmentTargetException = e.InvalidAssignmentTargetException;
+export const InvalidCharacterException = e.InvalidCharacterException;
+
+export const CannotMultiplyByValueException = e.CannotMultiplyByValueException;
+export const CannotDivideByValueException = e.CannotDivideByValueException;
+export const CannotAddWithValueException = e.CannotAddWithValueException;
+export const CannotModWithValueException = e.CannotModWithValueException;
+export const CannotMinusFromValueException = e.CannotMinusFromValueException;
+
+export const CannotCompareToException = e.CannotCompareToException;
+export const CannotConvertToTypeException = e.CannotConvertToTypeException;
+
+export const IndexInvalidException = e.IndexInvalidException;
+export const ArrayIndexInvalidException = e.ArrayIndexInvalidException;
+export const MapIndexInvalidException = e.MapIndexInvalidException;
+export const StringIndexInvalidException = e.StringIndexInvalidException;
+
+export const InvalidArgumentCountException = e.InvalidArgumentCountException;
+export const InvalidIndexTypeException = e.InvalidIndexTypeException;
+
+export const ObjectNotIterableException = e.ObjectNotIterableException;
+export const UnexpectedTypeException = e.UnexpectedTypeException;
+export const ExpectedValueException = e.ExpectedValueException;
+
+export const AssertionFailedException = e.AssertionFailedException;
+export const CannotInvertValueException = e.CannotInvertValueException;

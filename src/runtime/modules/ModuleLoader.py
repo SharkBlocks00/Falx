@@ -55,6 +55,11 @@ class ModuleLoader:
 
                 return FalxModule("time", TIME_ENVIRONMENT)
 
+            case "/exceptions":
+                from src.modules.internal.exceptions.ExceptionEnvironment import EXCEPTION_ENVIRONMENT
+
+                return FalxModule("exceptions", EXCEPTION_ENVIRONMENT)
+
             case _:
                 raise ModuleNotFoundException(name, "internal module directory")
 
@@ -91,8 +96,15 @@ class ModuleLoader:
             False
         )
 
-        environment = Environment(moduleGlobals)
-        module = FalxModule(name, environment)
+        environment = Environment(
+            moduleGlobals,
+            isStandardLibrary=path.is_relative_to(self.stdlib_directory),
+        )
+        EXPORT_ENVIRONMENT = Environment(
+            moduleGlobals,
+            isStandardLibrary=path.is_relative_to(self.stdlib_directory),
+        )
+        module = FalxModule(name, EXPORT_ENVIRONMENT)
 
         self.cachedModules[path] = module
         self.loadingModules.append(path)
@@ -113,7 +125,8 @@ class ModuleLoader:
             try:
                 self.interpreter.execute(
                     statements,
-                    environment
+                    environment,
+                    EXPORT_ENVIRONMENT
                 )
 
                 return module

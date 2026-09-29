@@ -1,0 +1,5 @@
+let values = require("_fixtures/exports/public_values");
+let pair = values.Pair(3, 4);
+
+output(pair.first);
+output(pair.second);

@@ -17,6 +17,7 @@ class UserFunction(Callable):
         self.parameters: list[ParameterDefinition] = parameters
         self.body: list[Statement] = body
         self.closure: Environment = closure
+        self.isStandardLibrary: bool = closure.isStandardLibrary
 
     def getTypeName(self) -> str:
         return "function"

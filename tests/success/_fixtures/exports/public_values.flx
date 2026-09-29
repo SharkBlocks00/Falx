@@ -1,0 +1,11 @@
+export const variable = 10;
+export const constant = 20;
+
+export func double = define(value) {
+    return value * 2;
+}
+
+export struct Pair {
+    first;
+    second;
+}

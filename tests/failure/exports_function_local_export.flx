@@ -1,0 +1,5 @@
+// Expects: E1012
+
+let values = require("_fixtures/exports/function_locals");
+assert(values.exportInside() == 5);
+output(values.exportedInside);

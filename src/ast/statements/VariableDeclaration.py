@@ -10,16 +10,19 @@ from src.runtime.objects.FalxValue import FalxValue
 
 
 class VariableDeclaration(Statement):
-    def __init__(self, location: SourceLocation, name: str, initializer: Expression, mutable: bool):
+    def __init__(self, location: SourceLocation, name: str, initializer: Expression, mutable: bool, exported: bool):
         super().__init__(location)
         self.initializer = initializer
         self.mutable = mutable
         self.name = name
+        self.exported = exported
 
-    def execute(self, interpreter: Interpreter, environment: Environment) -> None:
+    def execute(self, interpreter: Interpreter, environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None) -> None:
         try:
             value: FalxValue = self.initializer.evaluate(interpreter, environment)
             environment.define(self.name, value, self.mutable)
+            if EXPORT_ENVIRONMENT is not None and self.exported:
+                EXPORT_ENVIRONMENT.define(self.name, value, self.mutable)
         except VariableAlreadyExistsException:
             raise VariableAlreadyExistsException(self.name, self.location)
         except CannotConvertToTypeException as e:

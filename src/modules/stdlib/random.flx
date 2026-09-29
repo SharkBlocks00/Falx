@@ -1,18 +1,18 @@
-let r = require("_internal::random");
+const r = require("_internal::random");
 
-// FUNCTIONS
+// export funcTIONS
 
 // PREDEFINED
 
-let random = r.random;
-let randomInt = r.random_int;
-let seed = r.seed;
-let getState = r.get_state;
-let setState = r.set_state;
+export const random = r.random;
+export const randomInt = r.random_int;
+export const seed = r.seed;
+export const getState = r.get_state;
+export const setState = r.set_state;
 
 // CUSTOM
 
-func randomBool = define() {
+export func randomBool = define() {
     let n = random();
     if (n > 0.5) {
         return true;
@@ -20,7 +20,7 @@ func randomBool = define() {
    return false;
 }
 
-func randomSign = define() {
+export func randomSign = define() {
     let n = random();
     if (n > 0.5) {
         return -1;
@@ -28,7 +28,7 @@ func randomSign = define() {
     return 1;
 }
 
-func chance = define(prob) {
+export func chance = define(prob) {
     let n = random();
     if (n <= prob) {
         return true;

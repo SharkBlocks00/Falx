@@ -36,6 +36,7 @@ from src.diagnostics.exceptions.runtime.methods.DuplicateParameterException impo
 from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException import InvalidArgumentCountException
 from src.diagnostics.exceptions.runtime.methods.ObjectNotCallableException import ObjectNotCallableException
 from src.diagnostics.exceptions.runtime.modules.CircularModuleDependencyException import CircularModuleDependencyException
+from src.diagnostics.exceptions.runtime.modules.ExportMutableValueException import ExportMutableValueException
 from src.diagnostics.exceptions.runtime.modules.ModuleNotFoundException import ModuleNotFoundException
 from src.diagnostics.exceptions.runtime.operations.CannotAddWithValueException import CannotAddWithValueException
 from src.diagnostics.exceptions.runtime.operations.CannotCompareToException import CannotCompareToException
@@ -58,8 +59,21 @@ from src.diagnostics.exceptions.runtime.variables.FunctionAlreadyExistsException
 from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException import UndefinedVariableException
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.diagnostics.exceptions.runtime.AssertionFailedException import AssertionFailedException
+from src.runtime.objects.FalxThrowable import FalxThrowable
 
 DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
+
+    FalxThrowable: DiagnosticDefinition(
+        code=DiagnosticCode.THROWN_EXCEPTION,
+        severity=DiagnosticSeverity.ERROR,
+        title="uncaught exception",
+        help=(
+            "Handle the exception when exception handling is available, or avoid the failing operation.",
+        ),
+        notes=(
+            "This exception was explicitly thrown by the Falx program.",
+        ),
+    ),
 
     UndefinedVariableException: DiagnosticDefinition(
         code=DiagnosticCode.UNDEFINED_VARIABLE,
@@ -758,5 +772,18 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
         notes=(
             "The supplied file mode is not valid or supported for opening a file.",
         )
-    )
+    ),
+
+    ExportMutableValueException: DiagnosticDefinition(
+        code=DiagnosticCode.EXPORT_MUTABLE,
+        severity=DiagnosticSeverity.ERROR,
+        title="cannot export mutable value",
+        help=(
+            "Export the value as a constant or expose it through a function instead.",
+            "Keep mutable state private to the module and provide functions to access or modify it.",
+        ),
+        notes=(
+            "Mutable values cannot be exported.",
+        )   ,
+    ),
 }

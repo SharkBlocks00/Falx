@@ -1,0 +1,5 @@
+// Expects: E1032
+
+let ExpectedValueException = require("std::exceptions").ExpectedValueException;
+
+throw ExpectedValueException("This is a custom exception message");

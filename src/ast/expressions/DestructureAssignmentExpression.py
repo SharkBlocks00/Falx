@@ -7,13 +7,14 @@ from src.diagnostics.exceptions.runtime.variables.DestructureCountException impo
 
 if TYPE_CHECKING:
     from src.runtime.Interpreter import Interpreter
+    from src.ast.expressions.VariableExpression import VariableExpression
 
-from src.ast.Expression import Expression
 from src.ast.SourceLocation import SourceLocation
-from src.ast.expressions.VariableExpression import VariableExpression
 from src.runtime.Environment import Environment
 from src.runtime.objects.FalxTuple import FalxTuple
 from src.runtime.objects.FalxValue import FalxValue
+
+from src.ast.Expression import Expression
 
 
 class DestructureAssignmentExpression(Expression):

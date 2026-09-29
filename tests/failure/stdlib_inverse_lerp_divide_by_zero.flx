@@ -1,0 +1,5 @@
+// Expects: E1003
+// Expects-Location: 5:39
+
+let math = require("std::math");
+let value = math.inverseLerp(10, 10, 5);

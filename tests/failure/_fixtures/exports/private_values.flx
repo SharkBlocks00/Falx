@@ -1,0 +1,11 @@
+let variable = 10;
+const constant = 20;
+
+func double = define(value) {
+    return value * 2;
+}
+
+struct Pair {
+    first;
+    second;
+}

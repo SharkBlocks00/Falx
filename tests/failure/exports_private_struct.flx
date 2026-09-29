@@ -1,0 +1,4 @@
+// Expects: E1012
+
+let values = require("_fixtures/exports/private_values");
+let pair = values.Pair(1, 2);
