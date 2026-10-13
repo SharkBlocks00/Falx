@@ -13,7 +13,15 @@ from src.runtime.modules.ModuleLoader import ModuleLoader
 
 
 class Interpreter:
+    """Interpreter class for Falx.
+       Interprets Falx programs by executing their AST statements.
+    """
     def __init__(self, projectDir: Path = Path.cwd()):
+        """Initialize the interpreter and its runtime environment.
+
+        Args:
+            projectDir (Path): Root directory used for resolving project modules.
+        """
         self.globals: Environment = Environment()
         self.environment: Environment = self.globals
 
@@ -28,7 +36,18 @@ class Interpreter:
 
         sys.setrecursionlimit(5000)
 
-    def interpret(self, program: list[Statement], file: Path | None = None):
+    def interpret(self, program: list[Statement], file: Path | None = None) -> None:
+        """Interpret a Falx program.
+
+        Execute the program's statements in the current working environment.
+        Temporarily sets the current source file for runtime context, and
+        restore its previous value after execution.
+
+        Args:
+            program (list[Statement]): The statements composing the program's AST.
+            file (Path | None): The source file being interpreted, if applicable.
+        """
+
         previousFile = self.currentFile
         self.currentFile = file
         # Because of how all the statements and expressions are structured,
@@ -38,7 +57,25 @@ class Interpreter:
         finally:
             self.currentFile = previousFile
 
-    def execute(self, program: list[Statement], environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None):
+    def execute(self, program: list[Statement], environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None) -> None:
+        """Execute a sequence of statements in the given working environment.
+
+        Each statement is executed using the supplied environment.
+        Declarations that support exports also recieve the optional
+        export environment.
+
+        Args:
+            program (list[Statement]): The statements to be executed.
+            environment (Environment): The environment to execute the statements in.
+            EXPORT_ENVIRONMENT (Environment | None): The environment into which supported
+                declarations can export their bindings, if provided.
+
+        Raises:
+            RecursionDepthExceededException: If the execution exceeds the allowed recursion depth,
+                includes the raising statement's source location.
+
+        """
+
         from src.ast.statements.DestructureDeclaration import DestructureDeclaration
         from src.ast.statements.FunctionDeclaration import FunctionDeclaration
         from src.ast.statements.StructDeclaration import StructDeclaration
@@ -57,7 +94,7 @@ class Interpreter:
 
 
     def registerBuiltins(self):
-        """Registers the interpreter's builtin functions to the interpreter"""
+        """Registers the interpreter's builtin functions to the global environment."""
         # immutable so no user/program can overwrite the builtin basic functions
         self.globals.define("output", OutputFunction(), False)
         self.globals.define("request", RequestFunction(), False)
