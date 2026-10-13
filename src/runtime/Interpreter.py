@@ -93,7 +93,7 @@ class Interpreter:
                 raise e.withLocation(statement.location)
 
 
-    def registerBuiltins(self):
+    def registerBuiltins(self) -> None:
         """Registers the interpreter's builtin functions to the global environment."""
         # immutable so no user/program can overwrite the builtin basic functions
         self.globals.define("output", OutputFunction(), False)
