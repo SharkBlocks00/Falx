@@ -93,6 +93,46 @@ class Parser:
 
         return self._expressionStatement()
 
+    def _typeAnnotation(self) -> str:
+        return self._unionTypeAnnotation()
+
+    def _unionTypeAnnotation(self) -> str:
+        members = [self._postfixTypeAnnotation()]
+
+        while self._match(TokenKind.PIPE):
+            members.append(self._postfixTypeAnnotations())
+
+        return " | ".join(members)
+
+    def _postfixTypeAnnotation(self) -> str:
+        result: str = self._primaryTypeAnnotation()
+
+        while True:
+            if self._match(TokenKind.QUESTION):
+                result += "?"
+            elif self._match(TokenKind.LEFT_BRACKET):
+                self._consume(
+                    TokenKind.RIGHT_BRACKET,
+                    "Expected ']' in array type annotation.",
+                )
+                result += "[]"
+            else:
+                break
+
+        return result
+
+    def _primaryTypeAnnotation(self) -> str:
+        if self._match(TokenKind.LEFT_PAREN):
+            inner = self._unionTypeAnnotation()
+            self._consume(
+                TokenKind.RIGHT_PAREN,
+                "Expected ')' after type annotation.",
+            )
+            return f"({inner})"
+
+        name = self._consumeIdentifier()
+        return name.lexeme
+
     def _expressionStatement(self) -> Statement:
         expression: Expression = self._expression()
 
@@ -112,15 +152,21 @@ class Parser:
         return self._varDeclaration(exported=True)
 
     def _variableDeclaration(self, mutable: bool, exported: bool = False) -> VariableDeclaration | DestructureDeclaration:
-        if self._match(TokenKind.LEFT_PAREN): return self._destructureDeclaration(mutable, exported)
+        if self._match(TokenKind.LEFT_PAREN):
+            return self._destructureDeclaration(mutable, exported)
 
         name: Token = self._consumeIdentifier()
+
+        type_annotation: str | None = None
+
+        if self._match(TokenKind.COLON):
+            type_annotation = self._typeAnnotation()
 
         self._consume(TokenKind.EQUAL, "Expected '=' after variable name")
         initializer: Expression = self._expression()
         self._consume(TokenKind.SEMICOLON, "Expected ';' after variable declaration")
 
-        return VariableDeclaration(name.location, name.lexeme, initializer, mutable, exported)
+        return VariableDeclaration(name.location, name.lexeme, initializer, mutable, exported, type_annotation)
 
     def _destructureDeclaration(self, mutable: bool, exported: bool = False) -> DestructureDeclaration:
         location: SourceLocation = self._previous().location

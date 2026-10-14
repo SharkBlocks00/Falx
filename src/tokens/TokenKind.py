@@ -73,5 +73,8 @@ class TokenKind(Enum):
     AND = auto()
     OR = auto()
 
+    QUESTION = auto()
+    PIPE = auto()
+
     # Special
     EOF = auto()

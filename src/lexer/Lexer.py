@@ -99,12 +99,14 @@ class Lexer:
                 if self._match("|"):
                     self._addToken(TokenKind.OR)
                 else:
-                    raise InvalidCharacterException("Expected '||', found '|'.", SourceLocation(self.filename, self.line, self.column-1))
+                    self._addToken(TokenKind.PIPE)
             case "&":
                 if self._match("&"):
                     self._addToken(TokenKind.AND)
                 else:
                     raise InvalidCharacterException("Expected '&&', found '&'.", SourceLocation(self.filename, self.line, self.column-1))
+            case "?":
+                self._addToken(TokenKind.QUESTION)
             case _:
                 if c.isdigit() and c.isascii(): self._number()
                 elif c.isalpha(): self._identifier()

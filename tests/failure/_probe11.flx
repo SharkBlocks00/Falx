@@ -1,2 +1,1 @@
-// Expects: E4001
-let v = require("_probe12");
+let name: int? = null;

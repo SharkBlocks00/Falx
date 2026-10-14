@@ -14,6 +14,7 @@ from src.runtime.Interpreter import Interpreter
 from src.runtime.methods.repl.ReplExitFunction import ReplExitFunction
 from src.tokens.Token import Token
 from src.TestRunner import TestRunner
+from src.types.TypeChecker import TypeChecker
 
 
 def repl() -> None:
@@ -60,6 +61,9 @@ def runFile(scriptPath: Path) -> int:
 
         parser: Parser = Parser(tokens)
         statements: list[Statement] = parser.parse()
+
+        type_checker: TypeChecker = TypeChecker()
+        type_checker.check(statements)
 
         interpreter: Interpreter = Interpreter(scriptPath.parent)
         interpreter.interpret(statements, scriptPath.resolve())

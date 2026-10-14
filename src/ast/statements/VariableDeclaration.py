@@ -10,12 +10,13 @@ from src.runtime.objects.FalxValue import FalxValue
 
 
 class VariableDeclaration(Statement):
-    def __init__(self, location: SourceLocation, name: str, initializer: Expression, mutable: bool, exported: bool):
+    def __init__(self, location: SourceLocation, name: str, initializer: Expression, mutable: bool, exported: bool, type_annotation: str):
         super().__init__(location)
         self.initializer = initializer
         self.mutable = mutable
         self.name = name
         self.exported = exported
+        self.type_annotation = type_annotation
 
     def execute(self, interpreter: Interpreter, environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None) -> None:
         try:
