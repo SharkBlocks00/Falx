@@ -100,7 +100,7 @@ class Parser:
         members = [self._postfixTypeAnnotation()]
 
         while self._match(TokenKind.PIPE):
-            members.append(self._postfixTypeAnnotations())
+            members.append(self._postfixTypeAnnotation())
 
         return " | ".join(members)
 

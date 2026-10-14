@@ -40,13 +40,13 @@ class TypeResolver:
     def _parse_postfix(self, text: str) -> FalxType:
         text = text.strip()
 
+        if text.endswith("[]"):
+            inner = self._parse_postfix(text[:-2])
+            return ArrayType(inner)
+
         if text.endswith("?"):
             inner = self._parse_postfix(text[:-1])
             return make_nullable(inner)
-
-        if text.endswith("[]"):
-            inner = self._parse_postfix(text[:-1])
-            return ArrayType(inner)
 
         if text.startswith("(") and text.endswith(")"):
             return self._parse_union(text[1:-1])
@@ -57,7 +57,8 @@ class TypeResolver:
         if text in self.known_types:
             return NamedType(text)
 
-        raise TypeCheckError(f"Unknown type '{text}'")
+        raise TypeCheckError(f"Unknown type '{text}'.")
+
 
     @staticmethod
     def _split_top_level(text: str, seperator: str,) -> list[str]:
