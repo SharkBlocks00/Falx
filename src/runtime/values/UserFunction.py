@@ -12,7 +12,16 @@ from src.diagnostics.exceptions.runtime.methods.InvalidArgumentCountException im
 
 class UserFunction(Callable):
     """Base class for all user defined functions."""
+
     def __init__(self, parameters: list[ParameterDefinition], body: list[Statement], closure: Environment):
+        """Initialize a user-defined function.
+
+        Args:
+            parameters (list[ParameterDefinition]): The list of defined parameters
+            body (list[Statement]): The list of statements within the function to be executed
+            closure (Environment): The external environment of the function
+        """
+
         super().__init__()
         self.parameters: list[ParameterDefinition] = parameters
         self.body: list[Statement] = body
@@ -29,6 +38,23 @@ class UserFunction(Callable):
         return len(self.parameters)
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
+        """Execute the user-defined function.
+
+        Args:
+            interpreter (Interpreter): The interpreter to be used to execute the function
+            arguments (list[FalxValue]): The list of arguments to be passed to the function
+
+        Raises:
+            InvalidArgumentCountException: If the number of arguments passed to the function
+                exceeds the maximum number of parameters, or if it is under the number of
+                predefined parameters in the function
+            RecursionDepthExceededException: If the maximum recursion depth is exceeded
+
+        Returns:
+            FalxNull: FalxNull: If there was no earlier return type/statement.
+            FalxValue: The value to be returned, using `return`.
+        """
+
         if len(arguments) > len(self.parameters):
             raise InvalidArgumentCountException(len(arguments), len(self.parameters))
 

@@ -10,7 +10,14 @@ from src.runtime.values.StructDefinition import StructDefinition
 
 
 class StructConstructor(Callable):
+    """Class representing a struct constructor."""
+
     def __init__(self, definition: StructDefinition):
+        """Initialize the constructor and set its definition.
+
+        Args:
+            definition (StructDefinition): the definition of the struct
+        """
         super().__init__()
         self.definition = definition
 
@@ -21,6 +28,23 @@ class StructConstructor(Callable):
         return len(self.definition.fields)
 
     def call(self, interpreter: Interpreter, arguments: list[FalxValue]) -> FalxValue:
+        """Create a FalxStruct from the definition and the given arguments.
+
+        Each argument sets a field's value inside the struct, will default to null if
+        an argument is not given for a certain field.
+
+        Args:
+            interpreter (Interpreter): the interpreter class to use
+            arguments (list[FalxValue]): the arguments to set the struct's values to
+
+        Raises:
+            InvalidArgumentCountException: If the provided argument count does not
+                either match the number of required fields, or if there are more
+                arguments passed than the total number of fields.
+
+        Returns:
+            FalxStruct: The created FalxStruct
+        """
 
         requiredFields: int = len([field for field in self.definition.fields if field.defaultValue is None])
 
