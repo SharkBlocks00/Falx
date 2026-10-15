@@ -1,0 +1,5 @@
+// Expects: E1022
+
+func bad = define(a: int, a: int) {
+    return a;
+}

@@ -10,6 +10,7 @@ from src.ast.Statement import Statement
 
 from src.ast.expressions.VariableExpression import VariableExpression
 from src.ast.expressions.BinaryExpression import BinaryExpression
+from src.ast.expressions.FunctionCallExpression import FunctionCallExpression
 from src.ast.statements.ExpressionStatement import ExpressionStatement
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.FunctionDeclaration import FunctionDeclaration
@@ -45,6 +46,7 @@ class TypeChecker:
             ArrayLiteral: self._infer_array,
             MapLiteral: self._infer_map,
             TupleLiteral: self._infer_tuple,
+            FunctionCallExpression: self._infer_function_call,
         }
 
     def check(self, statements: list[Statement]) -> None:
@@ -200,7 +202,9 @@ class TypeChecker:
         numeric_types = (INT, FLOAT)
 
         if operator == TokenKind.PLUS:
-            if left_type == STRING and right_type == STRING:
+            if left_type == STRING and right_type in {STRING, INT, FLOAT, BOOL}:
+                return STRING
+            if right_type == STRING and left_type in {STRING, INT, FLOAT, BOOL}:
                 return STRING
 
             if left_type in numeric_types and right_type in numeric_types:
@@ -272,6 +276,38 @@ class TypeChecker:
         )
 
         return TupleType(element_types)
+
+    def _infer_function_call(self, expression: FunctionCallExpression) -> FalxType:
+        if isinstance(expression.callee, VariableExpression):
+            builtin_name = expression.callee.name
+            if builtin_name in {"output", "assert"}:
+                for arg in expression.arguments:
+                    self.infer_expression(arg)
+                return VOID
+            if builtin_name == "typeof":
+                for arg in expression.arguments:
+                    self.infer_expression(arg)
+                return STRING
+            if builtin_name in {"require", "request"}:
+                for arg in expression.arguments:
+                    self.infer_expression(arg)
+                return ANY
+
+        callee_type = self.infer_expression(expression.callee)
+
+        for arg in expression.arguments:
+            self.infer_expression(arg)
+
+        if isinstance(callee_type, FunctionType):
+            return callee_type.return_type
+
+        if callee_type == ANY:
+            return ANY
+
+        raise TypeCheckError(
+            f"Type '{callee_type}' is not callable.",
+            expression.location,
+        )
 
 
     def _check_function_declaration(self, statement: FunctionDeclaration) -> None:

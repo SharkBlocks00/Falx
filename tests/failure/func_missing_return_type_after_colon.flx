@@ -1,0 +1,5 @@
+// Expects: E2001
+
+func bad = define(a: int): {
+    return a;
+}

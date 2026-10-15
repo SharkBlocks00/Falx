@@ -1,0 +1,45 @@
+func add = define(a: int, b: int): int {
+    return a + b;
+}
+
+func subtract = define(a: int, b: int): int {
+    return a - b;
+}
+
+func multiply = define(a: int, b: int): int {
+    return a * b;
+}
+
+func divide = define(a: int, b: int): int {
+    return a / b;
+}
+
+func calculate = define(op: String, a: int, b: int): int | String {
+    if (op == "add") {
+        return add(a, b);
+    }
+    if (op == "sub") {
+        return subtract(a, b);
+    }
+    if (op == "mul") {
+        return multiply(a, b);
+    }
+    if (op == "div") {
+        return divide(a, b);
+    }
+
+    return "unknown operation";
+}
+
+func logStep = define(msg: String): void {
+    output("[CALC] " + msg);
+}
+
+logStep("Starting calculations");
+output(calculate("add", 10, 5));
+output(calculate("sub", 20, 8));
+output(calculate("mul", 6, 7));
+output(calculate("div", 100, 4));
+output(calculate("mul", 15, 2));
+output(calculate("pow", 2, 3));
+logStep("Completed");
