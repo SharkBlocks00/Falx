@@ -88,6 +88,7 @@ STRING = PrimitiveType("String")
 UNIT = PrimitiveType("unit")
 NULL = PrimitiveType("null")
 ANY = PrimitiveType("any")
+VOID = PrimitiveType("void")
 
 
 def make_nullable(inner: FalxType) -> FalxType:

@@ -202,7 +202,11 @@ class Parser:
             while True:
                 parameter: Token = self._consume(TokenKind.IDENTIFIER, "Expected parameter name")
 
+                param_type_annotation: str | None = None
                 defaultValue: Expression | None = None
+
+                if self._match(TokenKind.COLON):
+                    param_type_annotation = self._typeAnnotation()
 
                 if self._match(TokenKind.EQUAL):
                     defaultValue = self._expression()
@@ -210,10 +214,15 @@ class Parser:
                 elif not self._match(TokenKind.EQUAL) and defaultCreated:
                     raise InvalidDefaultValueCreationException(self._previous().lexeme, self._previous().location)
 
-                parameters.append(ParameterDefinition(parameter.lexeme, defaultValue))
+                parameters.append(ParameterDefinition(parameter.lexeme, defaultValue, param_type_annotation))
                 if not self._match(TokenKind.COMMA): break
 
         self._consume(TokenKind.RIGHT_PAREN, "Expected ')' after function parameters")
+
+        return_type_annotation: str | None = None
+        if self._match(TokenKind.COLON):
+            return_type_annotation = self._typeAnnotation()
+
         self._consumeLeftBrace()
 
         old: bool = self._insideFunction
@@ -224,7 +233,7 @@ class Parser:
 
         self._insideFunction = old
         self._insideLoop = inLoop
-        return FunctionDeclaration(name.location, name.lexeme, parameters, body, exported=exported)
+        return FunctionDeclaration(name.location, name.lexeme, parameters, body, exported=exported, return_type_annotation=return_type_annotation)
 
     def _structDeclaration(self, exported: bool = False) -> StructDeclaration:
         name: Token = self._consume(TokenKind.IDENTIFIER, "Expected struct name after 'struct'")

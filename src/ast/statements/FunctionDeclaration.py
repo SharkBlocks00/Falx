@@ -12,12 +12,13 @@ from src.runtime.values.UserFunction import UserFunction
 
 
 class FunctionDeclaration(Statement):
-    def __init__(self, location: SourceLocation, name: str, parameters: list[ParameterDefinition], body: list[Statement], exported: bool = False):
+    def __init__(self, location: SourceLocation, name: str, parameters: list[ParameterDefinition], body: list[Statement], exported: bool = False, return_type_annotation: str | None = None):
         super().__init__(location)
         self.name = name
         self.parameters = parameters
         self.body = body
         self.exported = exported
+        self.return_type_annotation = return_type_annotation
 
     def execute(self, interpreter: Interpreter, environment: Environment, EXPORT_ENVIRONMENT: Environment | None = None) -> None:
 

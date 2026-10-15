@@ -1,4 +1,4 @@
-from src.types.FalxType import ANY, BOOL, FLOAT, INT, NULL, STRING, UNIT, ArrayType, FalxType, NamedType, NullableType, make_nullable, make_union
+from src.types.FalxType import ANY, BOOL, FLOAT, INT, NULL, STRING, UNIT, VOID, ArrayType, FalxType, NamedType, NullableType, make_nullable, make_union
 from src.types.TypeErrors import TypeCheckError
 
 class TypeResolver:
@@ -9,7 +9,7 @@ class TypeResolver:
         "String": STRING,
         "string": STRING,
         "unit": UNIT,
-        "void": UNIT,
+        "void": VOID,
         "null": NULL,
         "any": ANY,
     }
