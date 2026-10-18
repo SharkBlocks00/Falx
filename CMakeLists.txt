@@ -35,4 +35,6 @@ add_executable(CFalx src/main.cpp
         ../Falx-cpp/src/runtime/objects/FalxNull.h
         ../Falx-cpp/src/ast/expressions/literals/NullLiteral.h
         src/ast/expressions/literals/MapLiteral.h
+        src/runtime/objects/advanced/FalxNumber.cpp
+        src/runtime/objects/advanced/FalxNumber.h
 )

@@ -33,14 +33,14 @@ public:
 
     [[nodiscard]] virtual bool isHashable() const { return false; }
     [[nodiscard]] virtual std::shared_ptr<FalxValue> add(const std::shared_ptr<FalxValue> &other) const;
-    [[nodiscard]] std::shared_ptr<FalxValue> minus(const FalxValue &other);
-    [[nodiscard]] FalxValue multiply(const FalxValue &other);
-    [[nodiscard]] FalxValue divide(const FalxValue &other);
-    [[nodiscard]] FalxValue modulo(const FalxValue &other);
-    [[nodiscard]] int compareTo(const FalxValue &other) const;
+    [[nodiscard]] virtual std::shared_ptr<FalxValue> minus(const FalxValue &other);
+    [[nodiscard]] virtual std::shared_ptr<FalxValue> multiply(const FalxValue &other);
+    [[nodiscard]] virtual std::shared_ptr<FalxValue> divide(const FalxValue &other);
+    [[nodiscard]] virtual std::shared_ptr<FalxValue> modulo(const FalxValue &other);
+    [[nodiscard]] virtual int compareTo(const FalxValue &other) const;
     [[nodiscard]] virtual bool equalsValue(const std::shared_ptr<FalxValue> &other) const;
-    [[nodiscard]] std::string getTypeName() const;
-    [[nodiscard]] std::variant<int, double> asNumber() const;
+    [[nodiscard]] virtual std::string getTypeName() const;
+    [[nodiscard]] virtual std::variant<int, double> asNumber() const;
     [[nodiscard]] virtual int asInt() const;
     [[nodiscard]] virtual double asDouble() const;
     [[nodiscard]] virtual std::string asString() const;

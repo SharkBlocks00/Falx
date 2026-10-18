@@ -16,6 +16,6 @@ public:
         return typeid(*this) == typeid(other);
     }
 
-    static std::string getTypeName() { return "null"; }
+    [[nodiscard]] std::string getTypeName() const override { return "null"; }
 
 };

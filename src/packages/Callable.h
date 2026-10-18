@@ -23,7 +23,7 @@ public:
         return {};
     }
 
-    static std::string getTypeName() {
+    [[nodiscard]] std::string getTypeName() const override {
         return "callable";
     }
 };

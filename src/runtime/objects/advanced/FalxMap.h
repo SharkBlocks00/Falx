@@ -21,7 +21,7 @@ public:
     [[nodiscard]] std::map<std::shared_ptr<FalxValue>, std::shared_ptr<FalxValue>> getValues() const { return this->m_values; }
 
     void indexAssign(const std::shared_ptr<FalxValue>& key, const std::shared_ptr<FalxValue>& value) override;
-    static std::string getTypeName() { return "map"; }
+    [[nodiscard]] std::string getTypeName() const override { return "map"; }
     void set(const std::string &name, const std::shared_ptr<FalxValue>& value);
 
 };

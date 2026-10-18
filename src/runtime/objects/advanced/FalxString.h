@@ -25,5 +25,5 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> add(const std::shared_ptr<FalxValue> &other) const override;
 
 
-    static std::string getTypeName() { return "string"; }
+    [[nodiscard]] std::string getTypeName() const override { return "string"; }
 };

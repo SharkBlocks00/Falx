@@ -51,15 +51,15 @@ std::shared_ptr<FalxValue> FalxValue::minus(const FalxValue& other) {
     throw std::runtime_error{""};
 }
 
-FalxValue FalxValue::multiply(const FalxValue& other) {
+std::shared_ptr<FalxValue> FalxValue::multiply(const FalxValue& other) {
     throw std::runtime_error{""};
 }
 
-FalxValue FalxValue::divide(const FalxValue& other) {
+std::shared_ptr<FalxValue> FalxValue::divide(const FalxValue& other) {
     throw std::runtime_error{""};
 }
 
-FalxValue FalxValue::modulo(const FalxValue& other) {
+std::shared_ptr<FalxValue> FalxValue::modulo(const FalxValue& other) {
     throw std::runtime_error{""};
 }
 

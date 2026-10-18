@@ -23,5 +23,5 @@ public:
     [[nodiscard]] std::string asString() const override { return this->m_value ? "true" : "false"; }
     [[nodiscard]] int asInt() const override { return std::stoi(this->asString()); }
     [[nodiscard]] double asDouble() const override { return std::stod(this->asString()); }
-    static std::string getTypeName() { return "boolean"; }
+    [[nodiscard]] std::string getTypeName() const override { return "boolean"; }
 };

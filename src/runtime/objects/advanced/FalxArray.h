@@ -16,7 +16,7 @@ public:
     [[nodiscard]] std::vector<std::shared_ptr<FalxValue>> iterate() const override;
     [[nodiscard]] std::shared_ptr<FalxValue> index(const std::shared_ptr<FalxValue>& index);
 
-    void indexAssign(const std::shared_ptr<FalxValue>& index, const std::shared_ptr<FalxValue>& value);
+    void indexAssign(const std::shared_ptr<FalxValue>& index, const std::shared_ptr<FalxValue>& value) override;
     bool equalsValue(const std::shared_ptr<FalxValue>& other);
-    static std::string getTypeName() { return "array"; }
+    [[nodiscard]] std::string getTypeName() const override { return "array"; }
 };
