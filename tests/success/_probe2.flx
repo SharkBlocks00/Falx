@@ -1,8 +1,8 @@
-let in = false;
+let in: bool = false;
 
 if (5 == 5) {
     output("equal");
-    in = true;
+    in: bool = true;
 }
 
 assert(in == true);

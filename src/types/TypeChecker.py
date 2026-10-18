@@ -1,4 +1,5 @@
 from src.ast.Expression import Expression
+from src.ast.expressions.AssignmentExpression import AssignmentExpression
 from src.ast.expressions.literals.ArrayLiteral import ArrayLiteral
 from src.ast.expressions.literals.BooleanLiteral import BooleanLiteral
 from src.ast.expressions.literals.MapLiteral import MapLiteral
@@ -10,10 +11,22 @@ from src.ast.Statement import Statement
 
 from src.ast.expressions.VariableExpression import VariableExpression
 from src.ast.expressions.BinaryExpression import BinaryExpression
+from src.ast.expressions.UnaryExpression import UnaryExpression
+from src.ast.expressions.AssignmentExpression import AssignmentExpression
+from src.ast.expressions.GetExpression import GetExpression
+from src.ast.expressions.SetExpression import SetExpression
+from src.ast.expressions.IndexExpression import IndexExpression
+from src.ast.expressions.IndexSetExpression import IndexSetExpression
+from src.ast.expressions.LogicalExpression import LogicalExpression
+from src.ast.expressions.DestructureAssignmentExpression import DestructureAssignmentExpression
 from src.ast.expressions.FunctionCallExpression import FunctionCallExpression
+
 from src.ast.statements.ExpressionStatement import ExpressionStatement
 from src.ast.statements.VariableDeclaration import VariableDeclaration
 from src.ast.statements.FunctionDeclaration import FunctionDeclaration
+from src.ast.statements.StructDeclaration import StructDeclaration
+from src.ast.statements.DestructureDeclaration import DestructureDeclaration
+from src.ast.statements.ThrowStatement import ThrowStatement
 from src.ast.statements.ReturnStatement import ReturnStatement
 from src.ast.statements.IfStatement import IfStatement
 from src.ast.statements.WhileStatement import WhileStatement
@@ -22,9 +35,12 @@ from src.ast.statements.BlockStatement import BlockStatement
 from src.ast.statements.BreakStatement import BreakStatement
 from src.ast.statements.ContinueStatement import ContinueStatement
 
+from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
+from src.diagnostics.exceptions.runtime.variables.FunctionAlreadyExistsException import FunctionAlreadyExistsException
+
 from src.tokens.TokenKind import TokenKind
 
-from src.types.FalxType import ANY, BOOL, FLOAT, INT, NULL, STRING, VOID, ArrayType, FalxType, MapType, TupleType, UnionType, make_union, FunctionType
+from src.types.FalxType import ANY, BOOL, FLOAT, INT, NULL, STRING, VOID, ArrayType, FalxType, MapType, NamedType, TupleType, UnionType, make_union, FunctionType
 from src.types.TypeEnvironment import TypeEnvironment
 from src.types.TypeErrors import TypeCheckError
 from src.types.TypeRelations import is_assignable
@@ -39,6 +55,14 @@ class TypeChecker:
         self._expression_handlers = {
             VariableExpression: self._infer_variable,
             BinaryExpression: self._infer_binary,
+            UnaryExpression: self._infer_unary,
+            AssignmentExpression: self._infer_assignment,
+            GetExpression: self._infer_get,
+            SetExpression: self._infer_set,
+            IndexExpression: self._infer_index,
+            IndexSetExpression: self._infer_index_set,
+            LogicalExpression: self._infer_logical,
+            DestructureAssignmentExpression: self._infer_destructure_assignment,
             BooleanLiteral: self._infer_boolean,
             NumberLiteral: self._infer_number,
             StringLiteral: self._infer_string,

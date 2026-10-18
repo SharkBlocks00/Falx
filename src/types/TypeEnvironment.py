@@ -1,5 +1,14 @@
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
-from src.types.FalxType import FalxType
+from src.types.FalxType import ANY, STRING, VOID, FalxType, FunctionType
+
+BUILTIN_FUNCTIONS: dict[str, FalxType] = {
+    "output": FunctionType((ANY,), VOID),
+    "typeof": FunctionType((ANY,), STRING),
+    "assert": FunctionType((ANY,), VOID),
+    "require": FunctionType((STRING,), ANY),
+    "request": FunctionType((ANY,), ANY),
+    "Exception": FunctionType((ANY,), ANY),
+}
 
 class TypeEnvironment:
     def __init__(self, parent: "TypeEnvironment | None" = None,) -> None:
@@ -19,7 +28,7 @@ class TypeEnvironment:
         if self.parent is not None:
             return self.parent.resolve(name)
 
-        return None
+        return BUILTIN_FUNCTIONS.get(name)
     
     def contains_local(self, name: str) -> bool:
         return name in self.variables

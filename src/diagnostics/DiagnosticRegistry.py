@@ -60,6 +60,7 @@ from src.diagnostics.exceptions.runtime.variables.UndefinedVariableException imp
 from src.diagnostics.exceptions.runtime.variables.VariableAlreadyExistsException import VariableAlreadyExistsException
 from src.diagnostics.exceptions.runtime.AssertionFailedException import AssertionFailedException
 from src.runtime.objects.FalxThrowable import FalxThrowable
+from src.types.TypeErrors import TypeCheckError
 
 DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
 
@@ -786,4 +787,16 @@ DIAGNOSTIC_REGISTRY: dict[..., DiagnosticDefinition] = {
             "Mutable values cannot be exported.",
         )   ,
     ),
+
+    TypeCheckError: DiagnosticDefinition(
+        code=DiagnosticCode.TYPE_CHECK_ERROR,
+        severity=DiagnosticSeverity.ERROR,
+        title="type check error",
+        help=(
+            "Remove the unsupported type annotations.",
+        ),
+        notes=(
+            "Type annotations are supported in functions/methods, and declaration.",
+        )
+    )
 }

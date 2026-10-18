@@ -12,9 +12,11 @@ from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
 from src.runtime.Interpreter import Interpreter
 from src.runtime.methods.repl.ReplExitFunction import ReplExitFunction
+from src.runtime.objects.FalxValue import FalxValue
 from src.tokens.Token import Token
 from src.TestRunner import TestRunner
 from src.types.TypeChecker import TypeChecker
+from src.types.TypeErrors import TypeCheckError
 
 
 def repl() -> None:
@@ -37,6 +39,7 @@ def repl() -> None:
         try:
             lexer: Lexer = Lexer(line, filename="REPL")
             tokens: list[Token] = lexer.lex()
+            print(tokens)
 
             parser: Parser = Parser(tokens)
             statements: list[Statement] = parser.parse()

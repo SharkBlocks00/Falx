@@ -11,3 +11,6 @@ class Token:
 
     def __str__(self):
         return f"{self.tokenKind} {self.lexeme} {self.literal} {self.location}"
+
+    def __repr__(self):
+        return self.__str__()

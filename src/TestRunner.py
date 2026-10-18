@@ -15,6 +15,8 @@ from src.lexer.Lexer import Lexer
 from src.parser.Parser import Parser
 from src.runtime.Interpreter import Interpreter
 from src.tokens.Token import Token
+from src.types.TypeChecker import TypeChecker
+
 
 class ExpectedResult(Enum):
     SUCCESS = auto(),
@@ -37,6 +39,9 @@ def _executeTest(path: Path) -> dict:
 
             parser: Parser = Parser(tokens)
             statements: list[Statement] = parser.parse()
+
+            type_checker: TypeChecker = TypeChecker()
+            type_checker.check(statements)
 
             interpreter: Interpreter = Interpreter(path.parent)
             interpreter.interpret(statements)

@@ -21,6 +21,7 @@ class DiagnosticCode(Enum):
 
     # Type errors
     UNEXPECTED_TYPE = "E1026"
+    TYPE_CHECK_ERROR = "E1036"
 
     # Operational errors
     CANNOT_MULTIPLY_BY = "E1006"
