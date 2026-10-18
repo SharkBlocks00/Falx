@@ -14,6 +14,8 @@ venv/
 env/
 ENV/
 
+cmake-build-debug
+
 .pytest_cache/
 .coverage
 .coverage.*
