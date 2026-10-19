@@ -8,15 +8,35 @@
 
 using Number = std::variant<int, double>;
 
+inline int to_int(const Number& number) {
+    return std::visit([](const auto& value) -> int {
+        return static_cast<int>(value);
+    }, number);
+}
+
+inline double to_double(const Number& number) {
+    return std::visit([](const auto& value) -> double {
+        return static_cast<double>(value);
+    }, number);
+}
+
+inline std::string repeat(const std::string& str, int count) {
+    std::string result;
+    for (int i = 0; i < count; ++i) {
+        result += str;
+    }
+    return result;
+}
+
 class FalxNumber : public FalxValue {
 private:
     Number m_value;
 
-    [[nodiscard]] Number _add(const Number& a, const Number& b) const;
-    [[nodiscard]] Number _minus(const Number& a, const Number& b) const;
-    [[nodiscard]] Number _multiply(const Number& a, const Number& b) const;
-    [[nodiscard]] Number _divide(const Number& a, const Number& b) const;
-    [[nodiscard]] Number _modulo(const Number& a, const Number& b) const;
+    [[nodiscard]] static Number _add(const Number& a, const Number& b);
+    [[nodiscard]] static Number _minus(const Number& a, const Number& b);
+    [[nodiscard]] static Number _multiply(const Number& a, const Number& b);
+    [[nodiscard]] static Number _divide(const Number& a, const Number& b);
+    [[nodiscard]] static Number _modulo(const Number& a, const Number& b);
 public:
     explicit FalxNumber(const int& value) : FalxValue(), m_value(value) {}
     explicit FalxNumber(const double& value) : FalxValue(), m_value(value) {}
@@ -27,11 +47,12 @@ public:
     [[nodiscard]] Number asNumber() const override;
 
     [[nodiscard]] std::shared_ptr<FalxValue> add(const std::shared_ptr<FalxValue> &other) const override;
-    [[nodiscard]] std::shared_ptr<FalxValue> minus(const FalxValue &other) override;
-    [[nodiscard]] std::shared_ptr<FalxValue> multiply(const FalxValue &other) override;
-    [[nodiscard]] std::shared_ptr<FalxValue> divide(const FalxValue &other) override;
-    [[nodiscard]] std::shared_ptr<FalxValue> modulo(const FalxValue &other) override;
-    [[nodiscard]] int compareTo(const FalxValue &other) const override;
+    [[nodiscard]] std::shared_ptr<FalxValue> minus(const std::shared_ptr<FalxValue> &other) const override;
+    [[nodiscard]] std::shared_ptr<FalxValue> multiply(const std::shared_ptr<FalxValue> &other) const override;
+    [[nodiscard]] std::shared_ptr<FalxValue> divide(const std::shared_ptr<FalxValue> &other) const override;
+    [[nodiscard]] std::shared_ptr<FalxValue> modulo(const std::shared_ptr<FalxValue> &other) const override;
+    [[nodiscard]] int compareTo(const std::shared_ptr<FalxValue> &other) const override;
     [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue> &other) const override;
 
+    [[nodiscard]] std::string getTypeName() const override { return "number"; }
 };

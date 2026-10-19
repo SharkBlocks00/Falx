@@ -47,23 +47,23 @@ std::shared_ptr<FalxValue> FalxValue::add(const std::shared_ptr<FalxValue>& othe
     throw std::runtime_error{""};
 }
 
-std::shared_ptr<FalxValue> FalxValue::minus(const FalxValue& other) {
+std::shared_ptr<FalxValue> FalxValue::minus(const std::shared_ptr<FalxValue>& other) const {
     throw std::runtime_error{""};
 }
 
-std::shared_ptr<FalxValue> FalxValue::multiply(const FalxValue& other) {
+std::shared_ptr<FalxValue> FalxValue::multiply(const std::shared_ptr<FalxValue>& other) const {
     throw std::runtime_error{""};
 }
 
-std::shared_ptr<FalxValue> FalxValue::divide(const FalxValue& other) {
+std::shared_ptr<FalxValue> FalxValue::divide(const std::shared_ptr<FalxValue>& other) const {
     throw std::runtime_error{""};
 }
 
-std::shared_ptr<FalxValue> FalxValue::modulo(const FalxValue& other) {
+std::shared_ptr<FalxValue> FalxValue::modulo(const std::shared_ptr<FalxValue>& other) const {
     throw std::runtime_error{""};
 }
 
-int FalxValue::compareTo(const FalxValue& other) const {
+int FalxValue::compareTo(const std::shared_ptr<FalxValue>& other) const {
     throw std::runtime_error{""};
 }
 
