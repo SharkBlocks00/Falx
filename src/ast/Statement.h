@@ -8,7 +8,8 @@
 
 #include "SourceLocation.h"
 #include "../runtime/environment/Environment.h"
-#include "../runtime/interpreter/Interpreter.h"
+
+class Interpreter;
 
 class Statement {
 private:

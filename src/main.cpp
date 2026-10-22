@@ -10,7 +10,6 @@ int main() {
     Parser parser{tokens};
     const std::vector statements{parser.parse()};
 
-    for (auto statement : statements) {
-        std::cout << *statement << std::endl;
-    }
+    Interpreter interpreter;
+    interpreter.interpret(statements);
 }
