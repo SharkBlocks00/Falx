@@ -22,4 +22,10 @@ public:
 
     [[nodiscard]] SourceLocation getSourceLocation() const { return m_location; }
     [[nodiscard]] virtual std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const=0;
+    virtual void print(std::ostream& os) const = 0;
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Expression& expression) {
+    expression.print(os);
+    return os;
+}

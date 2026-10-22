@@ -24,4 +24,13 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter &interpreter,  Environment &environment) const override {
         return std::make_unique<FalxValue>(FalxNumber(m_value));
     }
+
+    void print(std::ostream &os) const override {
+        if (std::holds_alternative<int>(m_value)) {
+            os << "NumberLiteral(" << std::get<int>(m_value) << ")";
+        } else {
+            os << "NumberLiteral(" << std::get<double>(m_value) << ")";
+        }
+
+    }
 };

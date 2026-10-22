@@ -23,4 +23,8 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const override {
         return std::make_unique<FalxBoolean>(FalxBoolean(this->m_value));
     }
+
+    void print(std::ostream &os) const override {
+        os << "BooleanLiteral(" << this->m_value << ")";
+    }
 };

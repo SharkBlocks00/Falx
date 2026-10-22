@@ -19,4 +19,7 @@ public:
         return std::make_unique<FalxValue>(FalxString(this->m_value));
     }
 
+    void print(std::ostream &os) const override {
+        os << "StringLiteral(" << m_value << ")";
+    }
 };

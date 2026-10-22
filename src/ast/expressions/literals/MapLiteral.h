@@ -25,4 +25,19 @@ public:
 
         return std::make_unique<FalxValue>(FalxMap{elements});
     }
+
+    void print(std::ostream &os) const override {
+        os << "MapLiteral(";
+        for (const auto& [key, expr] : this->m_values) {
+            os << key << " : ";
+
+            if (expr) {
+                expr->print(os);
+            } else {
+                os << "(null)";
+            }
+        }
+
+        os << ")";
+    }
 };

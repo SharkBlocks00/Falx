@@ -27,4 +27,20 @@ public:
             std::cerr << e.what() << std::endl;
         };
     }
+
+    void print(std::ostream &os) const override {
+        if (m_exported) {
+            os << "export ";
+        }
+
+        os << (m_mutable ? "let " : "const ");
+        os << m_name;
+
+        if (m_initializer) {
+            os << " = ";
+            m_initializer->print(os);
+        }
+
+        os <<';';
+    }
 };

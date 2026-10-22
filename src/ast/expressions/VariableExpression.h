@@ -25,4 +25,8 @@ public:
     }
 
     [[nodiscard]] std::string getName() const { return this->m_name; }
+
+    void print(std::ostream &os) const override {
+        os << m_name;
+    }
 };

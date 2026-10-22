@@ -27,4 +27,17 @@ public:
 
         return std::make_unique<FalxArray>(FalxArray(result));
     }
+
+    void print(std::ostream &os) const override {
+        os << "ArrayLiteral(";
+
+        for (const auto& expr : this->m_elements) {
+            if (expr) {
+                expr->print(os);
+            } else {
+                os << "(null)";
+            }
+        }
+        os << ")";
+    }
 };

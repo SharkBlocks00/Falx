@@ -17,4 +17,12 @@ public:
     void execute(const Interpreter &interpreter, Environment &environment) override {
         static_cast<void>(this->m_expression->evaluate(interpreter, environment));
     }
+
+    void print(std::ostream& os) const override {
+        if (m_expression) {
+            m_expression->print(os);
+        }
+
+        os << ';';
+    }
 };

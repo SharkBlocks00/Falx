@@ -11,6 +11,6 @@ int main() {
     const std::vector statements{parser.parse()};
 
     for (auto statement : statements) {
-        std::cout << statement << std::endl;
+        std::cout << *statement << std::endl;
     }
 }

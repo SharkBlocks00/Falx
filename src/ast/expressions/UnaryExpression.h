@@ -33,7 +33,18 @@ public:
             case TokenKind::BANG: return std::make_shared<FalxValue>(FalxBoolean(!value->asBool()));
             default: return value;
         }
+    }
 
+    void print(std::ostream &os) const override {
+        os << m_operator.asString();
+
+        if (m_expression) {
+            m_expression->print(os);
+        } else {
+            os << "(null)";
+        }
+
+        os << ';';
     }
 
 };

@@ -51,4 +51,22 @@ public:
                 throw std::runtime_error{"Cannot evaluate '" + leftValue->asString() + "' and '" + rightValue->asString() + "'"};
         }
     }
+
+    void print(std::ostream &os) const override {
+        if (m_left) {
+            m_left->print(os);
+        } else {
+            os << "(null)";
+        }
+
+        os << m_operator.asString();
+
+        if (m_right) {
+            m_right->print(os);
+        } else {
+            os << "(null)";
+        }
+
+        os << ';';
+    }
 };

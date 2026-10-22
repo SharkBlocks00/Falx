@@ -17,4 +17,8 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const override {
         return std::make_unique<FalxValue>(FalxNull{});
     }
+
+    void print(std::ostream &os) const override {
+        os << "NullLiteral(null)";
+    }
 };

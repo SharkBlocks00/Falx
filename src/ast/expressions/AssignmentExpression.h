@@ -25,4 +25,14 @@ public:
         }
         return newValue;
     }
+
+    void print(std::ostream &os) const override {
+        os << m_name;
+
+        if (m_value) {
+            os << " = ";
+            m_value->print(os);
+        }
+        os << ';';
+    }
 };

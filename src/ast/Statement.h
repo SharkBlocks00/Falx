@@ -19,4 +19,11 @@ public:
 
     [[nodiscard]] SourceLocation getSourceLocation() const { return m_location; }
     virtual void execute(const Interpreter& interpreter, Environment& environment)=0;
+    virtual void print(std::ostream& os) const = 0;
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Statement& statement) {
+    statement.print(os);
+    return os;
+}
+
