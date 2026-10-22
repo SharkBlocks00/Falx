@@ -12,17 +12,17 @@
 
 class ArrayLiteral : public Expression {
 private:
-    std::vector<Expression> m_elements{};
+    std::vector<std::shared_ptr<Expression>> m_elements{};
 public:
-    ArrayLiteral(const SourceLocation &location, std::vector<Expression> elements)
+    ArrayLiteral(const SourceLocation &location, std::vector<std::shared_ptr<Expression>> elements)
         : Expression(location), m_elements(std::move(elements)) {}
 
-    [[nodiscard]] std::vector<Expression> getElements() const { return m_elements; }
-    [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, const Environment& environment) const override {
+    [[nodiscard]] std::vector<std::shared_ptr<Expression>> getElements() const { return m_elements; }
+    [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const override {
         std::vector<std::shared_ptr<FalxValue>> result{};
 
         for (const auto& expr : this->m_elements) {
-            result.push_back(expr.evaluate(interpreter, environment));
+            result.push_back(expr->evaluate(interpreter, environment));
         }
 
         return std::make_unique<FalxArray>(FalxArray(result));

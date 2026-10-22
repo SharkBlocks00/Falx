@@ -38,4 +38,14 @@ add_executable(CFalx src/main.cpp
         src/runtime/objects/advanced/FalxNumber.cpp
         src/runtime/objects/advanced/FalxNumber.h
         src/ast/expressions/literals/NumberLiteral.h
+        src/ast/expressions/AssignmentExpression.h
+        src/ast/expressions/BinaryExpression.h
+        src/ast/statements/VariableDeclaration.h
+        src/ast/Statement.h
+        src/parser/Parser.cpp
+        src/parser/Parser.h
+        src/ast/expressions/VariableExpression.h
+        src/ast/statements/ExpressionStatement.h
+        src/ast/expressions/LogicalExpression.h
+        src/ast/expressions/UnaryExpression.h
 )

@@ -20,11 +20,11 @@ public:
 
     void define(const std::string& name, const std::shared_ptr<FalxValue>& value, bool _mutable = true);
     void assign(const std::string& name, const std::shared_ptr<FalxValue>& value);
-    void checkAssignable(const std::string& name);
+    void checkAssignable(const std::string& name) const;
     void assignLocal(const std::string& name, const std::shared_ptr<FalxValue>& value);
 
 
-    [[nodiscard]] std::shared_ptr<FalxValue> get(const std::string& name);
-    [[nodiscard]] std::shared_ptr<FalxValue> getLocal(const std::string& name);
+    [[nodiscard]] std::shared_ptr<FalxValue> get(const std::string& name) const;
+    [[nodiscard]] std::shared_ptr<FalxValue> getLocal(const std::string& name) const;
 
 };

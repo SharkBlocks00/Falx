@@ -14,7 +14,7 @@ private:
 public:
     explicit NullLiteral(const Token& token) : Expression(token.getLocation()), m_literal(token.getLiteral()) {}
 
-    [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, const Environment& environment) const override {
+    [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const override {
         return std::make_unique<FalxValue>(FalxNull{});
     }
 };

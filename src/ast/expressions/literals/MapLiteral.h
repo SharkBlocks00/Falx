@@ -15,7 +15,7 @@ public:
     explicit MapLiteral(const SourceLocation& location, const std::map<std::string, std::shared_ptr<Expression>>& values)
         : Expression(location) , m_values(values) {}
 
-    [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, const Environment& environment) const override {
+    [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const override {
         std::map<std::shared_ptr<FalxValue>, std::shared_ptr<FalxValue>> elements{};
 
         for (const auto& [key, expr] : this->m_values) {

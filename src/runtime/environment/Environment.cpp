@@ -38,7 +38,7 @@ void Environment::assign(const std::string& name, const std::shared_ptr<FalxValu
     throw std::runtime_error{name + " is not defined."};
 }
 
-void Environment::checkAssignable(const std::string& name) {
+void Environment::checkAssignable(const std::string& name) const {
     if (const auto it{this->m_variables.find(name)}; it != this->m_variables.end()) {
         if (!it->second.isMutable()) {
             throw std::runtime_error{name + " is immutable."};
@@ -54,7 +54,7 @@ void Environment::checkAssignable(const std::string& name) {
     throw std::runtime_error{name + " is not defined."};
 }
 
-std::shared_ptr<FalxValue> Environment::get(const std::string& name) {
+std::shared_ptr<FalxValue> Environment::get(const std::string& name) const {
     if (const auto it{this->m_variables.find(name)}; it != this->m_variables.end()) {
         return it->second.getValue();
     }
@@ -66,7 +66,7 @@ std::shared_ptr<FalxValue> Environment::get(const std::string& name) {
     throw std::runtime_error{name + " is not defined."};
 }
 
-std::shared_ptr<FalxValue> Environment::getLocal(const std::string &name) {
+std::shared_ptr<FalxValue> Environment::getLocal(const std::string &name) const {
     if (const auto it{this->m_variables.find(name)}; it != this->m_variables.end()) {
         return it->second.getValue();
     }

@@ -21,5 +21,5 @@ public:
     explicit Expression(SourceLocation location) : m_location(std::move(location)) {}
 
     [[nodiscard]] SourceLocation getSourceLocation() const { return m_location; }
-    [[nodiscard]] virtual std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, const Environment& environment) const;
+    [[nodiscard]] virtual std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const=0;
 };
