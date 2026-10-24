@@ -23,7 +23,7 @@ public:
             elements[std::make_unique<FalxValue>(FalxString{key})] = value;
         }
 
-        return std::make_unique<FalxValue>(FalxMap{elements});
+        return std::make_unique<FalxMap>(FalxMap{elements});
     }
 
     void print(std::ostream &os) const override {

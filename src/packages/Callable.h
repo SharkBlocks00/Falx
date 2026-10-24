@@ -19,7 +19,7 @@ public:
 
     [[nodiscard]] virtual bool isStrict() const { return false; }
     [[nodiscard]] virtual std::size_t arity() const { return 0; }
-    [[nodiscard]] virtual FalxValue call(Interpreter interpreter, std::vector<FalxValue> &arguments) {
+    [[nodiscard]] virtual FalxValue call(Interpreter interpreter, std::vector<std::shared_ptr<FalxValue>> &arguments) const {
         return {};
     }
 

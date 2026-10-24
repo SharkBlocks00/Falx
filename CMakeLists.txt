@@ -48,4 +48,15 @@ add_executable(CFalx src/main.cpp
         src/ast/statements/ExpressionStatement.h
         src/ast/expressions/LogicalExpression.h
         src/ast/expressions/UnaryExpression.h
+        src/ast/expressions/literals/TupleLiteral.h
+        src/runtime/objects/FalxTuple.cpp
+        src/runtime/objects/FalxTuple.h
+        src/ast/expressions/DestructureAssignmentExpression.h
+        src/ast/expressions/FunctionCallExpression.h
+        src/ast/expressions/GetExpression.h
+        src/ast/expressions/IndexExpression.h
+        src/ast/expressions/IndexSetExpression.h
+        src/ast/expressions/NullCoalesceExpression.h
+        src/ast/expressions/OptionalChainExpression.h
+        src/ast/expressions/SetExpression.h
 )

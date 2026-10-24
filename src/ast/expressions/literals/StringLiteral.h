@@ -16,7 +16,7 @@ public:
         : Expression(token.getLocation()), m_value(std::move(to_string(token.getLiteral()))) {}
 
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const override {
-        return std::make_unique<FalxValue>(FalxString(this->m_value));
+        return std::make_unique<FalxString>(FalxString(this->m_value));
     }
 
     void print(std::ostream &os) const override {

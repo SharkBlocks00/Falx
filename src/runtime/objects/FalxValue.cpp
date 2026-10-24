@@ -13,14 +13,14 @@ std::shared_ptr<FalxValue> FalxValue::get(const std::string &name) const {
     }
 
     if (const auto it{this->m_methods.find(name)}; it != this->m_methods.end()) {
-        return std::make_unique<FalxValue>(static_cast<FalxValue>(*it->second));
+        return std::make_unique<NativeFunction>(static_cast<NativeFunction>(*it->second));
     }
 
     throw std::runtime_error{this->getTypeName() + " has no property '" + name + "'"};
 
 }
 
-void FalxValue::set(const std::string &name, const FalxValue& value) {
+void FalxValue::set(const std::string &name, const std::shared_ptr<FalxValue> &value) {
     throw std::runtime_error{this->getTypeName() + " has no settable property '" + name + "'"};
 }
 
