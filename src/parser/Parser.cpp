@@ -7,12 +7,20 @@
 
 #include "../ast/expressions/AssignmentExpression.h"
 #include "../ast/expressions/BinaryExpression.h"
+#include "../ast/expressions/FunctionCallExpression.h"
+#include "../ast/expressions/GetExpression.h"
+#include "../ast/expressions/IndexExpression.h"
+#include "../ast/expressions/IndexSetExpression.h"
 #include "../ast/expressions/LogicalExpression.h"
+#include "../ast/expressions/NullCoalesceExpression.h"
+#include "../ast/expressions/OptionalChainExpression.h"
+#include "../ast/expressions/SetExpression.h"
 #include "../ast/expressions/UnaryExpression.h"
 #include "../ast/expressions/VariableExpression.h"
 #include "../ast/expressions/literals/ArrayLiteral.h"
 #include "../ast/expressions/literals/BooleanLiteral.h"
 #include "../ast/expressions/literals/MapLiteral.h"
+#include "../ast/expressions/literals/NullLiteral.h"
 #include "../ast/expressions/literals/NumberLiteral.h"
 #include "../ast/expressions/literals/StringLiteral.h"
 #include "../ast/expressions/literals/TupleLiteral.h"
@@ -33,6 +41,14 @@ std::vector<std::shared_ptr<Statement>> Parser::parse() {
     return statements;
 }
 
+TypeExpressionPtr Parser::parseTypeAnnotation() {
+    TypeExpressionPtr annotation = this->_typeAnnotation();
+    if (!this->_isAtEnd()) {
+        throw std::runtime_error("Unexpected " + this->_peek().getLexeme() + " after type annotation");
+    }
+    return annotation;
+}
+
 std::shared_ptr<Statement> Parser::_declaration() {
     if (this->_match(TokenKind::EXPORT)) {
         return this->_exportDeclaration();
@@ -42,9 +58,9 @@ std::shared_ptr<Statement> Parser::_declaration() {
 
 std::shared_ptr<Statement> Parser::_varDeclaration(const bool exported) {
     if (this->_match(TokenKind::LET)) {
-        return std::make_unique<VariableDeclaration>(this->_variableDeclaration(true, exported));
+        return this->_variableDeclaration(true, exported);
     } if (this->_match(TokenKind::CONST)) {
-        return std::make_unique<VariableDeclaration>(this->_variableDeclaration(false, exported));
+        return this->_variableDeclaration(false, exported);
     }
     if (this->_match(TokenKind::FUNC)) {
         return this->_functionDeclaration(exported);
@@ -84,7 +100,7 @@ TypeExpressionPtr Parser::_unionTypeAnnotation() {
     TypeExpressionPtr first = this->_postfixTypeAnnotation();
     std::vector members{first};
 
-    while (!this->_match(TokenKind::PIPE)) {
+    while (this->_match(TokenKind::PIPE)) {
         members.push_back(this->_postfixTypeAnnotation());
     }
 
@@ -160,7 +176,7 @@ TypeExpressionPtr Parser::_parenthesisedTypeAnnotation(const SourceLocation &loc
         return std::make_shared<FunctionTypeExpression>(location, elements, this->_typeAnnotation());
     }
 
-    if (!elements.data()) {
+    if (elements.empty()) {
         throw std::runtime_error("Expected '->' after '()' in a function type");
     }
 
@@ -190,7 +206,7 @@ std::shared_ptr<Statement> Parser::_expressionStatement() {
     const std::shared_ptr<Expression> expression = this->_expression();
 
     static_cast<void>(this->_consume(TokenKind::SEMICOLON, "Expected ';' after expression"));
-    return std::make_unique<ExpressionStatement>(ExpressionStatement(expression->getSourceLocation(), expression));
+    return std::make_unique<ExpressionStatement>(expression->getLocation(), expression);
 }
 
 std::shared_ptr<Statement> Parser::_exportDeclaration() {
@@ -205,14 +221,23 @@ std::shared_ptr<Statement> Parser::_exportDeclaration() {
     return this->_varDeclaration(true);
 }
 
-VariableDeclaration Parser::_variableDeclaration(const bool &_mutable, const bool exported) {
+std::shared_ptr<Statement> Parser::_variableDeclaration(const bool &_mutable, const bool exported) {
+    if (this->_match(TokenKind::LEFT_PAREN)) {
+        return this->_destructureDeclaration(_mutable, exported);
+    }
+
     const Token name = this->_consumeIdentifier();
+    TypeExpressionPtr typeAnnotation{nullptr};
+
+    if (this->_match(TokenKind::COLON)) {
+        typeAnnotation = this->_typeAnnotation();
+    }
 
     static_cast<void>(this->_consume(TokenKind::EQUAL, "Expected '=' after variable name"));
     const std::shared_ptr<Expression> initializer = this->_expression();
     static_cast<void>(this->_consume(TokenKind::SEMICOLON, "Expected ';' after variable declaration"));
 
-    return VariableDeclaration(name.getLocation(), name.getLexeme(), initializer, _mutable, exported);
+    return std::make_shared<VariableDeclaration>(name.getLocation(), name.getLexeme(), initializer, _mutable, exported, typeAnnotation);
 
 }
 
@@ -224,7 +249,7 @@ std::shared_ptr<DestructureDeclaration> Parser::_destructureDeclaration(const bo
     const std::shared_ptr<Expression> initializer = this->_expression();
     static_cast<void>(this->_consume(TokenKind::SEMICOLON, "Expected ';' after variable declaration"));
 
-    return std::make_shared<DestructureDeclaration>(DestructureDeclaration(location, targets, initializer, _mutable, exported));
+    return std::make_shared<DestructureDeclaration>(location, targets, initializer, _mutable, exported);
 }
 
 std::vector<VariableExpression> Parser::_destructureTargets(
@@ -277,7 +302,7 @@ std::shared_ptr<FunctionDeclaration> Parser::_functionDeclaration(const bool &ex
             } if (this->_match(TokenKind::EQUAL)) {
                 defaultValue = this->_expression();
                 defaultCreated = true;
-            } else if (!this->_match(TokenKind::EQUAL) && defaultCreated) {
+            } else if (defaultCreated) {
                 throw std::runtime_error("Invalid default value creation");
             }
 
@@ -459,6 +484,7 @@ std::shared_ptr<Expression> Parser::_arrayLiteral() {
         }
     }
 
+    static_cast<void>(this->_consume(TokenKind::RIGHT_BRACKET, "Expected ']' after array"));
     return std::make_shared<ArrayLiteral>(location, array);
 }
 
@@ -518,8 +544,9 @@ std::shared_ptr<Expression> Parser::_expression() {
     return this->_assignment();
 }
 
+
 std::shared_ptr<Expression> Parser::_assignment() {
-    std::shared_ptr<Expression> expression = this->_logicalOr();
+    std::shared_ptr<Expression> expression = this->_nullCoalescing();
 
     if (this->_match(TokenKind::EQUAL)) {
         const Token& equals = this->_previous();
@@ -527,16 +554,67 @@ std::shared_ptr<Expression> Parser::_assignment() {
         return _buildAssignmentTarget(expression, equals.getLocation(), value);
     }
 
+    for (const auto& [compoundToken, operation] : this->m_compound_assignment_operators) {
+        const auto& [baseOp, lexeme] = operation;
+        if (this->_match(compoundToken)) {
+            const Token operatorToken = this->_previous();
+            std::shared_ptr<Expression> rhs = this->_assignment();
+
+            const auto _operator = Token(baseOp, std::string{lexeme}, std::monostate(), operatorToken.getLocation());
+            return this->_buildCompoundAssignment(expression, operatorToken.getLocation(), _operator, rhs);
+        }
+    }
+
+    if (this->_match(std::vector{TokenKind::PLUS_PLUS, TokenKind::MINUS_MINUS})) {
+        const Token operatorToken = this->_previous();
+        TokenKind baseOp = operatorToken.getTokenKind() == TokenKind::PLUS_PLUS? TokenKind::PLUS : TokenKind::MINUS;
+        const std::string lexeme = baseOp == TokenKind::PLUS? "+" : "-";
+
+        const auto _operator = Token(baseOp, lexeme, std::monostate(), operatorToken.getLocation());
+        std::shared_ptr<Expression> one = std::make_shared<NumberLiteral>(Token(TokenKind::NUMBER, "1", 1, operatorToken.getLocation()));
+
+        return this->_buildCompoundAssignment(expression, operatorToken.getLocation(), _operator, one);
+    }
+
     return expression;
 }
 
-std::shared_ptr<Expression> Parser::_buildAssignmentTarget(std::shared_ptr<Expression>& target, const SourceLocation &location, std::shared_ptr<Expression>& value) {
-    if (typeid(VariableExpression) == typeid(target)) {
-        const auto& expr = static_cast<const VariableExpression&>(*target);
-        return std::make_unique<AssignmentExpression>(AssignmentExpression(location, expr.getName(), value));
+std::shared_ptr<Expression> Parser::_buildAssignmentTarget(std::shared_ptr<Expression>& target, const SourceLocation &location, std::shared_ptr<Expression>& value) const {
+    if (const auto* expr = dynamic_cast<VariableExpression*>(target.get())) {
+        return std::make_shared<AssignmentExpression>(location, expr->getName(), value);
+    } if (const auto* expr = dynamic_cast<GetExpression*>(target.get())) {
+        return std::make_shared<SetExpression>(location, expr->getObject(), expr->getProperty(), value);
+    } if (const auto* expr = dynamic_cast<IndexExpression*>(target.get())) {
+        return std::make_shared<IndexSetExpression>(location, expr->getObject(), expr->getIndex(), value);
+    } if (dynamic_cast<TupleLiteral*>(target.get())) {
+        return std::make_shared<DestructureAssignment>(location, this->_destructureTargets(target), value);
     }
 
     throw std::runtime_error{"PARSER::_buildAssignmentTarget"};
+}
+
+std::shared_ptr<Expression> Parser::_buildCompoundAssignment(std::shared_ptr<Expression> &target, const SourceLocation &location, const Token &_operator, std::shared_ptr<Expression> &rhs) {
+    if (const auto* expr = dynamic_cast<VariableExpression*>(target.get())) {
+        std::shared_ptr<Expression> combined = std::make_shared<BinaryExpression>(location, target, _operator, rhs);
+        return std::make_shared<AssignmentExpression>(location, expr->getName(), combined);
+    } if (const auto* expr = dynamic_cast<GetExpression*>(target.get())) {
+        return std::make_shared<SetExpression>(location, expr->getObject(), expr->getProperty(), rhs, _operator);
+    } if (const auto* expr = dynamic_cast<IndexExpression*>(target.get())) {
+        return std::make_shared<IndexSetExpression>(location, expr->getObject(), expr->getIndex(), rhs, _operator);
+    }
+    throw std::runtime_error{"PARSER::_buildCompoundAssignment"};
+}
+
+std::shared_ptr<Expression> Parser::_nullCoalescing() {
+    std::shared_ptr<Expression> expression = this->_logicalOr();
+
+    if (this->_match(TokenKind::QUESTION_QUESTION)) {
+        const Token _operator = this->_previous();
+        std::shared_ptr<Expression> right = this->_nullCoalescing();
+        return std::make_shared<NullCoalesceExpression>(_operator.getLocation(), expression, right);
+    }
+
+    return expression;
 }
 
 std::shared_ptr<Expression> Parser::_logicalOr() {
@@ -601,7 +679,7 @@ std::shared_ptr<Expression> Parser::_addition() {
     while (this->_match(std::vector{TokenKind::PLUS, TokenKind::MINUS})) {
         const Token& op = this->_previous();
 
-        std::shared_ptr<Expression> right = this->_addition();
+        std::shared_ptr<Expression> right = this->_multiplication();
 
         expression = std::make_shared<BinaryExpression>(BinaryExpression(op.getLocation(), expression, op, right));
     }
@@ -637,8 +715,51 @@ std::shared_ptr<Expression> Parser::_unary() {
 
 std::shared_ptr<Expression> Parser::_call() {
     std::shared_ptr<Expression> expression = this->_primary();
+    bool optionalChain{false};
 
+    while (true) {
+        if (this->_match(TokenKind::LEFT_PAREN)) {
+            expression = this->_parseCallArguments(expression);
+        } else if (this->_match(TokenKind::DOT)) {
+            const Token& name = this->_consume(TokenKind::IDENTIFIER, "Expected property name");
+            expression = std::make_shared<GetExpression>(name.getLocation(), expression, name.getLexeme());
+        } else if (this->_match(TokenKind::QUESTION_DOT)) {
+            const Token& name = this->_consume(TokenKind::IDENTIFIER, "Expected property name after '?.'");
+            expression = std::make_shared<GetExpression>(name.getLocation(), expression, name.getLexeme(), true);
+            optionalChain = true;
+        } else if (this->_check(TokenKind::QUESTION) && this->_checkNext(TokenKind::LEFT_BRACKET)) {
+            static_cast<void>(this->_advance());
+            static_cast<void>(this->_advance());
+            std::shared_ptr<Expression> index = this->_expression();
+            static_cast<void>(this->_consume(TokenKind::RIGHT_BRACKET, "Expected ']'"));
+            expression = std::make_shared<IndexExpression>(expression->getLocation(), expression, index, true);
+            optionalChain = true;
+        } else if (this->_match(TokenKind::LEFT_BRACKET)) {
+            std::shared_ptr<Expression> index = this->_expression();
+            static_cast<void>(this->_consume(TokenKind::RIGHT_BRACKET, "Expected ']'"));
+            expression = std::make_shared<IndexExpression>(expression->getLocation(), expression, index);
+        } else { break; }
+    }
+
+    if (optionalChain) {
+        expression = std::make_shared<OptionalChainExpression>(expression->getLocation(), expression);
+    }
     return expression;
+}
+
+std::shared_ptr<Expression> Parser::_parseCallArguments(std::shared_ptr<Expression> &callee) {
+    std::vector<std::shared_ptr<Expression>> arguments;
+
+    if (!this->_check(TokenKind::RIGHT_PAREN)) {
+        arguments.push_back(this->_expression());
+
+        while (this->_match(TokenKind::COMMA)) {
+            arguments.push_back(this->_expression());
+        }
+    }
+    const Token& closing = this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after arguments");
+
+    return std::make_shared<FunctionCallExpression>(closing.getLocation(), callee, arguments);
 }
 
 std::shared_ptr<Expression> Parser::_primary() {
@@ -651,6 +772,20 @@ std::shared_ptr<Expression> Parser::_primary() {
         return std::make_shared<VariableExpression>(VariableExpression(identifier.getLocation(), identifier.getLexeme()));
     } if (this->_match(TokenKind::BOOLEAN)) {
         return std::make_shared<BooleanLiteral>(BooleanLiteral(this->_previous()));
+    } if (this->_match(TokenKind::LEFT_PAREN)) {
+        return this->_tupleLiteral();
+    } if (this->_match(TokenKind::LEFT_BRACE)) {
+        return this->_mapLiteral();
+    } if (this->_match(TokenKind::END_OF_FILE)) {
+        throw std::runtime_error("Expected expression, found 'EOF'");
+    } if (this->_match(TokenKind::NULL_LITERAL)) {
+        return std::make_shared<NullLiteral>(this->_previous());
+    } if (this->_match(TokenKind::SEMICOLON)) {
+        throw std::runtime_error("Expected expression, found ';'");
+    } if (this->_match(TokenKind::ELSEIF)) {
+        throw std::runtime_error("Cannot call 'elseif' without a valid if");
+    } if (this->_match(TokenKind::ELSE)) {
+        throw std::runtime_error("Cannot call 'else' without a valid if");
     }
     throw std::runtime_error("Expected expression");
 }
@@ -713,7 +848,7 @@ Token Parser::_peek() {
 
 Token Parser::_peekNext() {
     if (this->m_current + 1 >= this->m_tokens.size()) {
-        return this->m_tokens.at(-1);
+        return this->m_tokens.back();
     }
     return this->m_tokens.at(this->m_current + 1);
 }

@@ -28,5 +28,12 @@ public:
         const std::shared_ptr<FalxValue> index = this->m_index->evaluate(interpreter, environment);
 
         return object->index(index);
-}
+    }
+
+    [[nodiscard]] std::shared_ptr<Expression> getIndex() const { return m_index; }
+    [[nodiscard]] std::shared_ptr<Expression> getObject() const { return m_object; }
+
+    void print(std::ostream &os) const override {
+        os << "IndexExpression";
+    }
 };

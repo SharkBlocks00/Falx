@@ -24,4 +24,8 @@ public:
             return std::make_unique<FalxNull>(FalxNull());
         }
     }
+
+    void print(std::ostream &os) const override {
+        os << "OptionalChainExpression";
+    }
 };

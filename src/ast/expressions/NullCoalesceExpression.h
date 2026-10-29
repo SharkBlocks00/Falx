@@ -24,4 +24,8 @@ public:
 
         return this->m_right->evaluate(interpreter, environment);
     }
+
+    void print(std::ostream &os) const override {
+        os << "NullCoalesceExpression";
+    }
 };

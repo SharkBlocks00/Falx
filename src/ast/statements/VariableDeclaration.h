@@ -8,6 +8,7 @@
 
 #include "../Expression.h"
 #include "../Statement.h"
+#include "../types/TypeExpression.h"
 
 class VariableDeclaration : public Statement {
 private:
@@ -16,9 +17,10 @@ private:
     bool m_mutable;
     bool m_exported;
     std::unique_ptr<Environment> m_exportEnvironment{};
+    TypeExpressionPtr m_typeAnnotation;
 public:
-    explicit VariableDeclaration(const SourceLocation &location, std::string name, const std::shared_ptr<Expression> &initializer, const bool _mutable, const bool exported)
-        : Statement(location), m_name(std::move(name)), m_initializer(initializer), m_mutable(_mutable), m_exported(exported) {}
+    explicit VariableDeclaration(const SourceLocation &location, std::string name, const std::shared_ptr<Expression> &initializer, const bool _mutable, const bool exported, const TypeExpressionPtr &annotation)
+        : Statement(location), m_name(std::move(name)), m_initializer(initializer), m_mutable(_mutable), m_exported(exported), m_typeAnnotation(annotation){}
 
     void execute(const Interpreter &interpreter, Environment &environment) override {
         try {

@@ -27,14 +27,24 @@ private:
     bool m_insideFunction{false};
     bool m_insideLoop{false};
 
-
+    const std::map<TokenKind, std::tuple<TokenKind, char>> m_compound_assignment_operators
+     = {
+        { TokenKind::PLUS_EQUAL, {TokenKind::PLUS, '+'}},
+        {TokenKind::MINUS_EQUAL, {TokenKind::MINUS, '-'}},
+        {TokenKind::STAR_EQUAL, {TokenKind::STAR, '*'}},
+        {TokenKind::SLASH_EQUAL, {TokenKind::SLASH_EQUAL, '/'}},
+        {TokenKind::PERCENT_EQUAL, {TokenKind::PERCENT, '%'}}
+    };
 
     [[nodiscard]] std::shared_ptr<Statement> _declaration();
     [[nodiscard]] std::shared_ptr<Statement> _varDeclaration(bool exported=false);
     [[nodiscard]] std::shared_ptr<Expression> _expression();
     [[nodiscard]] std::shared_ptr<Expression> _assignment();
 
-    [[nodiscard]] static std::shared_ptr<Expression> _buildAssignmentTarget(std::shared_ptr<Expression> &target, const SourceLocation &location, std::shared_ptr<Expression> &value);
+    [[nodiscard]] std::shared_ptr<Expression> _buildAssignmentTarget(std::shared_ptr<Expression> &target, const SourceLocation &location, std::shared_ptr<Expression> &value) const;
+    [[nodiscard]] static std::shared_ptr<Expression> _buildCompoundAssignment(std::shared_ptr<Expression> &target, const SourceLocation& location, const Token& _operator, std::shared_ptr<Expression>& rhs);
+    [[nodiscard]] std::shared_ptr<Expression> _nullCoalescing();
+    [[nodiscard]] std::shared_ptr<Expression> _parseCallArguments(std::shared_ptr<Expression>& callee);
 
     [[nodiscard]] std::shared_ptr<Expression> _logicalOr();
     [[nodiscard]] std::shared_ptr<Expression> _logicalAnd();
@@ -51,7 +61,7 @@ private:
     [[nodiscard]] std::shared_ptr<Statement> _expressionStatement();
     [[nodiscard]] std::shared_ptr<Statement> _exportDeclaration();
 
-    [[nodiscard]] VariableDeclaration _variableDeclaration(const bool &_mutable = false, bool exported = false);
+    [[nodiscard]] std::shared_ptr<Statement> _variableDeclaration(const bool &_mutable = false, bool exported = false);
 
     [[nodiscard]] std::shared_ptr<IfStatement> _ifStatement();
     [[nodiscard]] std::shared_ptr<WhileStatement> _whileStatement();
@@ -101,4 +111,5 @@ public:
     explicit Parser(const std::vector<Token> &tokens) : m_tokens{tokens} {}
 
     [[nodiscard]] std::vector<std::shared_ptr<Statement>> parse();
+    [[nodiscard]] TypeExpressionPtr parseTypeAnnotation();
 };

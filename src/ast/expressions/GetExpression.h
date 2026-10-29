@@ -28,4 +28,11 @@ public:
 
         return value->get(this->m_property);
     }
+
+    [[nodiscard]] std::shared_ptr<Expression> getObject() const { return m_object; }
+    [[nodiscard]] std::string getProperty() const { return m_property; }
+
+    void print(std::ostream &os) const override {
+        os << "GetExpression";
+    }
 };
