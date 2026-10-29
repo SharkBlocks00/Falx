@@ -12,11 +12,11 @@
 #include <functional>
 
 class NativeFunction;
-
+class Callable;
 
 class FalxValue {
 private:
-    std::map<std::string, std::shared_ptr<NativeFunction>> m_methods{};
+    std::map<std::string, std::shared_ptr<Callable>> m_methods{};
     std::map<std::string, std::function<FalxValue()>> m_properties{};
 
 public:

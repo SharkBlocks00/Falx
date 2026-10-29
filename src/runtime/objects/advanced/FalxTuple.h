@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "FalxIterable.h"
-#include "FalxValue.h"
+#include "../FalxIterable.h"
+#include "../FalxValue.h"
 
 class FalxTuple : public FalxValue, public FalxIterable {
 private:

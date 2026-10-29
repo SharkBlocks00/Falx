@@ -1,0 +1,17 @@
+//
+// Created by SharkBlocks00 on 10/24/2026.
+// Copyright (c) Sharx All rights reserved.
+//
+
+#pragma once
+#include "../Statement.h"
+
+class ContinueStatement : public Statement {
+public:
+    explicit ContinueStatement(const SourceLocation& location)
+        : Statement(location) {}
+
+    void execute(const Interpreter &interpreter, Environment &environment) override {
+        throw ContinueException();
+    }
+};

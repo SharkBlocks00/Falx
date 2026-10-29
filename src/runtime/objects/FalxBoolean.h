@@ -12,7 +12,7 @@ private:
 public:
     explicit FalxBoolean(const bool value) : m_value(value) {}
 
-    [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue>& other) const {
+    [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue>& other) const override{
         if (typeid(other) != typeid(*this)) { return false; }
         const auto temp = static_cast<const FalxBoolean&>(*other);
 

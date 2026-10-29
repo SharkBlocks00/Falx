@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "../Expression.h"
+#include "../../exceptions/NullShortCircuitException.h"
 #include "../../runtime/objects/FalxNull.h"
 
 class OptionalChainExpression : public Expression {
@@ -19,7 +20,7 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter &interpreter, Environment &environment) const override {
         try {
             return this->m_chain->evaluate(interpreter, environment);
-        } catch (std::runtime_error &e) {
+        } catch (const NullShortCircuitException &e) {
             return std::make_unique<FalxNull>(FalxNull());
         }
     }

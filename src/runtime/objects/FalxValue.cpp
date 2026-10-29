@@ -7,17 +7,18 @@
 #include "../../packages/Callable.h"
 #include "../../packages/NativeFunction.h"
 
-std::shared_ptr<FalxValue> FalxValue::get(const std::string &name) const {
-    if (const auto it{this->m_properties.find(name)}; it != this->m_properties.end()) {
+std::shared_ptr<FalxValue> FalxValue::get(const std::string& name) const {
+    if (const auto it = m_properties.find(name); it != m_properties.end()) {
         return std::make_unique<FalxValue>(it->second());
     }
 
-    if (const auto it{this->m_methods.find(name)}; it != this->m_methods.end()) {
-        return std::make_unique<NativeFunction>(static_cast<NativeFunction>(*it->second));
+    if (const auto it = m_methods.find(name); it != m_methods.end()) {
+        return it->second;
     }
 
-    throw std::runtime_error{this->getTypeName() + " has no property '" + name + "'"};
-
+    throw std::runtime_error{
+        getTypeName() + " has no property '" + name + "'"
+    };
 }
 
 void FalxValue::set(const std::string &name, const std::shared_ptr<FalxValue> &value) {

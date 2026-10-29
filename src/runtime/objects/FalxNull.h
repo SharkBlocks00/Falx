@@ -13,7 +13,7 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> INSTANCE() { return std::make_shared<FalxNull>(*this); }
     [[nodiscard]] std::string asString() const override { return "null"; }
     [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue> &other) const override {
-        return typeid(*this) == typeid(other);
+        return other != nullptr && dynamic_cast<const FalxNull*>(other.get()) != nullptr;
     }
 
     [[nodiscard]] std::string getTypeName() const override { return "null"; }

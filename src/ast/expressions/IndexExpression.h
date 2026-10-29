@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "../Expression.h"
+#include "../../exceptions/NullShortCircuitException.h"
 #include "../../runtime/objects/FalxNull.h"
 
 class IndexExpression : public Expression {
@@ -22,7 +23,7 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter &interpreter, Environment &environment) const override {
         const std::shared_ptr<FalxValue> object = this->m_object->evaluate(interpreter, environment);
         if (this->m_optional && typeid(*object) == typeid(FalxNull)) {
-            throw std::runtime_error("NullShortCircuit");
+            throw NullShortCircuitException();
         }
         const std::shared_ptr<FalxValue> index = this->m_index->evaluate(interpreter, environment);
 

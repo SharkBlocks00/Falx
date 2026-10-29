@@ -49,8 +49,8 @@ add_executable(CFalx src/main.cpp
         src/ast/expressions/LogicalExpression.h
         src/ast/expressions/UnaryExpression.h
         src/ast/expressions/literals/TupleLiteral.h
-        src/runtime/objects/FalxTuple.cpp
-        src/runtime/objects/FalxTuple.h
+        src/runtime/objects/advanced/FalxTuple.cpp
+        src/runtime/objects/advanced/FalxTuple.h
         src/ast/expressions/DestructureAssignmentExpression.h
         src/ast/expressions/FunctionCallExpression.h
         src/ast/expressions/GetExpression.h
@@ -59,4 +59,37 @@ add_executable(CFalx src/main.cpp
         src/ast/expressions/NullCoalesceExpression.h
         src/ast/expressions/OptionalChainExpression.h
         src/ast/expressions/SetExpression.h
+        src/ast/statements/BlockStatement.h
+        src/ast/statements/BreakStatement.h
+        src/exceptions/BreakException.h
+        src/exceptions/ContinueException.h
+        src/exceptions/NullShortCircuitException.h
+        src/ast/statements/ContinueStatement
+        src/ast/statements/DestructureDeclarationStatement.h
+        src/ast/statements/ForeachStatement.h
+        src/ast/statements/FunctionDeclarationStatement.h
+        src/runtime/values/ParameterDefinition.h
+        src/ast/types/TypeExpression.h
+        src/ast/types/expressions/NamedTypeExpression.h
+        src/ast/types/expressions/NamedTypeExpression.cpp
+        src/ast/types/expressions/NullableTypeExpression.cpp
+        src/ast/types/expressions/NullableTypeExpression.h
+        src/ast/types/expressions/ArrayTypeExpression.cpp
+        src/ast/types/expressions/ArrayTypeExpression.h
+        src/ast/types/expressions/UnionTypeExpression.cpp
+        src/ast/types/expressions/UnionTypeExpression.h
+        src/ast/types/expressions/TupleTypeExpression.cpp
+        src/ast/types/expressions/TupleTypeExpression.h
+        src/ast/types/expressions/FunctionTypeExpression.cpp
+        src/ast/types/expressions/FunctionTypeExpression.h
+        src/runtime/values/UserFunction.h
+        src/exceptions/ReturnException.h
+        src/ast/statements/IfStatement.h
+        src/ast/statements/ReturnStatement.h
+        src/ast/statements/StructDeclaration.h
+        src/runtime/values/FieldDefinition.h
+        src/runtime/values/StructDefinition.h
+        src/runtime/values/StructConstructor.h
+        src/runtime/objects/advanced/FalxStruct.h
+        src/ast/statements/WhileStatement.h
 )

@@ -27,4 +27,6 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> get(const std::string& name) const;
     [[nodiscard]] std::shared_ptr<FalxValue> getLocal(const std::string& name) const;
 
+    [[nodiscard]] std::map<std::string, Variable> getVariables() const { return m_variables; }
+
 };
