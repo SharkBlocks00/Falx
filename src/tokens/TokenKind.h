@@ -83,6 +83,7 @@ enum class TokenKind {
 
     QUESTION,
     PIPE,
+    ARROW,
 
     // Special
     END_OF_FILE,
@@ -156,6 +157,7 @@ enum class TokenKind {
 
             case TokenKind::QUESTION: return "QUESTION";
             case TokenKind::PIPE: return "PIPE";
+        case TokenKind::ARROW: return "ARROW";
 
             case TokenKind::END_OF_FILE: return "END_OF_FILE";
     }

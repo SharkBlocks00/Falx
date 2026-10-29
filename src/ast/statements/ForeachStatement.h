@@ -4,6 +4,8 @@
 //
 
 #pragma once
+#include <utility>
+
 #include "../Expression.h"
 #include "../Statement.h"
 #include "../../exceptions/BreakException.h"
@@ -16,11 +18,11 @@ private:
     std::shared_ptr<Expression> m_iterable;
     std::vector<std::shared_ptr<Statement>> m_body;
 public:
-    explicit ForeachStatement(const SourceLocation& location, const std::string &variable, const std::shared_ptr<Expression> &iterable, const std::vector<std::shared_ptr<Statement>> &body)
-        : Statement(location), m_variable(variable), m_iterable(iterable), m_body(body) {}
+    explicit ForeachStatement(const SourceLocation& location, std::string variable, const std::shared_ptr<Expression> &iterable, const std::vector<std::shared_ptr<Statement>> &body)
+        : Statement(location), m_variable(std::move(variable)), m_iterable(iterable), m_body(body) {}
 
     void execute(const Interpreter &interpreter, Environment &environment) override {
-        std::shared_ptr<FalxValue> value = this->m_iterable->evaluate(interpreter, environment);
+        const std::shared_ptr<FalxValue> value = this->m_iterable->evaluate(interpreter, environment);
 
         auto iterable = std::dynamic_pointer_cast<FalxIterable>(value);
 
@@ -36,10 +38,14 @@ public:
                 for (const auto& stmt : this->m_body) {
                     stmt->execute(interpreter, environment);
                 }
-            } catch (ContinueException) {
-            } catch (BreakException) {
+            } catch (ContinueException&) {
+            } catch (BreakException&) {
                 break;
             }
         }
+    }
+
+    void print(std::ostream &os) const override {
+        os << "ForeachStatement";
     }
 };

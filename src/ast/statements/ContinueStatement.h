@@ -5,6 +5,7 @@
 
 #pragma once
 #include "../Statement.h"
+#include "../../exceptions/ContinueException.h"
 
 class ContinueStatement : public Statement {
 public:
@@ -13,5 +14,9 @@ public:
 
     void execute(const Interpreter &interpreter, Environment &environment) override {
         throw ContinueException();
+    }
+
+    void print(std::ostream &os) const override {
+        os << "ContinueStatement.h";
     }
 };

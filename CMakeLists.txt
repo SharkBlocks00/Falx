@@ -51,7 +51,7 @@ add_executable(CFalx src/main.cpp
         src/ast/expressions/literals/TupleLiteral.h
         src/runtime/objects/advanced/FalxTuple.cpp
         src/runtime/objects/advanced/FalxTuple.h
-        src/ast/expressions/DestructureAssignmentExpression.h
+        src/ast/expressions/DestructureAssignment.h
         src/ast/expressions/FunctionCallExpression.h
         src/ast/expressions/GetExpression.h
         src/ast/expressions/IndexExpression.h
@@ -64,10 +64,10 @@ add_executable(CFalx src/main.cpp
         src/exceptions/BreakException.h
         src/exceptions/ContinueException.h
         src/exceptions/NullShortCircuitException.h
-        src/ast/statements/ContinueStatement
-        src/ast/statements/DestructureDeclarationStatement.h
+        src/ast/statements/ContinueStatement.h
+        src/ast/statements/DestructureDeclaration.h
         src/ast/statements/ForeachStatement.h
-        src/ast/statements/FunctionDeclarationStatement.h
+        src/ast/statements/FunctionDeclaration.h
         src/runtime/values/ParameterDefinition.h
         src/ast/types/TypeExpression.h
         src/ast/types/expressions/NamedTypeExpression.h

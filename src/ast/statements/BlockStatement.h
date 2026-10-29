@@ -21,4 +21,8 @@ public:
             statement->execute(interpreter, block);
         }
     }
+
+    void print(std::ostream &os) const override {
+        os << "BlockStatement";
+    }
 };

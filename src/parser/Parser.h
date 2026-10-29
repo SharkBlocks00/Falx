@@ -7,7 +7,17 @@
 #include <vector>
 
 #include "../ast/Statement.h"
+#include "../ast/statements/BlockStatement.h"
+#include "../ast/statements/BreakStatement.h"
+#include "../ast/statements/ForeachStatement.h"
+#include "../ast/statements/IfStatement.h"
 #include "../ast/statements/VariableDeclaration.h"
+#include "../ast/statements/WhileStatement.h"
+#include "../ast/statements/ContinueStatement.h"
+#include "../ast/statements/DestructureDeclaration.h"
+#include "../ast/statements/FunctionDeclaration.h"
+#include "../ast/statements/ReturnStatement.h"
+#include "../ast/statements/StructDeclaration.h"
 #include "../tokens/Token.h"
 
 class Parser {
@@ -42,6 +52,34 @@ private:
     [[nodiscard]] std::shared_ptr<Statement> _exportDeclaration();
 
     [[nodiscard]] VariableDeclaration _variableDeclaration(const bool &_mutable = false, bool exported = false);
+
+    [[nodiscard]] std::shared_ptr<IfStatement> _ifStatement();
+    [[nodiscard]] std::shared_ptr<WhileStatement> _whileStatement();
+    [[nodiscard]] std::shared_ptr<ForeachStatement> _foreachStatement();
+    [[nodiscard]] std::shared_ptr<BreakStatement> _breakStatement();
+    [[nodiscard]] std::shared_ptr<ContinueStatement> _continueStatement();
+    [[nodiscard]] std::shared_ptr<ReturnStatement> _returnStatement();
+    [[nodiscard]] std::shared_ptr<BlockStatement> _blockStatement();
+
+    [[nodiscard]] std::shared_ptr<FunctionDeclaration> _functionDeclaration(const bool &exported = false);
+    [[nodiscard]] std::shared_ptr<StructDeclaration> _structDeclaration(const bool &exported = false);
+
+    [[nodiscard]] std::shared_ptr<DestructureDeclaration> _destructureDeclaration(const bool& _mutable, const bool& exported = false);
+    [[nodiscard]] static std::vector<VariableExpression> _destructureTargets(const std::shared_ptr<Expression>& pattern);
+
+    [[nodiscard]] std::vector<std::shared_ptr<Statement>> _block();
+
+    [[nodiscard]] std::shared_ptr<Expression> _arrayLiteral();
+    [[nodiscard]] std::shared_ptr<Expression> _mapLiteral();
+    [[nodiscard]] std::shared_ptr<Expression> _tupleLiteral();
+
+    [[nodiscard]] TypeExpressionPtr _typeAnnotation();
+    [[nodiscard]] TypeExpressionPtr _unionTypeAnnotation();
+    [[nodiscard]] TypeExpressionPtr _postfixTypeAnnotation();
+    [[nodiscard]] TypeExpressionPtr _primaryTypeAnnotation();
+    [[nodiscard]] TypeExpressionPtr _parenthesisedTypeAnnotation(const SourceLocation& location);
+
+    void _consumeTypeArgumentsEnd();
 
     [[nodiscard]] bool _isAtEnd();
     [[nodiscard]] Token _advance();

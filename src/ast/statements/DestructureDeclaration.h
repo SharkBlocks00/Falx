@@ -7,23 +7,28 @@
 #include <set>
 
 #include "../Statement.h"
-#include "../expressions/DestructureAssignmentExpression.h"
+#include "../expressions/DestructureAssignment.h"
 #include "../expressions/VariableExpression.h"
 
-class DestructureDeclarationStatement : public Statement {
+class DestructureDeclaration : public Statement {
 private:
     SourceLocation m_location;
     std::vector<VariableExpression> m_targets;
     std::shared_ptr<Expression> m_initializer;
     bool m_mutable;
     bool m_exported;
+    std::shared_ptr<Environment> m_exportEnvironment{};
 public:
-    explicit DestructureDeclarationStatement(const SourceLocation& location, std::vector<VariableExpression> targets, const std::shared_ptr<Expression> &initializer, const bool _mut, const bool _exported)
+    explicit DestructureDeclaration(const SourceLocation& location, std::vector<VariableExpression> targets, const std::shared_ptr<Expression> &initializer, const bool _mut, const bool _exported)
         : Statement(location), m_location(location), m_targets(std::move(targets)), m_initializer(initializer), m_mutable(_mut), m_exported(_exported) {}
 
-    void execute(const Interpreter &interpreter, Environment &environment, Environment* export_environment = nullptr) const {
+    void setExportEnvironment(const std::shared_ptr<Environment>& environment) {
+        this->m_exportEnvironment = environment;
+    }
+
+    void execute(const Interpreter &interpreter, Environment &environment) override {
         const std::shared_ptr<FalxValue> value = this->m_initializer->evaluate(interpreter, environment);
-        const auto elements = DestructureAssignmentExpression::unpack(value, this->m_targets.size(), this->m_location);
+        const auto elements = DestructureAssignment::unpack(value, this->m_targets.size(), this->m_location);
 
         std::set<std::string> seen{};
         for (const auto& target : this->m_targets) {
@@ -35,9 +40,13 @@ public:
 
         for (std::size_t i = 0; i < this->m_targets.size() && i < elements.size(); ++i) {
             environment.define(m_targets[i].getName(), elements[i], this->m_mutable);
-            if (export_environment && this->m_exported) {
-                export_environment->define(m_targets[i].getName(), elements[i], this->m_mutable);
+            if (this->m_exportEnvironment && this->m_exported) {
+                this->m_exportEnvironment->define(m_targets[i].getName(), elements[i], this->m_mutable);
             }
         }
+    }
+
+    void print(std::ostream &os) const override {
+        os << "DestructureDeclarationStatement";
     }
 };

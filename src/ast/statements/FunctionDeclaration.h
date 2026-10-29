@@ -11,7 +11,7 @@
 #include "../../runtime/values/ParameterDefinition.h"
 #include "../../runtime/values/UserFunction.h"
 
-class FunctionDeclarationStatement : public Statement {
+class FunctionDeclaration : public Statement {
 private:
     SourceLocation m_location;
     std::string m_name;
@@ -22,7 +22,7 @@ private:
     std::unique_ptr<Environment> m_exportEnvironment{nullptr};
 
 public:
-    explicit FunctionDeclarationStatement(const SourceLocation& location, std::string name,
+    explicit FunctionDeclaration(const SourceLocation& location, std::string name,
         std::vector<ParameterDefinition> parameters, std::vector<std::shared_ptr<Statement>> body,
         const bool exported = false, TypeExpressionPtr returnType = nullptr)
             : Statement(location), m_location(location), m_name(std::move(name)), m_parameters(std::move(parameters)),
@@ -52,6 +52,10 @@ public:
 
     void setExportEnvironment(const Environment &environment) {
         m_exportEnvironment = std::make_unique<Environment>(environment);
+    }
+
+    void print(std::ostream &os) const override {
+        os << "FunctionDeclarationStatement";
     }
 
     [[nodiscard]] std::string getName() const { return m_name; }

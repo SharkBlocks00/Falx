@@ -10,10 +10,19 @@
 #include "../ast/expressions/LogicalExpression.h"
 #include "../ast/expressions/UnaryExpression.h"
 #include "../ast/expressions/VariableExpression.h"
+#include "../ast/expressions/literals/ArrayLiteral.h"
 #include "../ast/expressions/literals/BooleanLiteral.h"
+#include "../ast/expressions/literals/MapLiteral.h"
 #include "../ast/expressions/literals/NumberLiteral.h"
 #include "../ast/expressions/literals/StringLiteral.h"
+#include "../ast/expressions/literals/TupleLiteral.h"
 #include "../ast/statements/ExpressionStatement.h"
+#include "../ast/types/expressions/ArrayTypeExpression.h"
+#include "../ast/types/expressions/FunctionTypeExpression.h"
+#include "../ast/types/expressions/NamedTypeExpression.h"
+#include "../ast/types/expressions/NullableTypeExpression.h"
+#include "../ast/types/expressions/TupleTypeExpression.h"
+#include "../ast/types/expressions/UnionTypeExpression.h"
 
 std::vector<std::shared_ptr<Statement>> Parser::parse() {
     std::vector<std::shared_ptr<Statement>> statements{};
@@ -37,34 +46,144 @@ std::shared_ptr<Statement> Parser::_varDeclaration(const bool exported) {
     } if (this->_match(TokenKind::CONST)) {
         return std::make_unique<VariableDeclaration>(this->_variableDeclaration(false, exported));
     }
-        // } if (this->_match(TokenKind::FUNC)) {
-    //     return std::make_unique<Statement>(this->_functionDeclaration(exported));
-    // } if (this->_match(TokenKind::STRUCT)) {
-    //     return std::make_unique<Statement>(this->_structDeclaration(exported));
-    // }
+    if (this->_match(TokenKind::FUNC)) {
+        return this->_functionDeclaration(exported);
+    } if (this->_match(TokenKind::STRUCT)) {
+        return this->_structDeclaration(exported);
+    }
     return this->_statement();
 }
 
 std::shared_ptr<Statement> Parser::_statement() {
-    // if (this->_match(TokenKind::IF)) { return this->_ifStatement(); }
-    // if (this->_match(TokenKind::WHILE)) { return this->_whileStatement(); }
-    // if (this->_match(TokenKind::FOREACH)) { return this->_foreachStatement(); }
-    // if (this->_match(TokenKind::BREAK)) {
-    //     if (!this->m_insideLoop) { throw std::runtime_error("BREAK"); }
-    //     return this->_breakStatement();
-    // }
-    // if (this->_match(TokenKind::CONTINUE)) {
-    //     if (!this->m_insideLoop) { throw std::runtime_error("CONTINUE"); }
-    //     return this->_continueStatement();
-    // }
-    // if (this->_match(TokenKind::RETURN)) {
-    //     if (!this->m_insideFunction) { throw std::runtime_error("RETURN"); }
-    //     return this->_returnStatement();
-    // }
+    if (this->_match(TokenKind::IF)) { return this->_ifStatement(); }
+    if (this->_match(TokenKind::WHILE)) { return this->_whileStatement(); }
+    if (this->_match(TokenKind::FOREACH)) { return this->_foreachStatement(); }
+    if (this->_match(TokenKind::BREAK)) {
+        if (!this->m_insideLoop) { throw std::runtime_error("BREAK"); }
+        return this->_breakStatement();
+    }
+    if (this->_match(TokenKind::CONTINUE)) {
+        if (!this->m_insideLoop) { throw std::runtime_error("CONTINUE"); }
+        return this->_continueStatement();
+    }
+    if (this->_match(TokenKind::RETURN)) {
+        if (!this->m_insideFunction) { throw std::runtime_error("RETURN"); }
+        return this->_returnStatement();
+    }
     // if (this->_match(TokenKind::THROW)) { return this->_throwStatement(); }
-    // if (this->_match(TokenKind::LEFT_BRACE)) { return this->_blockStatement(); }
+    if (this->_match(TokenKind::LEFT_BRACE)) { return this->_blockStatement(); }
 
     return this->_expressionStatement();
+}
+
+TypeExpressionPtr Parser::_typeAnnotation() {
+    return this->_unionTypeAnnotation();
+}
+
+TypeExpressionPtr Parser::_unionTypeAnnotation() {
+    TypeExpressionPtr first = this->_postfixTypeAnnotation();
+    std::vector members{first};
+
+    while (!this->_match(TokenKind::PIPE)) {
+        members.push_back(this->_postfixTypeAnnotation());
+    }
+
+    if (members.size() == 1) {
+        return first;
+    }
+
+    return std::make_shared<UnionTypeExpression>(first->getLocation(), members);
+}
+
+TypeExpressionPtr Parser::_postfixTypeAnnotation() {
+    TypeExpressionPtr result = this->_primaryTypeAnnotation();
+
+    while (true) {
+        if (this->_match(TokenKind::QUESTION)) {
+            result = std::make_shared<NullableTypeExpression>(result->getLocation(), result);
+        } else if (this->_check(TokenKind::LEFT_BRACKET) && this->_checkNext(TokenKind::RIGHT_BRACKET)) {
+            static_cast<void>(this->_advance());
+            static_cast<void>(this->_advance());
+            result = std::make_shared<ArrayTypeExpression>(result->getLocation(), result);
+        } else {
+            return result;
+        }
+    }
+}
+
+TypeExpressionPtr Parser::_primaryTypeAnnotation() {
+    if (this->_match(TokenKind::LEFT_PAREN)) {
+        return this->_parenthesisedTypeAnnotation(this->_previous().getLocation());
+    }
+
+    if (this->_match(TokenKind::NULL_LITERAL)) {
+        return std::make_shared<NamedTypeExpression>(this->_previous().getLocation(), "null");
+    }
+
+    const Token name = this->_consume(TokenKind::IDENTIFIER, "Expected a type name");
+    std::string qualifiedName = name.getLexeme();
+
+    while (this->_check(TokenKind::DOT) && this->_checkNext(TokenKind::IDENTIFIER)) {
+        static_cast<void>(this->_advance());
+        qualifiedName += "." + this->_advance().getLexeme();
+    }
+
+    std::vector<TypeExpressionPtr> arguments;
+    if (this->_match(TokenKind::LESS)) {
+        arguments.push_back(this->_typeAnnotation());
+        while (this->_match(TokenKind::COMMA)) {
+            arguments.push_back(this->_typeAnnotation());
+        }
+        this->_consumeTypeArgumentsEnd();
+    }
+
+    return std::make_shared<NamedTypeExpression>(name.getLocation(), qualifiedName, arguments);
+}
+
+TypeExpressionPtr Parser::_parenthesisedTypeAnnotation(const SourceLocation &location) {
+    std::vector<TypeExpressionPtr> elements;
+    bool trailingComma = false;
+
+    if (!this->_check(TokenKind::RIGHT_PAREN)) {
+        elements.push_back(this->_typeAnnotation());
+        while (this->_match(TokenKind::COMMA)) {
+            trailingComma = true;
+            if (this->_check(TokenKind::RIGHT_PAREN)) { break; }
+            elements.push_back(this->_typeAnnotation());
+            trailingComma = false;
+        }
+    }
+
+    static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after type annotation"));
+
+    if (this->_match(TokenKind::ARROW)) {
+        return std::make_shared<FunctionTypeExpression>(location, elements, this->_typeAnnotation());
+    }
+
+    if (!elements.data()) {
+        throw std::runtime_error("Expected '->' after '()' in a function type");
+    }
+
+    if (elements.size() == 1 && !trailingComma) {
+        return elements.at(0);
+    }
+
+    return std::make_shared<TupleTypeExpression>(location, elements);
+}
+
+void Parser::_consumeTypeArgumentsEnd() {
+    if (this->_match(TokenKind::GREATER)) {
+        return;
+    }
+
+    if (this->_check(TokenKind::GREATER_EQUAL)) {
+        const Token token = this->_peek();
+        const auto location = SourceLocation(token.getLocation().getFilename(), token.getLocation().getLine(), token.getLocation().getColumn() + 1);
+        this->m_tokens[this->m_current] = Token(TokenKind::EQUAL, "=", std::monostate(), location);
+        return;
+    }
+
+    throw std::runtime_error("Expected '>' after type arguments");
 }
 
 std::shared_ptr<Statement> Parser::_expressionStatement() {
@@ -94,6 +213,304 @@ VariableDeclaration Parser::_variableDeclaration(const bool &_mutable, const boo
     static_cast<void>(this->_consume(TokenKind::SEMICOLON, "Expected ';' after variable declaration"));
 
     return VariableDeclaration(name.getLocation(), name.getLexeme(), initializer, _mutable, exported);
+
+}
+
+std::shared_ptr<DestructureDeclaration> Parser::_destructureDeclaration(const bool &_mutable, const bool &exported) {
+    const SourceLocation location = this->_previous().getLocation();
+    const std::vector<VariableExpression> targets = this->_destructureTargets(this->_tupleLiteral());
+
+    static_cast<void>(this->_consume(TokenKind::EQUAL, "Expected '=' after destructuring pattern"));
+    const std::shared_ptr<Expression> initializer = this->_expression();
+    static_cast<void>(this->_consume(TokenKind::SEMICOLON, "Expected ';' after variable declaration"));
+
+    return std::make_shared<DestructureDeclaration>(DestructureDeclaration(location, targets, initializer, _mutable, exported));
+}
+
+std::vector<VariableExpression> Parser::_destructureTargets(
+    const std::shared_ptr<Expression>& pattern
+) {
+    if (!pattern || typeid(*pattern) != typeid(TupleLiteral)) {
+        throw std::invalid_argument(
+            "A destructuring pattern must be a tuple, use '(a,)' for a single variable"
+        );
+    }
+
+    auto& tuple = static_cast<TupleLiteral&>(*pattern);
+
+    std::vector<VariableExpression> result;
+
+    for (const auto& element : tuple.getElements()) {
+        if (!element || typeid(*element) != typeid(VariableExpression)) {
+            throw std::runtime_error(
+                "Only variable names can appear in a destructuring pattern"
+            );
+        }
+
+        result.push_back(
+            static_cast<const VariableExpression&>(*element)
+        );
+    }
+
+    return result;
+}
+
+std::shared_ptr<FunctionDeclaration> Parser::_functionDeclaration(const bool &exported) {
+    const Token name = this->_consumeIdentifier();
+
+    static_cast<void>(this->_consume(TokenKind::EQUAL, "Expected '=' after function name"));
+    static_cast<void>(this->_consume(TokenKind::DEFINE, "Expected 'define' after function"));
+    static_cast<void>(this->_consume(TokenKind::LEFT_PAREN, "Expected '(' after function 'define'"));
+
+    std::vector<ParameterDefinition> parameters;
+
+    if (!this->_check(TokenKind::RIGHT_PAREN)) {
+        bool defaultCreated = false;
+        while (true) {
+            const Token parameter = this->_consume(TokenKind::IDENTIFIER, "Expected parameter name");
+
+            TypeExpressionPtr paramTypeAnnotation{nullptr};
+            std::shared_ptr<Expression> defaultValue;
+
+            if (this->_match(TokenKind::COLON)) {
+                paramTypeAnnotation = this->_typeAnnotation();
+            } if (this->_match(TokenKind::EQUAL)) {
+                defaultValue = this->_expression();
+                defaultCreated = true;
+            } else if (!this->_match(TokenKind::EQUAL) && defaultCreated) {
+                throw std::runtime_error("Invalid default value creation");
+            }
+
+            parameters.emplace_back(parameter.getLexeme(), defaultValue, paramTypeAnnotation);
+            if (!this->_match(TokenKind::COMMA)) { break; }
+        }
+    }
+
+    static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after function parameters"));
+
+    TypeExpressionPtr returnTypeAnnotation{nullptr};
+    if (this->_match(TokenKind::COLON)) {
+        returnTypeAnnotation = this->_typeAnnotation();
+    }
+
+    static_cast<void>(this->_consumeLeftBrace());
+
+    bool old = this->m_insideFunction;
+    bool inLoop = this->m_insideLoop;
+
+    this->m_insideFunction = true;
+    this->m_insideLoop = false;
+
+    std::vector<std::shared_ptr<Statement>> body = this->_block();
+
+    this->m_insideFunction = old;
+    this->m_insideLoop = inLoop;
+    return std::make_shared<FunctionDeclaration>(name.getLocation(), name.getLexeme(), parameters, body, exported, returnTypeAnnotation);
+    }
+
+std::shared_ptr<StructDeclaration> Parser::_structDeclaration(const bool &exported) {
+    const Token name = this->_consumeIdentifier();
+    static_cast<void>(this->_consumeLeftBrace());
+    std::vector<FieldDefinition> fields;
+    std::vector<FunctionDeclaration> methods;
+
+    while (!this->_check(TokenKind::RIGHT_BRACE)) {
+        if (this->_isAtEnd()) {
+            throw std::runtime_error("Unexpected end of input");
+        }
+        if (this->_peek().getTokenKind() == TokenKind::IDENTIFIER) {
+            const Token field = this->_consumeIdentifier();
+
+            TypeExpressionPtr fieldType{nullptr};
+            std::shared_ptr<Expression> defaultValue;
+
+            if (this->_match(TokenKind::COLON)) {
+                fieldType = this->_typeAnnotation();
+            } if (this->_match(TokenKind::EQUAL)) {
+                defaultValue = this->_expression();
+            }
+
+            static_cast<void>(this->_consume(TokenKind::SEMICOLON, "Expected ';' after struct field"));
+
+            fields.emplace_back(field.getLexeme(), defaultValue, fieldType, field.getLocation());
+        } else {
+            if (this->_match(TokenKind::FUNC)) {
+                auto function = this->_functionDeclaration(false);
+                methods.push_back(std::move(*function));
+            } else {
+                throw std::runtime_error("Expected field or method in struct body");
+            }
+        }
+    }
+    static_cast<void>(this->_consumeRightBrace());
+    return std::make_shared<StructDeclaration>(StructDeclaration(name.getLocation(), name.getLexeme(), fields, std::move(methods), exported));
+}
+
+std::shared_ptr<IfStatement> Parser::_ifStatement() {
+    const SourceLocation location = this->_previous().getLocation();
+
+    static_cast<void>(this->_consume(TokenKind::LEFT_PAREN, "Expected '(' after 'if'"));
+    std::shared_ptr<Expression> condition = this->_expression();
+    static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after if statement condition"));
+
+    static_cast<void>(this->_consumeLeftBrace());
+    std::vector<std::shared_ptr<Statement>> body = this->_block();
+
+    std::shared_ptr<Statement> elseBranch{nullptr};
+
+    if (this->_match(TokenKind::ELSEIF)) {
+        elseBranch = this->_ifStatement();
+    } else if (this->_match(TokenKind::ELSE)) {
+        static_cast<void>(this->_consumeLeftBrace());
+        elseBranch = std::make_shared<BlockStatement>(location, this->_block());
+    }
+
+    return std::make_shared<IfStatement>(location, condition, body, elseBranch);
+}
+
+std::shared_ptr<WhileStatement> Parser::_whileStatement() {
+    const SourceLocation location = this->_previous().getLocation();
+
+    static_cast<void>(this->_consume(TokenKind::LEFT_PAREN, "Expected '(' after 'while'"));
+    std::shared_ptr<Expression> condition = this->_expression();
+    static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after while statement condition"));
+
+    static_cast<void>(this->_consumeLeftBrace());
+    const bool old = this->m_insideLoop;
+    this->m_insideLoop = true;
+
+    std::vector<std::shared_ptr<Statement>> body = this->_block();
+    this->m_insideLoop = old;
+    return std::make_shared<WhileStatement>(location, condition, body);
+}
+
+std::vector<std::shared_ptr<Statement>> Parser::_block() {
+    std::vector<std::shared_ptr<Statement>> block;
+
+    while (!this->_check(TokenKind::RIGHT_BRACE) && !this->_isAtEnd()) {
+        block.push_back(this->_declaration());
+    }
+
+    if (this->_match(TokenKind::RIGHT_BRACE)) {
+        return block;
+    }
+
+    throw std::runtime_error("Expected '}'");
+
+}
+
+std::shared_ptr<ForeachStatement> Parser::_foreachStatement() {
+    const SourceLocation location = this->_previous().getLocation();
+
+    static_cast<void>(this->_consume(TokenKind::LEFT_PAREN, "Expected '(' after foreach statement"));
+    const std::string variable = this->_consumeIdentifier().getLexeme();
+    static_cast<void>(this->_consume(TokenKind::COLON, "Expected ':' after foreach variable"));
+
+    const std::shared_ptr<Expression> iterable = this->_expression();
+    static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after foreach iterable"));
+    static_cast<void>(this->_consumeLeftBrace());
+
+    const bool old = this->m_insideLoop;
+    this->m_insideLoop = true;
+    std::vector<std::shared_ptr<Statement>> body = this->_block();
+
+    this->m_insideLoop = old;
+    return std::make_shared<ForeachStatement>(location, variable, iterable, body);
+}
+
+std::shared_ptr<ReturnStatement> Parser::_returnStatement() {
+    const SourceLocation location = this->_previous().getLocation();
+
+    if (this->_match(TokenKind::SEMICOLON)) {
+        return std::make_shared<ReturnStatement>(location, nullptr);
+    }
+    const std::shared_ptr<Expression> value = this->_expression();
+    static_cast<void>(this->_consumeSemicolon());
+    return std::make_shared<ReturnStatement>(location, value);
+}
+
+std::shared_ptr<BreakStatement> Parser::_breakStatement() {
+    const SourceLocation location = this->_previous().getLocation();
+    static_cast<void>(this->_consumeSemicolon());
+    return std::make_shared<BreakStatement>(location);
+}
+
+std::shared_ptr<ContinueStatement> Parser::_continueStatement() {
+    const SourceLocation location = this->_previous().getLocation();
+    static_cast<void>(this->_consumeSemicolon());
+    return std::make_shared<ContinueStatement>(location);
+}
+
+std::shared_ptr<BlockStatement> Parser::_blockStatement() {
+    const SourceLocation location = this->_previous().getLocation();
+    const std::vector<std::shared_ptr<Statement>> block = this->_block();
+    return std::make_shared<BlockStatement>(location, block);
+}
+
+std::shared_ptr<Expression> Parser::_arrayLiteral() {
+    const SourceLocation location = this->_previous().getLocation();
+
+    std::vector<std::shared_ptr<Expression>> array;
+
+    if (!this->_check(TokenKind::RIGHT_BRACKET)) {
+        array.push_back(this->_expression());
+        while (this->_match(TokenKind::COMMA)) {
+            array.push_back(this->_expression());
+        }
+    }
+
+    return std::make_shared<ArrayLiteral>(location, array);
+}
+
+std::shared_ptr<Expression> Parser::_mapLiteral() {
+    const SourceLocation location = this->_previous().getLocation();
+
+    std::map<std::string, std::shared_ptr<Expression>> map;
+
+    if (!this->_check(TokenKind::RIGHT_BRACE)) {
+        std::string key = this->_consumeIdentifier().getLexeme();
+        static_cast<void>(this->_consume(TokenKind::COLON, "Expected ':' to separate map key and value"));
+        std::shared_ptr<Expression> value = this->_expression();
+        map[key] = value;
+
+        while (this->_match(TokenKind::COMMA)) {
+            key = this->_consumeIdentifier().getLexeme();
+            static_cast<void>(this->_consume(TokenKind::COLON, "Expected ':' to separate map key and value"));
+            value = this->_expression();
+            map[key] = value;
+        }
+    }
+
+    static_cast<void>(this->_consumeRightBrace());
+    return std::make_shared<MapLiteral>(location, map);
+}
+
+std::shared_ptr<Expression> Parser::_tupleLiteral() {
+    const SourceLocation location = this->_previous().getLocation();
+
+    if (this->_match(TokenKind::COMMA)) {
+        static_cast<void>(this->_consume(TokenKind::COMMA, "Expected ',' to complete an empty tuple '(,,)'"));
+        static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after an empty tuple '(,,)'"));
+        std::vector<std::shared_ptr<Expression>> elements{};
+        return std::make_shared<TupleLiteral>(location, elements);
+    }
+
+    const std::shared_ptr<Expression> first = this->_expression();
+
+    if (!this->_match(TokenKind::COMMA)) {
+        static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after an expression"));
+        return first;
+    }
+
+    std::vector elements{first};
+
+    while (!this->_check(TokenKind::RIGHT_PAREN)) {
+        elements.push_back(this->_expression());
+        if (!this->_match(TokenKind::COMMA)) { break; }
+    }
+
+    static_cast<void>(this->_consume(TokenKind::RIGHT_PAREN, "Expected ')' after tuple elements"));
+    return std::make_shared<TupleLiteral>(location, elements);
 
 }
 

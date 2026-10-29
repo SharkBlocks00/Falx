@@ -32,4 +32,8 @@ public:
             }
         }
     }
+
+    void print(std::ostream &os) const override {
+        os << "WhileStatement";
+    }
 };

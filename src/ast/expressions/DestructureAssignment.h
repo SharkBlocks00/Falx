@@ -8,13 +8,13 @@
 #include "../Expression.h"
 #include "../../runtime/objects/advanced/FalxTuple.h"
 
-class DestructureAssignmentExpression : public Expression {
+class DestructureAssignment : public Expression {
 private:
     SourceLocation m_location;
     std::vector<VariableExpression> m_targets;
     std::shared_ptr<Expression> m_value;
 public:
-    explicit DestructureAssignmentExpression(const SourceLocation& location, const std::vector<VariableExpression>& targets, std::shared_ptr<Expression> values)
+    explicit DestructureAssignment(const SourceLocation& location, const std::vector<VariableExpression>& targets, std::shared_ptr<Expression> values)
         : Expression(location), m_location(location), m_targets(std::move(targets)), m_value(std::move(values)) {}
 
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter &interpreter, Environment &environment) const override {

@@ -15,4 +15,8 @@ public:
     void execute(const Interpreter &interpreter, Environment &environment) override {
         throw BreakException();
     }
+
+    void print(std::ostream &os) const override {
+        os << "BreakStatement";
+    }
 };

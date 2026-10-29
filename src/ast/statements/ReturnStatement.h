@@ -18,11 +18,15 @@ public:
         : Statement(location), m_expression(expression) {}
 
     void execute(const Interpreter &interpreter, Environment &environment) override {
-        std::shared_ptr<FalxValue> object = std::make_shared<FalxNull>(FalxNull());
+        std::shared_ptr<FalxValue> object = std::make_shared<FalxNull>();
         if (this->m_expression != nullptr) {
             object = this->m_expression->evaluate(interpreter, environment);
         }
 
         throw ReturnException(object);
+    }
+
+    void print(std::ostream &os) const override {
+        os << "ReturnStatement";
     }
 };

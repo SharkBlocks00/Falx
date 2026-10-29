@@ -4,6 +4,7 @@
 //
 
 #pragma once
+#include <sstream>
 #include <utility>
 
 #include "../Statement.h"
@@ -37,5 +38,12 @@ public:
             return value->asBool();
         }
         return false;
+    }
+
+    void print(std::ostream &os) const override {
+        std::ostringstream result;
+        result << "IfStatement(";
+        m_condition->print(os);
+        result << ");";
     }
 };

@@ -45,4 +45,6 @@ public:
             }
         }
     }
+
+    std::vector<std::shared_ptr<Expression>>& getElements() { return m_elements; }
 };
