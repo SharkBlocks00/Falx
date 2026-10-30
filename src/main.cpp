@@ -3,7 +3,7 @@
 #include "parser/Parser.h"
 
 int main() {
-    Lexer lexer{"let x: int = 5;", "Test"};
+    Lexer lexer{"let in: bool = false; if (5 == 5) {in = true; } ", "Test"};
 
     const std::vector tokens{lexer.lex()};
 

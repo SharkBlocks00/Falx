@@ -46,9 +46,8 @@ std::vector<Token> Lexer::lex() {
 
 void Lexer::_scanToken() {
     this->m_startColumn = this->m_column;
-    const char c = this->_advance();
 
-    switch (c) {
+    switch (const char c = this->_advance()) {
         case ' ':
         case '\r':
         case '\t':
@@ -99,6 +98,8 @@ void Lexer::_scanToken() {
                 this->_addToken(TokenKind::MINUS_EQUAL);
             } else if (this->_match('-')) {
                 this->_addToken(TokenKind::MINUS_MINUS);
+            } else if (this->_match('>')) {
+                this->_addToken(TokenKind::ARROW);
             } else {
                 this->_addToken(TokenKind::MINUS);
             }
@@ -133,7 +134,15 @@ void Lexer::_scanToken() {
         case '<': this->_addToken(this->_match('=')? TokenKind::LESS_EQUAL : TokenKind::LESS); break;
         case '|': this->_addToken(this->_match('|')? TokenKind::OR : TokenKind::PIPE); break;
         case '&': this->_addToken(this->_match('&')? TokenKind::OR : throw std::exception()); break;
-        case '?': this->_addToken(TokenKind::QUESTION);
+        case '?': {
+            if (this->_match('?')) {
+                this->_addToken(TokenKind::QUESTION_QUESTION);
+            } else if (this->_match('.')) {
+                this->_addToken(TokenKind::QUESTION_DOT);
+            } else {
+                this->_addToken(TokenKind::QUESTION);
+            }
+        }
         default: {
             if (std::isdigit(c) && isascii(c)) {
                 this->_number();
