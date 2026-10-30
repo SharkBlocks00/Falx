@@ -44,17 +44,21 @@ public:
         try {
             this->m_environment.assignLocal(name, value);
         } catch (std::runtime_error& e) {
-            throw e.what();
+            throw;
         }
     }
 
-    bool equalsValue(const std::shared_ptr<FalxValue> &other) const override {
-        if (typeid(other) != typeid(FalxStruct)) { return false; }
-        const auto& tmp = static_cast<const FalxStruct&>(*other);
-        return tmp.m_definition == this->m_definition;
+    [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue> &other) const override {
+        const auto* temp = dynamic_cast<const FalxStruct*>(other.get());
+
+        if (!temp) {
+            return false;
+        }
+
+        return temp->m_definition == this->m_definition;
     }
 
-    std::string getTypeName() const override {
+    [[nodiscard]] std::string getTypeName() const override {
         return this->m_definition.getName();
     }
 };

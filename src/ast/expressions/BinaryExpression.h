@@ -35,17 +35,17 @@ public:
 
             // Assignment operators
             case TokenKind::GREATER:
-                return std::make_unique<FalxValue>(FalxBoolean(leftValue->compareTo(rightValue) > 0));
+                return std::make_shared<FalxBoolean>((leftValue->compareTo(rightValue) > 0));
             case TokenKind::GREATER_EQUAL:
-                return std::make_unique<FalxValue>(FalxBoolean(leftValue->compareTo(rightValue) >= 0));
+                return std::make_shared<FalxBoolean>(leftValue->compareTo(rightValue) >= 0);
             case TokenKind::LESS:
-                return std::make_unique<FalxValue>(FalxBoolean(leftValue->compareTo(rightValue) < 0));
+                return std::make_shared<FalxBoolean>(leftValue->compareTo(rightValue) < 0);
             case TokenKind::LESS_EQUAL:
-                return std::make_unique<FalxValue>(FalxBoolean(leftValue->compareTo(rightValue) <= 0));
+                return std::make_shared<FalxBoolean>(leftValue->compareTo(rightValue) <= 0);
             case TokenKind::EQUAL_EQUAL:
-                return std::make_unique<FalxValue>(FalxBoolean(leftValue->equalsValue(rightValue)));
+                return std::make_shared<FalxBoolean>(leftValue->equalsValue(rightValue));
             case TokenKind::BANG_EQUAL:
-                return std::make_unique<FalxValue>(FalxBoolean(!leftValue->equalsValue(rightValue)));
+                return std::make_shared<FalxBoolean>(!leftValue->equalsValue(rightValue));
 
             default:
                 throw std::runtime_error{"Cannot evaluate '" + leftValue->asString() + "' and '" + rightValue->asString() + "'"};

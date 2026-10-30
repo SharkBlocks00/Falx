@@ -14,13 +14,18 @@ inline int to_int(const Number& number) {
     }, number);
 }
 
+inline std::string to_string(const Number& number) {
+    if (std::holds_alternative<int>(number)) { return std::to_string(std::get<int>(number)); }
+    return std::to_string(std::get<double>(number));
+}
+
 inline double to_double(const Number& number) {
     return std::visit([](const auto& value) -> double {
         return static_cast<double>(value);
     }, number);
 }
 
-inline std::string repeat(const std::string& str, int count) {
+inline std::string repeat(const std::string& str, const int count) {
     std::string result;
     for (int i = 0; i < count; ++i) {
         result += str;
@@ -42,6 +47,7 @@ public:
     explicit FalxNumber(const double& value) : FalxValue(), m_value(value) {}
     explicit FalxNumber(const Number& value) : FalxValue(),  m_value(value) {}
 
+    std::string asString() const override;
     [[nodiscard]] int asInt() const override;
     [[nodiscard]] double asDouble() const override;
     [[nodiscard]] Number asNumber() const override;

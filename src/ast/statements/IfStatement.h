@@ -26,7 +26,7 @@ public:
         if (isTruthy(this->m_condition->evaluate(interpreter, environment))) {
             auto scope = Environment(environment);
             for (const auto& stmt : this->m_statements) {
-                stmt->execute(interpreter, environment);
+                stmt->execute(interpreter, scope);
             }
         } else if (this->m_elseBody) {
             this->m_elseBody->execute(interpreter, environment);
@@ -34,16 +34,18 @@ public:
     }
 
     [[nodiscard]] static bool isTruthy(const std::shared_ptr<FalxValue>& value) {
-        if (typeid(value) == typeid(FalxBoolean)) {
-            return value->asBool();
+        if (!value) {
+            throw std::runtime_error("If condition evaluated to nullptr");
         }
-        return false;
+        if (const auto* b = dynamic_cast<const FalxBoolean*>(value.get())) {
+            return b->asBool();
+        }
+        throw std::runtime_error("If condition must evaluate to a boolean");
     }
 
     void print(std::ostream &os) const override {
-        std::ostringstream result;
-        result << "IfStatement(";
+        os << "IfStatement(";
         m_condition->print(os);
-        result << ");";
+        os << ")";
     }
 };

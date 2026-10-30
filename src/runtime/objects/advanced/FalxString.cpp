@@ -36,9 +36,13 @@ double FalxString::asDouble() const {
 }
 
 bool FalxString::equalsValue(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(*this) != typeid(other)) { return false; }
-    const auto temp = static_cast<const FalxString&>(*other);
-    return this->m_value == temp.m_value;
+    const auto* temp = dynamic_cast<const FalxString*>(other.get());
+
+    if (!temp) {
+        return false;
+    }
+
+    return this->m_value == temp->m_value;
 }
 
 std::vector<std::shared_ptr<FalxValue>> FalxString::iterate() const {

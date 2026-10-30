@@ -30,10 +30,9 @@ void FalxArray::indexAssign(const std::shared_ptr<FalxValue> &index, const std::
     this->m_values.at(i) = value;
 }
 
-bool FalxArray::equalsValue(const std::shared_ptr<FalxValue> &other) {
-    if (typeid(*this) != typeid(other)) { return false; }
-
-    const auto temp = static_cast<const FalxArray&>(*other);
-    return temp.iterate() == this->m_values;
+bool FalxArray::equalsValue(const std::shared_ptr<FalxValue> &other) const {
+    const auto* temp = dynamic_cast<const FalxArray*>(other.get());
+    if (!temp) { return false; }
+    return temp->iterate() == this->m_values;
 }
 

@@ -33,6 +33,13 @@ public:
     [[nodiscard]] bool isMutable() const {
         return m_mutable;
     }
+
+    [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue> &other) const override {
+        if (const auto* o = dynamic_cast<const Variable *>(other.get())) {
+            return o->getValue() == getValue() && o->isMutable() == isMutable();
+        }
+        return false;
+    }
 };
 
 

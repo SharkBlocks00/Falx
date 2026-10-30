@@ -10,7 +10,7 @@
 Environment::Environment(std::shared_ptr<Environment> parent, const bool isStandardLibrary)
     : m_parent(std::move(parent))
 {
-    this->m_isStandardLibrary = isStandardLibrary || (parent != nullptr && parent);
+    this->m_isStandardLibrary = isStandardLibrary || (m_parent != nullptr && m_parent);
 }
 
 void Environment::define(const std::string& name, const std::shared_ptr<FalxValue>& value, const bool _mutable) {

@@ -5,6 +5,7 @@
 
 #pragma once
 #include "../../ast/Statement.h"
+#include "../../packages/builtins/OutputFunction.h"
 #include "../environment/Environment.h"
 
 class Interpreter {
@@ -14,7 +15,7 @@ private:
 
     void execute(const std::vector<std::shared_ptr<Statement>> &program, Environment& environment) const;
 public:
-    Interpreter() = default;
+    Interpreter() { this->m_environment.define("output", std::make_shared<OutputFunction>(), false); }
 
     void interpret(const std::vector<std::shared_ptr<Statement>> &program);
 };

@@ -9,7 +9,7 @@
 
 std::shared_ptr<FalxValue> FalxValue::get(const std::string& name) const {
     if (const auto it = m_properties.find(name); it != m_properties.end()) {
-        return std::make_unique<FalxValue>(it->second());
+        return std::make_shared<FalxValue>(it->second());
     }
 
     if (const auto it = m_methods.find(name); it != m_methods.end()) {
@@ -68,9 +68,6 @@ int FalxValue::compareTo(const std::shared_ptr<FalxValue>& other) const {
     throw std::runtime_error{""};
 }
 
-bool FalxValue::equalsValue(const std::shared_ptr<FalxValue>& other) const {
-    return this == &*other;
-}
 
 std::variant<int, double> FalxValue::asNumber() const {
     throw std::runtime_error{""};

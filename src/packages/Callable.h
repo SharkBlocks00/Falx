@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "../runtime/objects/FalxValue.h"
-#include "../runtime/interpreter/Interpreter.h"
 
+class Interpreter;
 
 class Callable : public FalxValue {
 public:

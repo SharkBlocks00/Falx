@@ -17,9 +17,9 @@ public:
         : Expression(location), m_location(location), m_callee(callee), m_arguments(arguments) {}
 
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter &interpreter, Environment &environment) const override {
-        std::shared_ptr<FalxValue> object = this->m_callee->evaluate(interpreter, environment);
+        const std::shared_ptr<FalxValue> object = this->m_callee->evaluate(interpreter, environment);
 
-        if (typeid(*object) != typeid(Callable)) {
+        if (!dynamic_cast<Callable*>(object.get())) {
             throw std::runtime_error("Type mismatch in function call");
         }
 

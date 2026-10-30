@@ -55,11 +55,11 @@ std::vector<std::shared_ptr<FalxValue> > FalxMap::iterate() const {
 }
 
 bool FalxMap::equalsValue(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(*this) != typeid(other)) {
+    const auto* temp = dynamic_cast<const FalxMap*>(other.get());
+    if (!temp) {
         return false;
     }
-    const auto& temp = static_cast<const FalxMap&>(*other);
-    return this->m_values == temp.m_values;
+    return this->m_values == temp->m_values;
 }
 
 void FalxMap::set(const std::string &name, const std::shared_ptr<FalxValue> &value) {

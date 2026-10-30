@@ -17,6 +17,6 @@ public:
     [[nodiscard]] std::shared_ptr<FalxValue> index(const std::shared_ptr<FalxValue>& index);
 
     void indexAssign(const std::shared_ptr<FalxValue>& index, const std::shared_ptr<FalxValue>& value) override;
-    bool equalsValue(const std::shared_ptr<FalxValue>& other);
+    bool equalsValue(const std::shared_ptr<FalxValue>& other) const override;
     [[nodiscard]] std::string getTypeName() const override { return "array"; }
 };

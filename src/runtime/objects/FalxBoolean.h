@@ -13,13 +13,14 @@ public:
     explicit FalxBoolean(const bool value) : m_value(value) {}
 
     [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue>& other) const override{
-        if (typeid(other) != typeid(*this)) { return false; }
-        const auto temp = static_cast<const FalxBoolean&>(*other);
+        const auto* boolean = dynamic_cast<const FalxBoolean*>(other.get());
+        if (!boolean) { return false; }
 
-        return this->m_value == temp.getValue();
+        return this->m_value == boolean->getValue();
     }
 
     [[nodiscard]] bool getValue() const { return this->m_value; }
+    [[nodiscard]] bool asBool() const override { return this->m_value; }
     [[nodiscard]] std::string asString() const override { return this->m_value ? "true" : "false"; }
     [[nodiscard]] int asInt() const override { return std::stoi(this->asString()); }
     [[nodiscard]] double asDouble() const override { return std::stod(this->asString()); }

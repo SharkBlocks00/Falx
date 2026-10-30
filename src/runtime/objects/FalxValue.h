@@ -40,7 +40,7 @@ public:
     [[nodiscard]] virtual std::shared_ptr<FalxValue> modulo(const std::shared_ptr<FalxValue> &other) const;
 
     [[nodiscard]] virtual int compareTo(const std::shared_ptr<FalxValue> &other) const;
-    [[nodiscard]] virtual bool equalsValue(const std::shared_ptr<FalxValue> &other) const;
+    [[nodiscard]] virtual bool equalsValue(const std::shared_ptr<FalxValue> &other) const { return false; };
 
     [[nodiscard]] virtual std::string getTypeName() const;
 

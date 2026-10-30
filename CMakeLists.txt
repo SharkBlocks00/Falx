@@ -92,4 +92,5 @@ add_executable(CFalx src/main.cpp
         src/runtime/values/StructConstructor.h
         src/runtime/objects/advanced/FalxStruct.h
         src/ast/statements/WhileStatement.h
+        src/packages/builtins/OutputFunction.h
 )

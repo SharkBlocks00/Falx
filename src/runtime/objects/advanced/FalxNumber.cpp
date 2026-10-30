@@ -7,6 +7,10 @@
 
 #include "FalxString.h"
 
+std::string FalxNumber::asString() const {
+    return to_string(this->m_value);
+}
+
 int FalxNumber::asInt() const {
     return to_int(this->m_value);
 }
@@ -20,47 +24,47 @@ Number FalxNumber::asNumber() const {
 }
 
 std::shared_ptr<FalxValue> FalxNumber::add(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(other) == typeid(FalxString)) {
-        return std::make_unique<FalxValue>(FalxString(this->asString() + other->asString()));
+    if (const auto* expr = dynamic_cast<const FalxString*>(other.get())) {
+        return std::make_shared<FalxString>(this->asString() + expr->asString());
     }
-    if (typeid(other) == typeid(FalxNumber)) {
-        return std::make_unique<FalxValue>(FalxNumber(_add(this->m_value, other->asNumber())));
+    if (const auto* expr = dynamic_cast<const FalxNumber*>(other.get())) {
+        return std::make_shared<FalxNumber>(_add(this->m_value, expr->asNumber()));
     }
 
     return FalxValue::add(other);
 }
 
 std::shared_ptr<FalxValue> FalxNumber::minus(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(other) == typeid(FalxNumber)) {
-        return std::make_unique<FalxValue>(FalxNumber(_minus(this->m_value, other->asNumber())));
+    if (const auto* expr = dynamic_cast<const FalxNumber*>(other.get())) {
+        return std::make_shared<FalxNumber>(_minus(this->m_value, expr->asNumber()));
     }
 
     return FalxValue::minus(other);
 }
 
 std::shared_ptr<FalxValue> FalxNumber::multiply(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(other) == typeid(FalxNumber)) {
-        return std::make_unique<FalxValue>(FalxNumber(_multiply(this->m_value, other->asNumber())));
+    if (const auto* expr = dynamic_cast<const FalxNumber*>(other.get())) {
+        return std::make_shared<FalxNumber>(_multiply(this->m_value, expr->asNumber()));
     }
 
-    if (typeid(other) == typeid(FalxString)) {
-        return std::make_unique<FalxValue>(FalxString(repeat(other->asString(), this->asInt())));
+    if (const auto* expr = dynamic_cast<const FalxString*>(other.get())) {
+        return std::make_shared<FalxString>(repeat(expr->asString(), this->asInt()));
     }
 
     return FalxValue::multiply(other);
 }
 
 std::shared_ptr<FalxValue> FalxNumber::divide(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(other) == typeid(FalxNumber)) {
-        return std::make_unique<FalxValue>(FalxNumber(_divide(this->m_value, other->asNumber())));
+    if (const auto* expr = dynamic_cast<const FalxNumber*>(other.get())) {
+        return std::make_shared<FalxNumber>(_divide(this->m_value, expr->asNumber()));
     }
 
     return FalxValue::divide(other);
 }
 
 std::shared_ptr<FalxValue> FalxNumber::modulo(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(other) == typeid(FalxNumber)) {
-        return std::make_unique<FalxValue>(FalxNumber(_modulo(this->m_value, other->asNumber())));
+    if (const auto* expr = dynamic_cast<const FalxNumber*>(other.get())) {
+        return std::make_shared<FalxNumber>(_modulo(this->m_value, expr->asNumber()));
     }
 
     return FalxValue::modulo(other);
@@ -77,42 +81,42 @@ int FalxNumber::compareTo(const std::shared_ptr<FalxValue> &other) const {
 }
 
 bool FalxNumber::equalsValue(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(other) != typeid(FalxNumber)) {
+    if (!dynamic_cast<const FalxNumber*>(other.get())) {
         return false;
     }
     return this->asDouble() == other->asDouble();
 }
 
 Number FalxNumber::_add(const Number &a, const Number &b) {
-    if (typeid(a) == typeid(int) && typeid(b) == typeid(int)) {
+    if (std::holds_alternative<int>(a) && std::holds_alternative<int>(b)) {
         return to_int(a) + to_int(b);
     }
     return to_double(a) + to_double(b);
 }
 
 Number FalxNumber::_minus(const Number &a, const Number &b) {
-    if (typeid(a) == typeid(int) && typeid(b) == typeid(int)) {
+    if (std::holds_alternative<int>(a) && std::holds_alternative<int>(b)) {
         return to_int(a) - to_int(b);
     }
     return to_double(a) - to_double(b);
 }
 
 Number FalxNumber::_multiply(const Number &a, const Number &b) {
-    if (typeid(a) == typeid(int) && typeid(b) == typeid(int)) {
+    if (std::holds_alternative<int>(a) && std::holds_alternative<int>(b)) {
         return to_int(a) * to_int(b);
     }
     return to_double(a) * to_double(b);
 }
 
 Number FalxNumber::_divide(const Number &a, const Number &b) {
-    if (typeid(a) == typeid(int) && typeid(b) == typeid(int)) {
+    if (std::holds_alternative<int>(a) && std::holds_alternative<int>(b)) {
         return to_int(a) / to_int(b);
     }
     return to_double(a) / to_double(b);
 }
 
 Number FalxNumber::_modulo(const Number &a, const Number &b) {
-    if (typeid(a) == typeid(int) && typeid(b) == typeid(int)) {
+    if (std::holds_alternative<int>(a) && std::holds_alternative<int>(b)) {
         return to_int(a) % to_int(b);
     }
     return to_double(a) / to_double(b);

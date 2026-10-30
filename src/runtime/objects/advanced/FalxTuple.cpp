@@ -26,12 +26,13 @@ void FalxTuple::set(const std::string &name, const std::shared_ptr<FalxValue> &v
 }
 
 bool FalxTuple::equalsValue(const std::shared_ptr<FalxValue> &other) const {
-    if (typeid(other) != typeid(FalxTuple)) {
+    const auto* temp = dynamic_cast<const FalxTuple*>(other.get());
+
+    if (!temp) {
         return false;
     }
 
-    const auto& tmp = static_cast<const FalxTuple&>(*other);
-    return tmp.m_values == this->m_values;
+    return temp->m_values == this->m_values;
 }
 
 std::string FalxTuple::asString() const {
