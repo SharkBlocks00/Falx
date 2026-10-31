@@ -47,7 +47,7 @@ public:
     explicit FalxNumber(const double& value) : FalxValue(), m_value(value) {}
     explicit FalxNumber(const Number& value) : FalxValue(),  m_value(value) {}
 
-    std::string asString() const override;
+    [[nodiscard]] std::string asString() const override;
     [[nodiscard]] int asInt() const override;
     [[nodiscard]] double asDouble() const override;
     [[nodiscard]] Number asNumber() const override;

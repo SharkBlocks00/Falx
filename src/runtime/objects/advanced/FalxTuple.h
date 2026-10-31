@@ -23,9 +23,9 @@ public:
 
     [[nodiscard]] bool equalsValue(const std::shared_ptr<FalxValue> &other) const override;
 
-    std::string getTypeName() const override { return "tuple"; }
+    [[nodiscard]] std::string getTypeName() const override { return "tuple"; }
 
-    std::string asString() const override;
+    [[nodiscard]] std::string asString() const override;
 
-    std::vector<std::shared_ptr<FalxValue>> getValues() const { return m_values; }
+    [[nodiscard]] std::vector<std::shared_ptr<FalxValue>> getValues() const { return m_values; }
 };

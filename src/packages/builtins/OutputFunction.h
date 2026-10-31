@@ -11,9 +11,9 @@
 
 class OutputFunction : public NativeFunction {
 public:
-    bool isStrict() const override { return false; }
-    bool isHashable() const override { return true; }
-    std::size_t arity() const override { return 1; }
+    [[nodiscard]] bool isStrict() const override { return false; }
+    [[nodiscard]] bool isHashable() const override { return true; }
+    [[nodiscard]] std::size_t arity() const override { return 1; }
 
     std::shared_ptr<FalxValue> call(const Interpreter &interpreter, std::vector<std::shared_ptr<FalxValue>> &arguments) const override {
         if (arguments.empty()) {

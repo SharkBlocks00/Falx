@@ -4,7 +4,7 @@
 
 int main() {
     try {
-        Lexer lexer{"let x: int = 5; if (x==5) { output(5); } else { output(2);}", "Test"};
+        Lexer lexer{"output(typeof(20));", "Test"};
 
         const std::vector tokens{lexer.lex()};
 

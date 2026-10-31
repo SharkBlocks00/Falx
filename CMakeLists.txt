@@ -93,4 +93,7 @@ add_executable(CFalx src/main.cpp
         src/runtime/objects/advanced/FalxStruct.h
         src/ast/statements/WhileStatement.h
         src/packages/builtins/OutputFunction.h
+        src/packages/builtins/RequestFunction.h
+        src/packages/builtins/TypeOfFunction.h
+        src/packages/builtins/AssertFunction.h
 )

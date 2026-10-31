@@ -35,7 +35,7 @@ public:
             throw std::runtime_error("Function call arguments are not valid");
         }
 
-        return std::make_shared<FalxValue>(*tmp.call(interpreter, arguments));
+        return tmp.call(interpreter, arguments);
     }
 
     void print(std::ostream &os) const override {
