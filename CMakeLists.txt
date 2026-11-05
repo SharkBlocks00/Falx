@@ -96,4 +96,8 @@ add_executable(CFalx src/main.cpp
         src/packages/builtins/RequestFunction.h
         src/packages/builtins/TypeOfFunction.h
         src/packages/builtins/AssertFunction.h
+        src/types/TypeResolver.cpp
+        src/types/TypeResolver.h
+        src/types/falxtype/FalxType.h
+        src/types/falxtype/FalxType.cpp
 )
