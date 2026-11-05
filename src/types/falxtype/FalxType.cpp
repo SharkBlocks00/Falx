@@ -194,8 +194,8 @@ std::string TupleType::toString() const {
 
 // FunctionType
 
-FunctionType::FunctionType(const std::vector<std::shared_ptr<const FalxType> > &parameterTypes)
-    : m_parameterTypes(parameterTypes) {}
+FunctionType::FunctionType(const std::vector<std::shared_ptr<const FalxType> > &parameterTypes, const std::shared_ptr<const FalxType> &returnType, int *required, std::vector<std::string> parameterNames)
+    : m_parameterTypes(parameterTypes), m_returnType(returnType), m_required(required), m_parameterNames(std::move(parameterNames)) {}
 
 std::size_t FunctionType::getMaxArguments() const {
     return m_parameterTypes.size();
@@ -218,6 +218,10 @@ std::size_t FunctionType::getParameterCount() const {
 
 std::vector<std::string> FunctionType::getParameterNames() const {
     return m_parameterNames;
+}
+
+int *FunctionType::getRequired() const {
+    return m_required;
 }
 
 const std::vector<std::shared_ptr<const FalxType> > &FunctionType::getParameterTypes() const {
@@ -525,7 +529,7 @@ std::shared_ptr<const FalxType> substitute(const std::shared_ptr<const FalxType>
             params.push_back(substitute(param, bindings));
         }
 
-        return std::make_shared<FunctionType>(params);
+        return std::make_shared<FunctionType>(params, substitute(tmp->getReturnType(), bindings), tmp->getRequired(), tmp->getParameterNames());
     }
 
     return type;

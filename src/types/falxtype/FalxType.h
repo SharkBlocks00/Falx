@@ -107,12 +107,17 @@ private:
     int* m_required{nullptr};
     std::vector<std::string> m_parameterNames;
 public:
-    explicit FunctionType(const std::vector<std::shared_ptr<const FalxType>>& parameterTypes);
+    explicit FunctionType(const std::vector<std::shared_ptr<const FalxType>>& parameterTypes,
+        const std::shared_ptr<const FalxType>& returnType,
+        int* required,
+        std::vector<std::string> parameterNames
+    );
 
     [[nodiscard]] const std::vector<std::shared_ptr<const FalxType>>& getParameterTypes() const;
     [[nodiscard]] const std::shared_ptr<const FalxType>& getReturnType() const;
     [[nodiscard]] std::size_t getParameterCount() const;
     [[nodiscard]] std::vector<std::string> getParameterNames() const;
+    [[nodiscard]] int* getRequired() const;
 
     [[nodiscard]] std::string toString() const override;
     [[nodiscard]] bool equals(const FalxType& other) const override;
