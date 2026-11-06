@@ -7,18 +7,6 @@
 
 #include <utility>
 
-// Literals
-
-const std::shared_ptr<const FalxType> NULL_LITERAL = std::make_shared<PrimitiveType>("null");
-const std::shared_ptr<const FalxType> INTEGER_LITERAL = std::make_shared<PrimitiveType>("int");
-const std::shared_ptr<const FalxType> FLOAT_LITERAL = std::make_shared<PrimitiveType>("float");
-const std::shared_ptr<const FalxType> BOOLEAN_LITERAL = std::make_shared<PrimitiveType>("bool");
-const std::shared_ptr<const FalxType> STRING_LITERAL = std::make_shared<PrimitiveType>("String");
-const std::shared_ptr<const FalxType> ANY = std::make_shared<PrimitiveType>("any");
-const std::shared_ptr<const FalxType> VOID = std::make_shared<PrimitiveType>("void");
-const std::shared_ptr<const FalxType> NEVER = std::make_shared<PrimitiveType>("never");
-const std::shared_ptr<const FalxType> EXCEPTION = std::make_shared<PrimitiveType>("Exception");
-const std::shared_ptr<const FalxType> FILE_OBJECT = std::make_shared<PrimitiveType>("File");
 
 [[nodiscard]] bool isSimpleNullable(const UnionType& _union) {
     return _union.getMembers().size() == 2 && (std::find(_union.getMembers().begin(), _union.getMembers().end(), NULL_LITERAL) != _union.getMembers().end());

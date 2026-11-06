@@ -102,4 +102,5 @@ add_executable(CFalx src/main.cpp
         src/types/falxtype/FalxType.cpp
         src/types/environment/TypeEnvironment.cpp
         src/types/environment/TypeEnvironment.h
+        src/types/TypeRelations.cpp
 )
