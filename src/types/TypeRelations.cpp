@@ -6,8 +6,7 @@
 #include <functional>
 
 #include "falxtype/FalxType.h"
-
-bool functionFits(const FunctionType& target, const FunctionType& source);
+#include "TypeRelations.hpp"
 
 bool isAssignable(const std::shared_ptr<const FalxType>& target, const std::shared_ptr<const FalxType>& source) {
     if (*target == *source || *target == *ANY || *source == *ANY || *source == *NEVER) {

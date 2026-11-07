@@ -35,6 +35,9 @@ public:
         }
     }
 
+    [[nodiscard]] Token getOperator() const { return m_operator; }
+    [[nodiscard]] std::shared_ptr<Expression> getExpression() const { return m_expression; }
+
     void print(std::ostream &os) const override {
         os << m_operator.asString();
 

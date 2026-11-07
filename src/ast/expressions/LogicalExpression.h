@@ -35,6 +35,10 @@ public:
         return value->asBool();
     }
 
+    [[nodiscard]] std::shared_ptr<Expression> getLeft() const { return m_left; }
+    [[nodiscard]] std::shared_ptr<Expression> getRight() const { return m_right; }
+    [[nodiscard]] Token getOperator() const { return m_operator; }
+
     void print(std::ostream &os) const override {
         if (m_left) {
             m_left->print(os);

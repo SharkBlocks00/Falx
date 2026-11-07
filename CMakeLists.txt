@@ -106,4 +106,7 @@ add_executable(CFalx src/main.cpp
         src/types/builtins/Builtins.cpp
         src/types/builtins/Builtins.h
         src/helpers/StringUtils.h
+        src/types/Narrowing.cpp
+        src/types/TypeRelations.hpp
+        src/types/Narrowing.hpp
 )
