@@ -185,7 +185,7 @@ private:
     std::map<std::string, std::shared_ptr<const FalxType>> m_exports;
     std::map<std::string, const StructType> m_types;
 public:
-    explicit ModuleType(std::string name, const std::map<std::string, std::shared_ptr<const FalxType>>& exports, const std::map<std::string, const StructType>& types);
+    explicit ModuleType(std::string name, const std::map<std::string, std::shared_ptr<const FalxType>>& exports, const std::map<std::string, const StructType>& types={});
 
     [[nodiscard]] const std::map<std::string, std::shared_ptr<const FalxType>>& getExports() const;
     [[nodiscard]] const std::map<std::string, const StructType>& getTypes() const;

@@ -63,6 +63,4 @@ public:
         std::vector<std::string> typeVariables = {});
 
     [[nodiscard]] std::shared_ptr<const FalxType> resolve(TypeExpressionPtr expression, const bool& allowVoid = false);
-
-
 };

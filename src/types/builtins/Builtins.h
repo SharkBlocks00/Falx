@@ -11,10 +11,13 @@
 #include "../TypeResolver.h"
 
 
-const std::shared_ptr<const FalxType>& parseType(const std::string& text, const std::vector<std::string>& variables={});
-std::optional<std::shared_ptr<const FalxType>>& builtinMember(const std::shared_ptr<const FalxType>& receiver, const std::string& name);
-std::vector<std::string>& builtinMemberNames(const std::shared_ptr<const FalxType>& receiver);
-std::optional<const ModuleType>& internalModule(const std::string& name);
+std::shared_ptr<const FalxType> parseType(const std::string& text, const std::vector<std::string>& variables={});
+
+std::optional<std::shared_ptr<const FalxType>> builtinMember(const std::shared_ptr<const FalxType> &receiver,
+                                                             const std::string &name);
+
+std::vector<std::string> builtinMemberNames(const std::shared_ptr<const FalxType> &receiver);
+std::optional<ModuleType> internalModule(const std::string& name);
 
 using Signature = std::variant<std::string, std::tuple<std::string, int>>;
 

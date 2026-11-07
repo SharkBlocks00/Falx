@@ -70,8 +70,82 @@ std::map<std::string, std::shared_ptr<const FalxType> > SignatureTable::asDict()
     return dict;
 }
 
-const std::shared_ptr<const FalxType>& parseType(const std::string& text, const std::vector<std::string>& variables) {
+std::shared_ptr<const FalxType> parseType(const std::string& text, const std::vector<std::string>& variables) {
     const auto expression = Parser{Lexer{text, "<builtin>"}.lex()}.parseTypeAnnotation();
-    // return TypeResolver{variables}.resolve(expressioon, true);
+
+    TypeResolver resolver{{}, {}, variables};
+    return resolver.resolve(expression, true);
+}
+
+std::optional<std::shared_ptr<const FalxType>> builtinMember(const std::shared_ptr<const FalxType> &receiver,
+                                                             const std::string &name) {
+    if (*receiver == *STRING_LITERAL) {
+        return STRING_MEMBERS.get(name);
+    }
+
+    if (const auto* array = dynamic_cast<const ArrayType*>(receiver.get())) {
+        const auto member = ARRAY_MEMBERS.get(name);
+
+        if (!member) return nullptr;
+        return substitute(member.value(), {{"T", array->getElementType()}});
+    }
+
+    if (const auto* map = dynamic_cast<const MapType*>(receiver.get())) {
+        const auto member = MAP_MEMBERS.get(name);
+
+        if (!member) return nullptr;
+        return substitute(member.value(), {{"K", map->getKeyType()}, {"V", map->getValueType()}});
+    }
+
+    if (const auto tup = dynamic_cast<const TupleType*>(receiver.get())) {
+        return TUPLE_MEMBERS.get(name);
+    }
+
     return nullptr;
+}
+
+std::vector<std::string> builtinMemberNames(const std::shared_ptr<const FalxType> &receiver) {
+    if (*receiver == *STRING_LITERAL) {
+        return STRING_MEMBERS.names();
+    }
+
+    if (dynamic_cast<const ArrayType*>(receiver.get())) {
+        return ARRAY_MEMBERS.names();
+    }
+
+    if (dynamic_cast<const MapType*>(receiver.get())) {
+        return MAP_MEMBERS.names();
+    }
+
+    if (dynamic_cast<const TupleType*>(receiver.get())) {
+        return TUPLE_MEMBERS.names();
+    }
+    return {};
+}
+
+std::optional<ModuleType> internalModule(const std::string& name) {
+    if (name == "exceptions") {
+        const auto c = parseType("(any) -> Exception");
+
+        if (const auto* con = dynamic_cast<const FunctionType*>(c.get())) {
+            const auto constructor = std::make_shared<FunctionType>(
+                con->getParameterTypes(),
+                con->getReturnType(),
+                nullptr
+            );
+
+            std::map<std::string, std::shared_ptr<const FalxType>> exports{
+                    {"Exception", constructor}
+            };
+
+            return ModuleType{"exceptions", exports};
+        }
+    }
+
+    const auto it = INTERNAL_MODULES.find(name);
+
+    if (it == INTERNAL_MODULES.end())
+        return std::nullopt;
+
+    return ModuleType{name, it->second.asDict()};
 }
