@@ -65,7 +65,7 @@ std::shared_ptr<TypeEnvironment> TypeEnvironment::child(const bool &functionBoun
     return std::make_shared<TypeEnvironment>(std::shared_ptr<TypeEnvironment>(this), functionBoundary);
 }
 
-Symbol TypeEnvironment::define(const std::string &name, std::shared_ptr<const FalxType> &type, const bool &_mutable,
+Symbol TypeEnvironment::define(const std::string &name, const std::shared_ptr<const FalxType> &type, const bool &_mutable,
                                const std::string &kind) {
     if (const auto it = m_symbols.find(name); it != m_symbols.end()) {
         if (const Symbol& existing = it->second; kind == "function" && (existing.getKind() == "function" || existing.getKind() == "builtin")) {

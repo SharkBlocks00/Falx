@@ -47,7 +47,7 @@ public:
     [[nodiscard]] std::shared_ptr<TypeEnvironment> getParent() const;
 
     [[nodiscard]] std::shared_ptr<TypeEnvironment> child(const bool& functionBoundary);
-    [[nodiscard]] Symbol define(const std::string &name, std::shared_ptr<const FalxType> &type, const bool &_mutable,
+    [[nodiscard]] Symbol define(const std::string &name, const std::shared_ptr<const FalxType> &type, const bool &_mutable,
                                 const std::string &kind = "variable");
 
     [[nodiscard]] std::vector<const TypeEnvironment*> chain() const;

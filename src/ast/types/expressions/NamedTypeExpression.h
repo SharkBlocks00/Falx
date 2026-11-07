@@ -11,7 +11,7 @@
 
 class NamedTypeExpression final : public TypeExpression {
 private:
-    std::string m_name;
+    std::string& m_name;
     std::vector<TypeExpressionPtr> m_arguments;
 
 public:
@@ -21,7 +21,7 @@ public:
         std::vector<TypeExpressionPtr> arguments = {}
     );
 
-    [[nodiscard]] const std::string& getName() const;
+    [[nodiscard]] std::string &getName() const;
     [[nodiscard]] const std::vector<TypeExpressionPtr>& getArguments() const;
 
     [[nodiscard]] std::string toString() const override;

@@ -103,4 +103,7 @@ add_executable(CFalx src/main.cpp
         src/types/environment/TypeEnvironment.cpp
         src/types/environment/TypeEnvironment.h
         src/types/TypeRelations.cpp
+        src/types/builtins/Builtins.cpp
+        src/types/builtins/Builtins.h
+        src/helpers/StringUtils.h
 )

@@ -109,8 +109,8 @@ private:
 public:
     explicit FunctionType(const std::vector<std::shared_ptr<const FalxType>>& parameterTypes,
         const std::shared_ptr<const FalxType>& returnType,
-        int* required,
-        std::vector<std::string> parameterNames
+        int* required = nullptr,
+        std::vector<std::string> parameterNames = {}
     );
 
     [[nodiscard]] const std::vector<std::shared_ptr<const FalxType>>& getParameterTypes() const;
@@ -220,3 +220,12 @@ const std::shared_ptr<const FalxType> VOID = std::make_shared<PrimitiveType>("vo
 const std::shared_ptr<const FalxType> NEVER = std::make_shared<PrimitiveType>("never");
 const std::shared_ptr<const FalxType> EXCEPTION = std::make_shared<PrimitiveType>("Exception");
 const std::shared_ptr<const FalxType> FILE_OBJECT = std::make_shared<PrimitiveType>("File");
+
+// Methods
+
+std::shared_ptr<const FalxType> makeUnion(const std::vector<std::shared_ptr<const FalxType>>& members);
+std::shared_ptr<const FalxType> makeNullable(const std::shared_ptr<const FalxType>& type);
+std::vector<std::shared_ptr<const FalxType>> membersOf(const std::shared_ptr<const FalxType>& type);
+bool isNullable(const std::shared_ptr<const FalxType>& type);
+std::shared_ptr<const FalxType> nonNull(const std::shared_ptr<const FalxType>& type);
+std::shared_ptr<const FalxType> substitute(const std::shared_ptr<const FalxType>& type, const std::map<std::string, std::shared_ptr<const FalxType>>& bindings);
