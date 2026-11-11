@@ -34,6 +34,7 @@ public:
 
     [[nodiscard]] const std::vector<VariableExpression>& getTargets() const { return m_targets; }
     [[nodiscard]] std::shared_ptr<Expression> getValue() const { return m_value; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_targets, m_value); }
 
     [[nodiscard]] static std::vector<std::shared_ptr<FalxValue>> unpack(std::shared_ptr<FalxValue> value, const int count, const SourceLocation& location) {
         if (typeid(*value) != typeid(FalxTuple)) {

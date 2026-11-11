@@ -28,6 +28,7 @@ public:
 
     [[nodiscard]] std::string getName() const { return this->m_name; }
     [[nodiscard]] std::shared_ptr<Expression> getValue() const { return this->m_value; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_value); }
 
     void print(std::ostream &os) const override {
         os << m_name;

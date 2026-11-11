@@ -26,6 +26,7 @@ public:
     }
 
     [[nodiscard]] std::shared_ptr<Expression> getChain() const { return m_chain; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_chain); }
 
     void print(std::ostream &os) const override {
         os << "OptionalChainExpression";

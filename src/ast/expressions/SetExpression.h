@@ -41,6 +41,7 @@ public:
     [[nodiscard]] std::string getProperty() const { return m_property; }
     [[nodiscard]] std::shared_ptr<Expression> getValue() const { return m_value; }
     [[nodiscard]] std::optional<Token> getOperator() const { return m_operator; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_object, m_value); }
 
     void print(std::ostream &os) const override {
         os << "SetExpression";

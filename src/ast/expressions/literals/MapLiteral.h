@@ -27,6 +27,7 @@ public:
     }
 
     [[nodiscard]] std::map<std::string, std::shared_ptr<Expression>> getValues() const { return m_values; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_values); }
 
     void print(std::ostream &os) const override {
         os << "MapLiteral(";

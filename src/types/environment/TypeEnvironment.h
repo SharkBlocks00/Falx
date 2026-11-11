@@ -5,10 +5,12 @@
 
 #pragma once
 #include <memory>
+#include <map>
+#include <optional>
 #include <set>
 #include <string>
+#include <vector>
 
-#include "../expressions/ExpressionChecker.hpp"
 #include "../falxtype/FalxType.h"
 
 class Symbol {

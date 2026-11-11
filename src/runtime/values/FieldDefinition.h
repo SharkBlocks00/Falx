@@ -24,6 +24,7 @@ public:
 
     std::shared_ptr<Expression> const& getDefaultValue() const { return m_defaultValue; }
     std::string const& getName() const { return m_name; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_defaultValue); }
 
     bool operator==(const FieldDefinition& other) const {
         return m_name == other.m_name && m_defaultValue == other.m_defaultValue && m_typeAnnotation == other.m_typeAnnotation;

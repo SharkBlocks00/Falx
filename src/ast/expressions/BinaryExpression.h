@@ -55,6 +55,7 @@ public:
     [[nodiscard]] std::shared_ptr<Expression> getLeft() const { return m_left; }
     [[nodiscard]] std::shared_ptr<Expression> getRight() const { return m_right; }
     [[nodiscard]] Token getOperator() const { return m_operator; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_left, m_right); }
 
     void print(std::ostream &os) const override {
         if (m_left) {

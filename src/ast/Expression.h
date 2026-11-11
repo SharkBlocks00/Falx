@@ -7,6 +7,8 @@
 #pragma once
 #include <utility>
 
+#include <tuple>
+
 #include "SourceLocation.h"
 #include "../runtime/environment/Environment.h"
 #include "../runtime/interpreter/Interpreter.h"

@@ -38,6 +38,13 @@ public:
         m_exportEnvironment = std::make_unique<Environment>(environment);
     }
 
+    [[nodiscard]] std::string getName() const { return m_name; }
+    [[nodiscard]] std::shared_ptr<Expression> getInitializer() const { return m_initializer; }
+    [[nodiscard]] bool isMutable() const { return m_mutable; }
+    [[nodiscard]] bool isExported() const { return m_exported; }
+    [[nodiscard]] std::unique_ptr<Environment> getExportEnvironment() { return std::move(m_exportEnvironment); }
+    [[nodiscard]] TypeExpressionPtr getTypeAnnotation() const { return m_typeAnnotation; }
+
     void print(std::ostream &os) const override {
         if (m_exported) {
             os << "export ";
@@ -53,4 +60,5 @@ public:
 
         os <<';';
     }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_initializer); }
 };

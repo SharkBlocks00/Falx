@@ -40,6 +40,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> getCallee() const { return m_callee; }
     [[nodiscard]] std::vector<std::shared_ptr<Expression>>& getArguments() const { return m_arguments; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_callee, m_arguments); }
 
     void print(std::ostream &os) const override {
         os << "FunctionCallExpression";

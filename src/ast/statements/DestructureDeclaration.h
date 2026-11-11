@@ -46,7 +46,14 @@ public:
         }
     }
 
+    [[nodiscard]] SourceLocation getLocation() const { return m_location; }
+    [[nodiscard]] std::vector<VariableExpression> getTargets() const { return m_targets; }
+    [[nodiscard]] std::shared_ptr<Expression> getInitializer() const { return m_initializer; }
+    [[nodiscard]] bool exported() const { return m_exported; }
+    [[nodiscard]] std::shared_ptr<Environment> getExportEnvironment() const { return m_exportEnvironment; }
+
     void print(std::ostream &os) const override {
         os << "DestructureDeclarationStatement";
     }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_targets, m_initializer); }
 };

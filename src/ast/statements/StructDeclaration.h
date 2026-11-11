@@ -16,12 +16,12 @@ class StructDeclaration : public Statement {
 private:
     std::string m_name;
     std::vector<FieldDefinition> m_fields;
-    std::vector<FunctionDeclaration> m_methods;
+    std::vector<std::shared_ptr<FunctionDeclaration>> m_methods;
     bool m_exported;
     std::unique_ptr<Environment> m_exportEnvironment{nullptr};
 
 public:
-    explicit StructDeclaration(const SourceLocation& location, std::string name, const std::vector<FieldDefinition>& fields, std::vector<FunctionDeclaration> methods, const bool exported)
+    explicit StructDeclaration(const SourceLocation& location, std::string name, const std::vector<FieldDefinition>& fields, std::vector<std::shared_ptr<FunctionDeclaration>> methods, const bool exported)
         : Statement(location), m_name(std::move(name)), m_fields(fields), m_methods(std::move(methods)), m_exported(exported) {}
 
     void setExportEnvironment(std::unique_ptr<Environment>& environment) {
@@ -32,8 +32,8 @@ public:
         try {
             std::map<std::string, UserFunction> methods{};
             for (auto& method : m_methods) {
-                method.execute(interpreter, environment);
-                methods.insert_or_assign(method.getName(), static_cast<const UserFunction&>(*environment.get(method.getName())));
+                method->execute(interpreter, environment);
+                methods.insert_or_assign(method->getName(), static_cast<const UserFunction&>(*environment.get(method->getName())));
             }
 
             const StructDefinition definition{this->m_name, this->m_fields, methods, environment};
@@ -49,7 +49,14 @@ public:
         }
     }
 
+    [[nodiscard]] std::string getName() const { return m_name; }
+    [[nodiscard]] std::vector<FieldDefinition> getFields() const { return m_fields; }
+    [[nodiscard]] std::vector<std::shared_ptr<FunctionDeclaration>> getMethods() const { return m_methods; }
+    [[nodiscard]] bool exported() const { return m_exported; }
+    [[nodiscard]] std::unique_ptr<Environment> getExportEnvironment() { return std::move(m_exportEnvironment); }
+
     void print(std::ostream &os) const override {
         os << "ReturnStatement";
     }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_fields, m_methods); }
 };

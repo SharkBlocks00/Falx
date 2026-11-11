@@ -18,6 +18,7 @@ public:
         : Expression(location), m_elements(std::move(elements)) {}
 
     [[nodiscard]] std::vector<std::shared_ptr<Expression>> getElements() const { return m_elements; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_elements); }
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter& interpreter, Environment& environment) const override {
         std::vector<std::shared_ptr<FalxValue>> result{};
 

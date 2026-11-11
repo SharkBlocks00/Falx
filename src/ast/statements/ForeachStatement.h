@@ -48,4 +48,5 @@ public:
     void print(std::ostream &os) const override {
         os << "ForeachStatement";
     }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_iterable, m_body); }
 };

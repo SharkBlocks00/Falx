@@ -43,6 +43,7 @@ public:
     [[nodiscard]] std::shared_ptr<Expression> getIndex() const { return m_index; }
     [[nodiscard]] std::shared_ptr<Expression> getValue() const { return m_value; }
     [[nodiscard]] std::optional<Token> getOperator() const { return m_operator; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_object, m_index, m_value); }
 
     void print(std::ostream &os) const override {
         os << "IndexSetExpression";

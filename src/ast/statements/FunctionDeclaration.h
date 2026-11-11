@@ -59,4 +59,5 @@ public:
     }
 
     [[nodiscard]] std::string getName() const { return m_name; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_parameters, m_body); }
 };

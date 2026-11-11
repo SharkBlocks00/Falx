@@ -337,7 +337,7 @@ std::shared_ptr<StructDeclaration> Parser::_structDeclaration(const bool &export
     const Token name = this->_consumeIdentifier();
     static_cast<void>(this->_consumeLeftBrace());
     std::vector<FieldDefinition> fields;
-    std::vector<FunctionDeclaration> methods;
+    std::vector<std::shared_ptr<FunctionDeclaration>> methods;
 
     while (!this->_check(TokenKind::RIGHT_BRACE)) {
         if (this->_isAtEnd()) {
@@ -361,7 +361,7 @@ std::shared_ptr<StructDeclaration> Parser::_structDeclaration(const bool &export
         } else {
             if (this->_match(TokenKind::FUNC)) {
                 auto function = this->_functionDeclaration(false);
-                methods.push_back(std::move(*function));
+                methods.push_back(std::move(function));
             } else {
                 throw std::runtime_error("Expected field or method in struct body");
             }

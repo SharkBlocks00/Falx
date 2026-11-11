@@ -25,4 +25,5 @@ public:
 
         os << ';';
     }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_expression); }
 };

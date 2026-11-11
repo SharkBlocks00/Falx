@@ -12,11 +12,11 @@
 class WhileStatement : public Statement {
 private:
     std::shared_ptr<Expression> m_condition;
-    std::vector<std::shared_ptr<Statement>> m_body;
+    std::vector<std::shared_ptr<Statement>>& m_body;
 
 public:
     explicit WhileStatement(const SourceLocation& location, std::shared_ptr<Expression> condition, std::vector<std::shared_ptr<Statement>> body)
-        : Statement(location), m_condition(std::move(condition)), m_body(std::move(body)) {}
+        : Statement(location), m_condition(std::move(condition)), m_body(body) {}
 
     void execute(const Interpreter &interpreter, Environment &environment) override {
         while (this->m_condition->evaluate(interpreter, environment)->asBool()) {
@@ -32,6 +32,10 @@ public:
             }
         }
     }
+
+    [[nodiscard]] std::shared_ptr<Expression> getCondition() const { return m_condition; }
+    [[nodiscard]] std::vector<std::shared_ptr<Statement>>& getBody() const { return m_body; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_condition, m_body); }
 
     void print(std::ostream &os) const override {
         os << "WhileStatement";

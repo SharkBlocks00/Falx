@@ -32,6 +32,7 @@ public:
     [[nodiscard]] std::shared_ptr<Expression> getObject() const { return m_object; }
     [[nodiscard]] std::string getProperty() const { return m_property; }
     [[nodiscard]] bool isOptional() const { return m_optional; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_object); }
 
     void print(std::ostream &os) const override {
         os << "GetExpression";

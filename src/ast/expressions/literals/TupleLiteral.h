@@ -47,4 +47,5 @@ public:
     }
 
     std::vector<std::shared_ptr<Expression>>& getElements() const { return m_elements; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_elements); }
 };

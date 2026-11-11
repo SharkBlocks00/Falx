@@ -24,6 +24,8 @@ public:
         return std::make_unique<FalxBoolean>(FalxBoolean(this->m_value));
     }
 
+    [[nodiscard]] bool getValue() const { return m_value; }
+
     void print(std::ostream &os) const override {
         os << "BooleanLiteral(" << this->m_value << ")";
     }

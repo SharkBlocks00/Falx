@@ -14,13 +14,13 @@
 class IfStatement : public Statement {
 private:
     std::shared_ptr<Expression> m_condition;
-    std::vector<std::shared_ptr<Statement>> m_statements;
+    std::vector<std::shared_ptr<Statement>>& m_statements;
     std::shared_ptr<Statement> m_elseBody;
 
 public:
     explicit IfStatement(const SourceLocation& location, std::shared_ptr<Expression> condition,
         std::vector<std::shared_ptr<Statement>> statements, std::shared_ptr<Statement> elseBody)
-            : Statement(location), m_condition(std::move(condition)), m_statements(std::move(statements)), m_elseBody(std::move(elseBody)) {}
+            : Statement(location), m_condition(std::move(condition)), m_statements(statements), m_elseBody(std::move(elseBody)) {}
 
     void execute(const Interpreter &interpreter, Environment &environment) override {
         if (isTruthy(this->m_condition->evaluate(interpreter, environment))) {
@@ -48,4 +48,9 @@ public:
         m_condition->print(os);
         os << ")";
     }
+
+    [[nodiscard]] std::shared_ptr<Expression> getCondition() const { return m_condition; }
+    [[nodiscard]] std::vector<std::shared_ptr<Statement>>& getStatements() const { return m_statements; }
+    [[nodiscard]] std::shared_ptr<Statement> getElseBody() const { return m_elseBody; }
+    [[nodiscard]] auto astChildren() const { return std::tie(m_condition, m_statements, m_elseBody); }
 };
