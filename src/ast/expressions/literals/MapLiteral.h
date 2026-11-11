@@ -26,6 +26,8 @@ public:
         return std::make_unique<FalxMap>(FalxMap{elements});
     }
 
+    [[nodiscard]] std::map<std::string, std::shared_ptr<Expression>> getValues() const { return m_values; }
+
     void print(std::ostream &os) const override {
         os << "MapLiteral(";
         for (const auto& [key, expr] : this->m_values) {

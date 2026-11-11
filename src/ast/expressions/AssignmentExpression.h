@@ -26,6 +26,9 @@ public:
         return newValue;
     }
 
+    [[nodiscard]] std::string getName() const { return this->m_name; }
+    [[nodiscard]] std::shared_ptr<Expression> getValue() const { return this->m_value; }
+
     void print(std::ostream &os) const override {
         os << m_name;
 

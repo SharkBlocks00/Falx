@@ -10,10 +10,10 @@
 
 class TupleLiteral : public Expression {
 private:
-    std::vector<std::shared_ptr<Expression>> m_elements;
+    std::vector<std::shared_ptr<Expression>>& m_elements;
 public:
     TupleLiteral(const SourceLocation& location, std::vector<std::shared_ptr<Expression>>& elements)
-        : Expression(location), m_elements(std::move(elements)) {}
+        : Expression(location), m_elements(elements) {}
 
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter &interpreter, Environment &environment) const override {
         std::vector<std::shared_ptr<FalxValue>> values;
@@ -46,5 +46,5 @@ public:
         }
     }
 
-    std::vector<std::shared_ptr<Expression>>& getElements() { return m_elements; }
+    std::vector<std::shared_ptr<Expression>>& getElements() const { return m_elements; }
 };

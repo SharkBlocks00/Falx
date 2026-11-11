@@ -32,6 +32,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> getIndex() const { return m_index; }
     [[nodiscard]] std::shared_ptr<Expression> getObject() const { return m_object; }
+    [[nodiscard]] bool isOptional() const { return m_optional; }
 
     void print(std::ostream &os) const override {
         os << "IndexExpression";

@@ -19,6 +19,8 @@ public:
         return std::make_unique<FalxString>(FalxString(this->m_value));
     }
 
+    [[nodiscard]] std::string getValue() const { return this->m_value; }
+
     void print(std::ostream &os) const override {
         os << "StringLiteral(" << m_value << ")";
     }

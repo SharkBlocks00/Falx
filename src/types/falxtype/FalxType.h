@@ -65,6 +65,7 @@ class ArrayType final : public FalxType {
 private:
     std::shared_ptr<const FalxType> m_elementType;
 public:
+    explicit ArrayType() = default;
     explicit ArrayType(const std::shared_ptr<const FalxType>& elementType);
 
     [[nodiscard]] const std::shared_ptr<const FalxType>& getElementType() const;
@@ -79,6 +80,7 @@ private:
     std::shared_ptr<const FalxType> m_valueType;
 
 public:
+    explicit MapType() = default;
     explicit MapType(const std::shared_ptr<const FalxType>& keyType, const std::shared_ptr<const FalxType>& valueType);
     [[nodiscard]] const std::shared_ptr<const FalxType>& getKeyType() const;
     [[nodiscard]] const std::shared_ptr<const FalxType>& getValueType() const;

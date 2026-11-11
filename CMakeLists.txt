@@ -109,4 +109,6 @@ add_executable(CFalx src/main.cpp
         src/types/Narrowing.cpp
         src/types/TypeRelations.hpp
         src/types/Narrowing.hpp
+        src/types/expressions/ExpressionChecker.cpp
+        src/types/expressions/ExpressionChecker.hpp
 )

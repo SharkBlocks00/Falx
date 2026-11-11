@@ -25,6 +25,8 @@ public:
         }
     }
 
+    [[nodiscard]] std::shared_ptr<Expression> getChain() const { return m_chain; }
+
     void print(std::ostream &os) const override {
         os << "OptionalChainExpression";
     }

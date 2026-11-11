@@ -25,6 +25,9 @@ public:
         return this->m_right->evaluate(interpreter, environment);
     }
 
+    [[nodiscard]] std::shared_ptr<Expression> getLeft() const { return m_left; }
+    [[nodiscard]] std::shared_ptr<Expression> getRight() const { return m_right; }
+
     void print(std::ostream &os) const override {
         os << "NullCoalesceExpression";
     }

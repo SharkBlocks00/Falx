@@ -8,6 +8,7 @@
 #include <set>
 #include <string>
 
+#include "../expressions/ExpressionChecker.hpp"
 #include "../falxtype/FalxType.h"
 
 class Symbol {
@@ -37,6 +38,7 @@ private:
     std::map<std::string, std::shared_ptr<const FalxType>> m_narrowed{};
     std::set<std::string> m_pending{};
 public:
+    TypeEnvironment() = default;
     explicit TypeEnvironment(std::shared_ptr<TypeEnvironment> parent, bool functionBoundary);
 
     [[nodiscard]] const std::set<std::string>& getPending() const;

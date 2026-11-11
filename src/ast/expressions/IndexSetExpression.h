@@ -39,6 +39,11 @@ public:
         return evaluatedValue;
     }
 
+    [[nodiscard]] std::shared_ptr<Expression> getObject() const { return m_object; }
+    [[nodiscard]] std::shared_ptr<Expression> getIndex() const { return m_index; }
+    [[nodiscard]] std::shared_ptr<Expression> getValue() const { return m_value; }
+    [[nodiscard]] std::optional<Token> getOperator() const { return m_operator; }
+
     void print(std::ostream &os) const override {
         os << "IndexSetExpression";
     }

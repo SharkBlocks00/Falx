@@ -25,6 +25,8 @@ public:
         return std::make_unique<FalxNumber>(FalxNumber(m_value));
     }
 
+    Number getValue() const { return m_value; }
+
     void print(std::ostream &os) const override {
         if (std::holds_alternative<int>(m_value)) {
             os << "NumberLiteral(" << std::get<int>(m_value) << ")";

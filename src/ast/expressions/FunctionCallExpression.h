@@ -11,9 +11,9 @@ class FunctionCallExpression : public Expression {
 private:
     SourceLocation m_location;
     std::shared_ptr<Expression> m_callee;
-    std::vector<std::shared_ptr<Expression>> m_arguments;
+    std::vector<std::shared_ptr<Expression>> &m_arguments;
 public:
-    FunctionCallExpression(const SourceLocation& location, const std::shared_ptr<Expression> &callee, const std::vector<std::shared_ptr<Expression>> &arguments)
+    FunctionCallExpression(const SourceLocation& location, const std::shared_ptr<Expression> &callee, std::vector<std::shared_ptr<Expression>>& arguments)
         : Expression(location), m_location(location), m_callee(callee), m_arguments(arguments) {}
 
     [[nodiscard]] std::shared_ptr<FalxValue> evaluate(const Interpreter &interpreter, Environment &environment) const override {
@@ -37,6 +37,9 @@ public:
 
         return tmp.call(interpreter, arguments);
     }
+
+    [[nodiscard]] std::shared_ptr<Expression> getCallee() const { return m_callee; }
+    [[nodiscard]] std::vector<std::shared_ptr<Expression>>& getArguments() const { return m_arguments; }
 
     void print(std::ostream &os) const override {
         os << "FunctionCallExpression";
