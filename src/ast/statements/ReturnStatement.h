@@ -29,5 +29,8 @@ public:
     void print(std::ostream &os) const override {
         os << "ReturnStatement";
     }
+
+    [[nodiscard]] std::shared_ptr<Expression> getValue() const { return this->m_expression; }
+
     [[nodiscard]] auto astChildren() const { return std::tie(m_expression); }
 };

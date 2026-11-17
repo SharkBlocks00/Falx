@@ -25,5 +25,8 @@ public:
 
         os << ';';
     }
+
+    [[nodiscard]] std::shared_ptr<Expression> getExpression() const { return m_expression; }
+
     [[nodiscard]] auto astChildren() const { return std::tie(m_expression); }
 };

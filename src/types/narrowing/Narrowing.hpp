@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "falxtype/FalxType.h"
-#include "../ast/expressions/BinaryExpression.h"
+#include "../falxtype/FalxType.h"
+#include "../../ast/expressions/BinaryExpression.h"
 
 
 using Facts = std::map<std::string, std::shared_ptr<const FalxType>>;

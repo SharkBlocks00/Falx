@@ -96,21 +96,23 @@ add_executable(CFalx src/main.cpp
         src/packages/builtins/RequestFunction.h
         src/packages/builtins/TypeOfFunction.h
         src/packages/builtins/AssertFunction.h
-        src/types/TypeResolver.cpp
-        src/types/TypeResolver.h
+        src/types/resolver/TypeResolver.cpp
+        src/types/resolver/TypeResolver.h
         src/types/falxtype/FalxType.h
         src/types/falxtype/FalxType.cpp
         src/types/environment/TypeEnvironment.cpp
         src/types/environment/TypeEnvironment.h
-        src/types/TypeRelations.cpp
+        src/types/relations/TypeRelations.cpp
         src/types/builtins/Builtins.cpp
         src/types/builtins/Builtins.h
         src/helpers/StringUtils.h
-        src/types/Narrowing.cpp
-        src/types/TypeRelations.hpp
-        src/types/Narrowing.hpp
+        src/types/narrowing/Narrowing.cpp
+        src/types/relations/TypeRelations.hpp
+        src/types/narrowing/Narrowing.hpp
         src/types/expressions/ExpressionChecker.cpp
         src/types/expressions/ExpressionChecker.hpp
         src/types/analysis/StatementAnalysis.cpp
         src/types/analysis/StatementAnalysis.h
+        src/types/TypeChecker.cpp
+        src/types/TypeChecker.h
 )

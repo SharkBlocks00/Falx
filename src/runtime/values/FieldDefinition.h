@@ -22,8 +22,10 @@ public:
     explicit FieldDefinition(std::string  name, const std::shared_ptr<Expression>& defaultValue, TypeExpressionPtr  typeAnnotation, SourceLocation  location)
         : m_name(std::move(name)), m_defaultValue(defaultValue), m_typeAnnotation(std::move(typeAnnotation)), m_location(std::move(location)) {}
 
-    std::shared_ptr<Expression> const& getDefaultValue() const { return m_defaultValue; }
-    std::string const& getName() const { return m_name; }
+    [[nodiscard]] std::shared_ptr<Expression> const& getDefaultValue() const { return m_defaultValue; }
+    [[nodiscard]] std::string const& getName() const { return m_name; }
+    [[nodiscard]] const TypeExpressionPtr& getTypeAnnotation() const { return m_typeAnnotation; }
+
     [[nodiscard]] auto astChildren() const { return std::tie(m_defaultValue); }
 
     bool operator==(const FieldDefinition& other) const {

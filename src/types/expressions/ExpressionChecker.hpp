@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../Narrowing.hpp"
+#include "../narrowing/Narrowing.hpp"
 #include "../../ast/Expression.h"
 #include "../../ast/expressions/AssignmentExpression.h"
 #include "../../ast/expressions/DestructureAssignment.h"

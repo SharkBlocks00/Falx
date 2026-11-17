@@ -13,14 +13,14 @@
 class DestructureDeclaration : public Statement {
 private:
     SourceLocation m_location;
-    std::vector<VariableExpression> m_targets;
+    std::vector<VariableExpression>& m_targets;
     std::shared_ptr<Expression> m_initializer;
     bool m_mutable;
     bool m_exported;
     std::shared_ptr<Environment> m_exportEnvironment{};
 public:
     explicit DestructureDeclaration(const SourceLocation& location, std::vector<VariableExpression> targets, const std::shared_ptr<Expression> &initializer, const bool _mut, const bool _exported)
-        : Statement(location), m_location(location), m_targets(std::move(targets)), m_initializer(initializer), m_mutable(_mut), m_exported(_exported) {}
+        : Statement(location), m_location(location), m_targets(targets), m_initializer(initializer), m_mutable(_mut), m_exported(_exported) {}
 
     void setExportEnvironment(const std::shared_ptr<Environment>& environment) {
         this->m_exportEnvironment = environment;
@@ -47,9 +47,10 @@ public:
     }
 
     [[nodiscard]] SourceLocation getLocation() const { return m_location; }
-    [[nodiscard]] std::vector<VariableExpression> getTargets() const { return m_targets; }
+    [[nodiscard]] std::vector<VariableExpression>& getTargets() const { return m_targets; }
     [[nodiscard]] std::shared_ptr<Expression> getInitializer() const { return m_initializer; }
     [[nodiscard]] bool exported() const { return m_exported; }
+    [[nodiscard]] bool isMutable() const { return m_mutable; }
     [[nodiscard]] std::shared_ptr<Environment> getExportEnvironment() const { return m_exportEnvironment; }
 
     void print(std::ostream &os) const override {

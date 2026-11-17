@@ -47,7 +47,7 @@ std::vector<ASTNode> childrenAs(const std::shared_ptr<Base>& node) {
     return {};
 }
 
-bool terminates(std::vector<std::shared_ptr<Statement> > &statements, const bool loopJumps) {
+bool terminates(const std::vector<std::shared_ptr<Statement> > &statements, const bool loopJumps) {
     return std::any_of(statements.begin(), statements.end(),
     [&](const std::shared_ptr<Statement>& statement) {
         return iTerminates(statement, loopJumps);

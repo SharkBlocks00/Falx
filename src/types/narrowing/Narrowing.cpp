@@ -10,14 +10,14 @@
 
 #include "Narrowing.hpp"
 
-#include "../ast/Expression.h"
-#include "../ast/expressions/BinaryExpression.h"
-#include "../ast/expressions/LogicalExpression.h"
-#include "../ast/expressions/UnaryExpression.h"
-#include "../ast/expressions/VariableExpression.h"
-#include "../ast/expressions/literals/NullLiteral.h"
-#include "TypeRelations.hpp"
-#include "falxtype/FalxType.h"
+#include "../../ast/Expression.h"
+#include "../../ast/expressions/BinaryExpression.h"
+#include "../../ast/expressions/LogicalExpression.h"
+#include "../../ast/expressions/UnaryExpression.h"
+#include "../../ast/expressions/VariableExpression.h"
+#include "../../ast/expressions/literals/NullLiteral.h"
+#include "../relations/TypeRelations.hpp"
+#include "../falxtype/FalxType.h"
 
 
 

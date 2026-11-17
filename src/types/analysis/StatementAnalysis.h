@@ -12,7 +12,7 @@
 #include "../../ast/Expression.h"
 #include "../../ast/Statement.h"
 
-bool terminates(std::vector<std::shared_ptr<Statement>>& statements, bool loopJumps = false);
+bool terminates(const std::vector<std::shared_ptr<Statement>>& statements, bool loopJumps = false);
 bool iTerminates(const std::shared_ptr<Statement>& statement, bool loopJumps);
 
 bool containsBreak(const std::vector<std::shared_ptr<Statement>>& statements);

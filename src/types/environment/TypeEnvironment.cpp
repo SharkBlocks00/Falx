@@ -128,13 +128,13 @@ bool TypeEnvironment::isPending(const std::string &name) const {
     return false;
 }
 
-std::optional<std::shared_ptr<StructType> > TypeEnvironment::findStruct(const std::string &name) const {
+std::optional<StructType> TypeEnvironment::findStruct(const std::string &name) const {
     for (const auto& scope : this->chain()) {
         if (auto it = scope->m_structs.find(name); it != scope->m_structs.end()) {
-            return std::make_shared<StructType>(it->second);
+            return it->second;
         }
     }
-    return nullptr;
+    return std::nullopt;
 }
 
 std::vector<std::string> TypeEnvironment::structNames() const {
@@ -193,4 +193,12 @@ void TypeEnvironment::narrowAll(const std::map<std::string, std::shared_ptr<cons
     for (const auto& [name, type] : facts) {
         this->narrow(name, type);
     }
+}
+
+void TypeEnvironment::setPending(const std::string &name) {
+    m_pending.insert(name);
+}
+
+void TypeEnvironment::setStruct(const std::string &name, const StructType& type) {
+    this->m_structs.at(name) = type;
 }

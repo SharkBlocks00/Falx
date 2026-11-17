@@ -15,7 +15,7 @@ class FunctionDeclaration : public Statement {
 private:
     SourceLocation m_location;
     std::string m_name;
-    std::vector<ParameterDefinition> m_parameters;
+    std::vector<ParameterDefinition>& m_parameters;
     std::vector<std::shared_ptr<Statement>> m_body;
     bool m_exported;
     TypeExpressionPtr m_returnType;
@@ -23,9 +23,9 @@ private:
 
 public:
     explicit FunctionDeclaration(const SourceLocation& location, std::string name,
-        std::vector<ParameterDefinition> parameters, std::vector<std::shared_ptr<Statement>> body,
+        std::vector<ParameterDefinition>& parameters, std::vector<std::shared_ptr<Statement>> body,
         const bool exported = false, TypeExpressionPtr returnType = nullptr)
-            : Statement(location), m_location(location), m_name(std::move(name)), m_parameters(std::move(parameters)),
+            : Statement(location), m_location(location), m_name(std::move(name)), m_parameters(parameters),
                 m_body(std::move(body)), m_exported(exported), m_returnType(std::move(returnType)) {}
 
     void execute(const Interpreter &interpreter, Environment &environment) override {
@@ -59,5 +59,10 @@ public:
     }
 
     [[nodiscard]] std::string getName() const { return m_name; }
+    [[nodiscard]] std::vector<ParameterDefinition>& getParameters() const { return m_parameters; }
+    [[nodiscard]] std::vector<std::shared_ptr<Statement>> getBody() const { return m_body; }
+    [[nodiscard]] bool isExported() const { return m_exported; }
+    [[nodiscard]] TypeExpressionPtr getReturnType() const { return m_returnType; }
+
     [[nodiscard]] auto astChildren() const { return std::tie(m_parameters, m_body); }
 };

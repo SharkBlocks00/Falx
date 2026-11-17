@@ -8,7 +8,7 @@
 #include "../../lexer/Lexer.h"
 #include "../../parser/Parser.h"
 #include "../falxtype/FalxType.h"
-#include "../TypeResolver.h"
+#include "../resolver/TypeResolver.h"
 
 
 std::shared_ptr<const FalxType> parseType(const std::string& text, const std::vector<std::string>& variables={});
@@ -98,7 +98,7 @@ const auto GLOBAL_FUNCTIONS = SignatureTable{
     }, {}
 };
 
-const auto REQUIRE_FUNCTION = FunctionType{
+const std::shared_ptr<const FalxType> REQUIRE_FUNCTION = FunctionType{
     {STRING_LITERAL},
     parseType("any")
 };

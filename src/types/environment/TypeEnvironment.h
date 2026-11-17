@@ -34,7 +34,7 @@ public:
 class TypeEnvironment {
 private:
     std::shared_ptr<TypeEnvironment> m_parent;
-    bool m_functionBoundary;
+    bool m_functionBoundary{false};
     std::map<std::string, Symbol> m_symbols{};
     std::map<std::string, StructType> m_structs{};
     std::map<std::string, std::shared_ptr<const FalxType>> m_narrowed{};
@@ -50,7 +50,7 @@ public:
     [[nodiscard]] const std::map<std::string, std::shared_ptr<const FalxType>>& getNarrowed() const;
     [[nodiscard]] std::shared_ptr<TypeEnvironment> getParent() const;
 
-    [[nodiscard]] std::shared_ptr<TypeEnvironment> child(const bool& functionBoundary);
+    [[nodiscard]] std::shared_ptr<TypeEnvironment> child(const bool& functionBoundary = false);
     [[nodiscard]] Symbol define(const std::string &name, const std::shared_ptr<const FalxType> &type, const bool &_mutable,
                                 const std::string &kind = "variable");
 
@@ -59,7 +59,7 @@ public:
     [[nodiscard]] std::optional<std::shared_ptr<TypeEnvironment>> declaringScope(const std::string& name) const;
     [[nodiscard]] bool isPending(const std::string& name) const;
 
-    [[nodiscard]] std::optional<std::shared_ptr<StructType>> findStruct(const std::string& name) const;
+    [[nodiscard]] std::optional<StructType> findStruct(const std::string& name) const;
     [[nodiscard]] std::vector<std::string> structNames() const;
 
     [[nodiscard]] std::optional<std::shared_ptr<const FalxType>> typeOf(const std::string& name) const;
@@ -67,5 +67,6 @@ public:
     void narrow(const std::string& name, const std::shared_ptr<const FalxType>& type);
     void narrowAll(const std::map<std::string, std::shared_ptr<const FalxType>>& facts);
     void redefine(const std::string& name, const std::shared_ptr<const FalxType>& type);
-
+    void setPending(const std::string& name);
+    void setStruct(const std::string& name, const StructType& type);
 };

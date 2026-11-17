@@ -5,7 +5,7 @@
 
 #include <functional>
 
-#include "falxtype/FalxType.h"
+#include "../falxtype/FalxType.h"
 #include "TypeRelations.hpp"
 
 bool isAssignable(const std::shared_ptr<const FalxType>& target, const std::shared_ptr<const FalxType>& source) {

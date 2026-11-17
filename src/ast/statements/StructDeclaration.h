@@ -17,12 +17,14 @@ private:
     std::string m_name;
     std::vector<FieldDefinition> m_fields;
     std::vector<std::shared_ptr<FunctionDeclaration>> m_methods;
-    bool m_exported;
+    bool m_exported{false};
     std::unique_ptr<Environment> m_exportEnvironment{nullptr};
 
 public:
     explicit StructDeclaration(const SourceLocation& location, std::string name, const std::vector<FieldDefinition>& fields, std::vector<std::shared_ptr<FunctionDeclaration>> methods, const bool exported)
         : Statement(location), m_name(std::move(name)), m_fields(fields), m_methods(std::move(methods)), m_exported(exported) {}
+
+    StructDeclaration() = default;
 
     void setExportEnvironment(std::unique_ptr<Environment>& environment) {
         m_exportEnvironment = std::move(environment);

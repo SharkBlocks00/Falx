@@ -102,33 +102,37 @@ public:
 };
 
 
+
 class FunctionType final : public FalxType {
 private:
     std::vector<std::shared_ptr<const FalxType>> m_parameterTypes;
     std::shared_ptr<const FalxType> m_returnType;
-    int* m_required{nullptr};
+    std::optional<std::size_t> m_required;
     std::vector<std::string> m_parameterNames;
+
 public:
-    explicit FunctionType(const std::vector<std::shared_ptr<const FalxType>>& parameterTypes,
+    explicit FunctionType(
+        const std::vector<std::shared_ptr<const FalxType>>& parameterTypes,
         const std::shared_ptr<const FalxType>& returnType,
-        int* required = nullptr,
+        std::optional<std::size_t> required = std::nullopt,
         std::vector<std::string> parameterNames = {}
     );
 
-    [[nodiscard]] const std::vector<std::shared_ptr<const FalxType>>& getParameterTypes() const;
-    [[nodiscard]] const std::shared_ptr<const FalxType>& getReturnType() const;
+    [[nodiscard]] const std::vector<std::shared_ptr<const FalxType>>&
+        getParameterTypes() const;
+    [[nodiscard]] const std::shared_ptr<const FalxType>&
+        getReturnType() const;
     [[nodiscard]] std::size_t getParameterCount() const;
-    [[nodiscard]] std::vector<std::string> getParameterNames() const;
-    [[nodiscard]] int* getRequired() const;
-
+    [[nodiscard]] const std::vector<std::string>&
+        getParameterNames() const;
+    [[nodiscard]] const std::optional<std::size_t>&
+        getRequired() const;
     [[nodiscard]] std::string toString() const override;
     [[nodiscard]] bool equals(const FalxType& other) const override;
-
     [[nodiscard]] std::size_t getMinArguments() const;
     [[nodiscard]] std::size_t getMaxArguments() const;
-
-    void setRequired(int* required);
 };
+
 
 
 class FieldInfo final : public FalxType {
@@ -151,11 +155,11 @@ public:
 class StructInfo : public FalxType {
 private:
     std::string m_name;
-    std::string* m_origin{nullptr};
+    std::optional<std::string> m_origin{std::nullopt};
     std::map<std::string, FieldInfo> m_fields;
     std::map<std::string, FunctionType> m_methods;
 public:
-    explicit StructInfo(std::string  name, std::string* origin);
+    explicit StructInfo(std::string  name, std::optional<std::string> origin = std::nullopt);
 
     [[nodiscard]] const std::string& getName() const;
     [[nodiscard]] const std::string& getOrigin() const;
@@ -165,7 +169,7 @@ public:
     [[nodiscard]] bool equals(const FalxType& other) const override;
     [[nodiscard]] std::string toString() const override;
 
-    void setOrigin(std::string* origin);
+    void setOrigin(const std::optional<std::string>& origin);
 };
 
 

@@ -48,5 +48,10 @@ public:
     void print(std::ostream &os) const override {
         os << "ForeachStatement";
     }
+
+    [[nodiscard]] std::string getVariable() const { return m_variable; }
+    [[nodiscard]] std::shared_ptr<Expression> getIterable() const { return m_iterable; }
+    [[nodiscard]] std::vector<std::shared_ptr<Statement>> getBody() const { return m_body; }
+
     [[nodiscard]] auto astChildren() const { return std::tie(m_iterable, m_body); }
 };

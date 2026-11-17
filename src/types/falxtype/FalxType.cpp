@@ -182,41 +182,52 @@ std::string TupleType::toString() const {
 
 // FunctionType
 
-FunctionType::FunctionType(const std::vector<std::shared_ptr<const FalxType> > &parameterTypes, const std::shared_ptr<const FalxType> &returnType, int *required, std::vector<std::string> parameterNames)
-    : m_parameterTypes(parameterTypes), m_returnType(returnType), m_required(required), m_parameterNames(std::move(parameterNames)) {}
+
+FunctionType::FunctionType(
+    const std::vector<std::shared_ptr<const FalxType>>& parameterTypes,
+    const std::shared_ptr<const FalxType>& returnType,
+    std::optional<std::size_t> required,
+    std::vector<std::string> parameterNames
+)
+    : m_parameterTypes(parameterTypes),
+      m_returnType(returnType),
+      m_required(required),
+      m_parameterNames(std::move(parameterNames)) {}
+
 
 std::size_t FunctionType::getMaxArguments() const {
     return m_parameterTypes.size();
 }
 
+
 std::size_t FunctionType::getMinArguments() const {
-    if (!m_required) {
-        return m_parameterTypes.size();
-    }
-    return reinterpret_cast<std::size_t>(m_required);
+    return m_required.value_or(m_parameterTypes.size());
 }
 
-void FunctionType::setRequired(int *required) {
-    m_required = required;
-}
 
 std::size_t FunctionType::getParameterCount() const {
     return m_parameterTypes.size();
 }
 
-std::vector<std::string> FunctionType::getParameterNames() const {
+
+const std::vector<std::string>& FunctionType::getParameterNames() const {
     return m_parameterNames;
 }
 
-int *FunctionType::getRequired() const {
+
+const std::optional<std::size_t>& FunctionType::getRequired() const {
     return m_required;
 }
 
-const std::vector<std::shared_ptr<const FalxType> > &FunctionType::getParameterTypes() const {
+
+const std::vector<std::shared_ptr<const FalxType>>&
+FunctionType::getParameterTypes() const {
     return m_parameterTypes;
 }
 
-const std::shared_ptr<const FalxType> &FunctionType::getReturnType() const {
+
+const std::shared_ptr<const FalxType>&
+FunctionType::getReturnType() const {
     return m_returnType;
 }
 
@@ -237,15 +248,34 @@ std::string FunctionType::toString() const {
     return result.str();
 }
 
-bool FunctionType::equals(const FalxType &other) const {
-    if (const auto* otherType = dynamic_cast<const FunctionType*>(&other)) {
-        return m_returnType->equals(*otherType->getReturnType())
-            && m_required == otherType->m_required
-            && m_parameterTypes == otherType->m_parameterTypes;
+bool FunctionType::equals(const FalxType& other) const {
+    const auto* otherType = dynamic_cast<const FunctionType*>(&other);
+
+    if (!otherType) {
+        return false;
     }
 
-    return false;
+    if (m_required != otherType->m_required) {
+        return false;
+    }
+
+    if (m_parameterTypes.size() != otherType->m_parameterTypes.size()) {
+        return false;
+    }
+
+    if (!m_returnType->equals(*otherType->m_returnType)) {
+        return false;
+    }
+
+    for (std::size_t i = 0; i < m_parameterTypes.size(); ++i) {
+        if (!m_parameterTypes[i]->equals(*otherType->m_parameterTypes[i])) {
+            return false;
+        }
+    }
+
+    return true;
 }
+
 
 // FieldInfo
 
@@ -273,8 +303,8 @@ bool FieldInfo::equals(const FalxType &other) const {
 
 // StructInfo
 
-StructInfo::StructInfo(std::string name, std::string *origin)
-    : m_name(std::move(name)), m_origin(origin) {}
+StructInfo::StructInfo(std::string name, std::optional<std::string> origin)
+    : m_name(std::move(name)), m_origin(std::move(origin)) {}
 
 const std::map<std::string, FieldInfo> &StructInfo::getFields() const {
     return m_fields;
@@ -292,14 +322,14 @@ const std::string &StructInfo::getOrigin() const {
     return *m_origin;
 }
 
-void StructInfo::setOrigin(std::string *origin) {
+void StructInfo::setOrigin(const std::optional<std::string> &origin) {
     m_origin = origin;
 }
 
 std::string StructInfo::toString() const {
     std::ostringstream result;
 
-    result << "(" << m_name << " : " << m_origin << " = ";
+    result << "(" << m_name << " : " << m_origin.value_or("") << " = ";
 
     std::size_t i = 0;
     for (const auto&[fst, snd] : m_methods) {

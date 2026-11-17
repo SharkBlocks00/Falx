@@ -8,9 +8,9 @@
 #include <functional>
 #include <set>
 
-#include "falxtype/FalxType.h"
-#include "../ast/types/expressions/ArrayTypeExpression.h"
-#include "../ast/types/expressions/NamedTypeExpression.h"
+#include "../falxtype/FalxType.h"
+#include "../../ast/types/expressions/ArrayTypeExpression.h"
+#include "../../ast/types/expressions/NamedTypeExpression.h"
 
 const std::map<std::string, std::shared_ptr<const FalxType>> BUILTIN_TYPES{
     {"int", INTEGER_LITERAL},
@@ -44,7 +44,7 @@ const std::map<std::string, std::pair<int, GenericTypeFactory>> GENERIC_TYPES{
 
 class TypeResolver {
 public:
-    using FindStruct = std::function<std::shared_ptr<const StructType>(const std::string&)>;
+    using FindStruct = std::function<std::optional<StructType>(const std::string&)>;
     using StructNames = std::function<std::vector<std::string>()>;
 private:
     FindStruct m_findStruct;
@@ -58,9 +58,9 @@ private:
     );
 public:
     explicit TypeResolver(
-        FindStruct findStruct = [](const std::string&) { return nullptr; } ,
+        FindStruct findStruct = [](const std::string&) -> std::optional<StructType> { return std::nullopt; } ,
         StructNames structNames = [] { return std::vector<std::string>{}; },
         std::vector<std::string> typeVariables = {});
 
-    [[nodiscard]] std::shared_ptr<const FalxType> resolve(TypeExpressionPtr expression, const bool& allowVoid = false);
+    [[nodiscard]] std::shared_ptr<const FalxType> resolve(const TypeExpressionPtr& expression, const bool& allowVoid = false);
 };

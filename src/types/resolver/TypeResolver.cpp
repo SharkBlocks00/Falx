@@ -8,17 +8,17 @@
 #include <ranges>
 #include <utility>
 
-#include "../ast/types/expressions/FunctionTypeExpression.h"
-#include "../ast/types/expressions/NullableTypeExpression.h"
-#include "../ast/types/expressions/TupleTypeExpression.h"
-#include "../ast/types/expressions/UnionTypeExpression.h"
-#include "../helpers/StringUtils.h"
+#include "../../ast/types/expressions/FunctionTypeExpression.h"
+#include "../../ast/types/expressions/NullableTypeExpression.h"
+#include "../../ast/types/expressions/TupleTypeExpression.h"
+#include "../../ast/types/expressions/UnionTypeExpression.h"
+#include "../../helpers/StringUtils.h"
 
 TypeResolver::TypeResolver(FindStruct findStruct, StructNames structNames, std::vector<std::string> typeVariables)
     : m_findStruct(std::move(findStruct)), m_structNames(std::move(structNames)), m_typeVariables(typeVariables.begin(), typeVariables.end()) {}
 
-std::shared_ptr<const FalxType> TypeResolver::resolve(TypeExpressionPtr expression, const bool &allowVoid) {
-    const auto resolved = this->_resolve(std::move(expression));
+std::shared_ptr<const FalxType> TypeResolver::resolve(const TypeExpressionPtr& expression, const bool &allowVoid) {
+    const auto resolved = this->_resolve(expression);
 
     if (resolved == VOID && !allowVoid) {
         throw std::runtime_error{"'void' can only be used as a function's return type"};

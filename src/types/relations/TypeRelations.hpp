@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "falxtype/FalxType.h"
+#include "../falxtype/FalxType.h"
 
 bool isAssignable(const std::shared_ptr<const FalxType>& target, const std::shared_ptr<const FalxType>& source);
 bool functionFits(const FunctionType& target, const FunctionType& source);

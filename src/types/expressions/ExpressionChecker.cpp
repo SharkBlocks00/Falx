@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <ranges>
 
-#include "../TypeRelations.hpp"
+#include "../relations/TypeRelations.hpp"
 #include "../../ast/expressions/FunctionCallExpression.h"
 #include "../../ast/expressions/GetExpression.h"
 #include "../../ast/expressions/IndexExpression.h"
@@ -897,7 +897,7 @@ std::optional<std::shared_ptr<const FalxType> > ExpressionChecker::_requireCall(
     }
 
     const auto& argument = node.getArguments()[0];
-    requireAssignable(REQUIRE_FUNCTION.getParameterTypes().front(), this->inferValue(argument), "argument 1", argument->getLocation());
+    requireAssignable(REQUIRE_FUNCTION->getParameterTypes().front(), this->inferValue(argument), "argument 1", argument->getLocation());
 
     if (const auto* str = dynamic_cast<const StringLiteral*>(argument.get())) {
         return loadModule(str->getValue(), node.getLocation());
