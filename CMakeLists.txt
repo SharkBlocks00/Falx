@@ -115,4 +115,15 @@ add_executable(CFalx src/main.cpp
         src/types/analysis/StatementAnalysis.h
         src/types/TypeChecker.cpp
         src/types/TypeChecker.h
+        src/diagnostics/exceptions/FalxException.h
+        src/diagnostics/exceptions/LexerExceptions.h
+        src/diagnostics/exceptions/ParserExceptions.h
+        src/diagnostics/exceptions/runtime/FalxRuntimeException.h
+        src/diagnostics/exceptions/runtime/IndexExceptions.h
+        src/diagnostics/exceptions/runtime/MethodExceptions.h
+        src/diagnostics/exceptions/runtime/ModuleExceptions.h
+        src/diagnostics/exceptions/runtime/OperationExceptions.h
+        src/diagnostics/exceptions/runtime/PropertyExceptions.h
+        src/diagnostics/exceptions/runtime/TypingExceptions.h
+        src/diagnostics/exceptions/runtime/VariableExceptions.h
 )
