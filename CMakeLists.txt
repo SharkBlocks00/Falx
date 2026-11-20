@@ -126,4 +126,19 @@ add_executable(CFalx src/main.cpp
         src/diagnostics/exceptions/runtime/PropertyExceptions.h
         src/diagnostics/exceptions/runtime/TypingExceptions.h
         src/diagnostics/exceptions/runtime/VariableExceptions.h
+        src/diagnostics/exceptions/TypeExceptions.h
+        src/diagnostics/exceptions/CLIExceptions.h
+        src/diagnostics/exceptions/files/IOException.h
+        src/diagnostics/exceptions/files/FileExceptions.h
+        src/diagnostics/exceptions/files/ModeExceptions.h
+        src/diagnostics/exceptions/files/PathExceptions.h
+        src/diagnostics/Diagnostic.h
+        src/diagnostics/code/DiagnosticCode.hpp
+        src/diagnostics/code/DiagnosticCode.cpp
+        src/diagnostics/DiagnosticDefinition.h
+        src/diagnostics/DiagnosticSeverity.h
+        src/diagnostics/DiagnosticRegistry.hpp
+        src/diagnostics/DiagnosticFactory.hpp
+        src/diagnostics/printer/DiagnosticPrinter.hpp
+        src/diagnostics/printer/DiagnosticPrinter.cpp
 )

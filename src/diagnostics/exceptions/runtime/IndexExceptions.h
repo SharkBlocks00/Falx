@@ -85,3 +85,7 @@ public:
     explicit ObjectIsNotIndexableException(const std::string& object)
         : FalxRuntimeException("'" + object + "' is not indexable") {}
 };
+
+class InvalidIndexTypeException : public FalxRuntimeException {
+    using FalxRuntimeException::FalxRuntimeException;
+};

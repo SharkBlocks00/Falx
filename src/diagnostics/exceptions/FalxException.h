@@ -30,4 +30,16 @@ public:
 
         return *this;
     }
+
+    [[nodiscard]] std::string getMessage() const {
+        return this->m_message;
+    }
+
+    [[nodiscard]] std::optional<SourceLocation> getLocation() const {
+        return this->m_location;
+    }
+
+    [[nodiscard]] std::shared_ptr<FalxException> getCause() const {
+        return this->m_cause;
+    }
 };
