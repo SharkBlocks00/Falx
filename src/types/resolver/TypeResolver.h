@@ -54,7 +54,7 @@ private:
     [[nodiscard]] std::shared_ptr<const FalxType> _resolve(const TypeExpressionPtr& expression);
     [[nodiscard]] std::shared_ptr<const FalxType> _operand(const TypeExpressionPtr &expression);
     [[nodiscard]] std::shared_ptr<const FalxType> _resolveNamed(NamedTypeExpression expression,
-        std::string& name, std::vector<TypeExpressionPtr> arguments
+        const std::string& name, std::vector<TypeExpressionPtr> arguments
     );
 public:
     explicit TypeResolver(

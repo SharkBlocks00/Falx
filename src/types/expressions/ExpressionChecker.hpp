@@ -54,9 +54,11 @@ std::shared_ptr<const FalxType> flowType(std::shared_ptr<const FalxType> declare
 std::shared_ptr<const FalxType> loadModule(const std::string& name, const SourceLocation& location);
 
 class ExpressionChecker {
-private:
-    TypeEnvironment m_environment{};
+protected:
+    std::shared_ptr<TypeEnvironment> m_environment{std::make_shared<TypeEnvironment>()};
     std::vector<bool> m_chains;
+
+private:
 
     static std::string source(const std::shared_ptr<Expression>& expression);
 
@@ -86,17 +88,64 @@ private:
 
     static FunctionType _commonSignature(const std::vector<FunctionType>& signatures, const FunctionCallExpression& node);
 
-    [[nodiscard]] std::shared_ptr<const FalxType> _checkCall(const FunctionType& signature, const FunctionCallExpression& node) const;
-    [[nodiscard]] std::optional<std::shared_ptr<const FalxType>> _requireCall(const FunctionCallExpression& node) const;
+    [[nodiscard]] std::shared_ptr<const FalxType> _checkCall(const FunctionType& signature, const FunctionCallExpression& node);
+    [[nodiscard]] std::optional<std::shared_ptr<const FalxType>> _requireCall(const FunctionCallExpression& node);
 
-    static std::shared_ptr<const FalxType> loadModule(const std::string& name, const SourceLocation& location);
+    virtual std::shared_ptr<const FalxType> loadModule(const std::string& name, const SourceLocation& location);
 public:
-    [[nodiscard]] static std::shared_ptr<const FalxType> infer(const std::shared_ptr<Expression>& expression, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
-    [[nodiscard]] std::shared_ptr<const FalxType> inferValue(const std::shared_ptr<Expression>& expression, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt) const;
+    virtual ~ExpressionChecker() = default;
 
-    template<typename Callback> auto scope(Callback&& callback, std::optional<Facts> facts = std::nullopt,
-        bool functionBoundary = false
-    ) -> std::invoke_result_t<Callback, TypeEnvironment&>;
+    [[nodiscard]] std::shared_ptr<const FalxType> infer(const std::shared_ptr<Expression>& expression, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
+    [[nodiscard]] std::shared_ptr<const FalxType> inferValue(const std::shared_ptr<Expression>& expression, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
+
+    template<typename Callback>
+    auto scope(Callback&& callback, const std::optional<Facts>& facts = std::nullopt, bool functionBoundary = false)
+        -> std::invoke_result_t<Callback, TypeEnvironment&> {
+        using Result = std::invoke_result_t<Callback, TypeEnvironment&>;
+        static_assert(!std::is_reference_v<Result>, "Scope callbacks must not return references.");
+
+        auto previous = m_environment;
+        try {
+            m_environment = std::make_shared<TypeEnvironment>(previous, functionBoundary);
+            if (facts.has_value()) {
+                m_environment->narrowAll(*facts);
+            }
+            if constexpr (std::is_void_v<Result>) {
+                std::invoke(std::forward<Callback>(callback), *m_environment);
+                m_environment = std::move(previous);
+            } else {
+                Result result = std::invoke(std::forward<Callback>(callback), *m_environment);
+                m_environment = std::move(previous);
+                return result;
+            }
+        } catch (...) {
+            m_environment = std::move(previous);
+            throw;
+        }
+    }
+
+    template<typename Callback>
+    auto scope(std::shared_ptr<TypeEnvironment> environment, Callback&& callback)
+        -> std::invoke_result_t<Callback, TypeEnvironment&> {
+        using Result = std::invoke_result_t<Callback, TypeEnvironment&>;
+        static_assert(!std::is_reference_v<Result>, "Scope callbacks must not return references.");
+
+        auto previous = m_environment;
+        try {
+            m_environment = std::move(environment);
+            if constexpr (std::is_void_v<Result>) {
+                std::invoke(std::forward<Callback>(callback), *m_environment);
+                m_environment = std::move(previous);
+            } else {
+                Result result = std::invoke(std::forward<Callback>(callback), *m_environment);
+                m_environment = std::move(previous);
+                return result;
+            }
+        } catch (...) {
+            m_environment = std::move(previous);
+            throw;
+        }
+    }
 
     std::pair<Facts, Facts> factsFor(const std::shared_ptr<Expression>& condition);
 
@@ -112,9 +161,9 @@ public:
     static std::shared_ptr<const FalxType> expression_BooleanLiteral(const BooleanLiteral& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
 
     static std::shared_ptr<const FalxType> expression_NullLiteral(const NullLiteral& node, const std::optional<std::shared_ptr<const FalxType>> &expected = std::nullopt);
-    [[nodiscard]] std::shared_ptr<const FalxType> expression_ArrayLiteral(const ArrayLiteral& node, const std::optional<std::shared_ptr<const FalxType>> &expected = std::nullopt) const;
-    [[nodiscard]] std::shared_ptr<const FalxType> expression_MapLiteral(const MapLiteral& node, const std::optional<std::shared_ptr<const FalxType>> &expected = std::nullopt) const;
-    [[nodiscard]] std::shared_ptr<const FalxType> expression_TupleLiteral(const TupleLiteral& node, const std::optional<std::shared_ptr<const FalxType>> &expected = std::nullopt) const;
+    [[nodiscard]] std::shared_ptr<const FalxType> expression_ArrayLiteral(const ArrayLiteral& node, const std::optional<std::shared_ptr<const FalxType>> &expected = std::nullopt);
+    [[nodiscard]] std::shared_ptr<const FalxType> expression_MapLiteral(const MapLiteral& node, const std::optional<std::shared_ptr<const FalxType>> &expected = std::nullopt);
+    [[nodiscard]] std::shared_ptr<const FalxType> expression_TupleLiteral(const TupleLiteral& node, const std::optional<std::shared_ptr<const FalxType>> &expected = std::nullopt);
 
     // Variables
     [[nodiscard]] std::shared_ptr<const FalxType> expression_VariableExpression(const VariableExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt) const;
@@ -124,10 +173,10 @@ public:
     static std::vector<std::shared_ptr<const FalxType>> unpackTuple(const std::shared_ptr<const FalxType>& value, const int& count, const SourceLocation& location);
 
     // Operators
-    [[nodiscard]] std::shared_ptr<const FalxType> expression_BinaryExpression(const BinaryExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt) const;
-    [[nodiscard]] std::shared_ptr<const FalxType> expression_UnaryExpression(const UnaryExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt) const;
+    [[nodiscard]] std::shared_ptr<const FalxType> expression_BinaryExpression(const BinaryExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
+    [[nodiscard]] std::shared_ptr<const FalxType> expression_UnaryExpression(const UnaryExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
     std::shared_ptr<const FalxType> expression_LogicalExpression(const LogicalExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
-    [[nodiscard]] std::shared_ptr<const FalxType> expression_NullCoalesceExpression(const NullCoalesceExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt) const;
+    [[nodiscard]] std::shared_ptr<const FalxType> expression_NullCoalesceExpression(const NullCoalesceExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);
 
     // Members
     std::shared_ptr<const FalxType> expression_OptionalChainExpression(const OptionalChainExpression& node, std::optional<std::shared_ptr<const FalxType>> expected = std::nullopt);

@@ -77,7 +77,7 @@ std::shared_ptr<const FalxType> TypeResolver::_operand(const TypeExpressionPtr &
     return this->resolve(expression);
 }
 
-std::shared_ptr<const FalxType> TypeResolver::_resolveNamed(NamedTypeExpression expression, std::string &name, std::vector<TypeExpressionPtr> arguments) {
+std::shared_ptr<const FalxType> TypeResolver::_resolveNamed(NamedTypeExpression expression, const std::string &name, std::vector<TypeExpressionPtr> arguments) {
     if (GENERIC_TYPES.contains(name)) {
         const auto& [expected, build] = GENERIC_TYPES.at(name);
 
@@ -108,8 +108,10 @@ std::shared_ptr<const FalxType> TypeResolver::_resolveNamed(NamedTypeExpression 
         return BUILTIN_TYPES.at(name);
     }
 
-    if (const auto& _struct = m_findStruct(name)) {
-        return _struct;
+    if (m_findStruct) {
+        if (const auto& _struct = m_findStruct(name)) {
+            return std::make_shared<StructType>(*_struct);
+        }
     }
 
     std::vector<std::string> candidates;
@@ -121,8 +123,10 @@ std::shared_ptr<const FalxType> TypeResolver::_resolveNamed(NamedTypeExpression 
         candidates.push_back(title);
     }
 
-    const auto structNames = m_structNames();
-    candidates.insert(candidates.end(), structNames.begin(), structNames.end());
+    if (m_structNames) {
+        const auto structNames = m_structNames();
+        candidates.insert(candidates.end(), structNames.begin(), structNames.end());
+    }
 
     const auto close = getCloseMatches(name, candidates, 1);
 

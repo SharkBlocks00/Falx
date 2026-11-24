@@ -9,9 +9,9 @@
 #include <utility>
 
 NamedTypeExpression::NamedTypeExpression(const SourceLocation &location, std::string name, std::vector<TypeExpressionPtr> arguments)
-    : TypeExpression(location), m_name(name), m_arguments(std::move(arguments)) {}
+    : TypeExpression(location), m_name(std::move(name)), m_arguments(std::move(arguments)) {}
 
-std::string &NamedTypeExpression::getName() const {
+const std::string &NamedTypeExpression::getName() const {
     return m_name;
 }
 

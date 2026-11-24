@@ -98,10 +98,10 @@ const auto GLOBAL_FUNCTIONS = SignatureTable{
     }, {}
 };
 
-const std::shared_ptr<const FalxType> REQUIRE_FUNCTION = FunctionType{
-    {STRING_LITERAL},
-    parseType("any")
-};
+const std::shared_ptr<const FunctionType> REQUIRE_FUNCTION = std::make_shared<FunctionType>(
+    std::vector<std::shared_ptr<const FalxType>>{STRING_LITERAL},
+    ANY
+);
 
 const std::map<std::string, SignatureTable> INTERNAL_MODULES{
         {

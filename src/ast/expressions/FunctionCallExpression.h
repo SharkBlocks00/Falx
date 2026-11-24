@@ -11,7 +11,7 @@ class FunctionCallExpression : public Expression {
 private:
     SourceLocation m_location;
     std::shared_ptr<Expression> m_callee;
-    std::vector<std::shared_ptr<Expression>> &m_arguments;
+    std::vector<std::shared_ptr<Expression>> m_arguments;
 public:
     FunctionCallExpression(const SourceLocation& location, const std::shared_ptr<Expression> &callee, std::vector<std::shared_ptr<Expression>>& arguments)
         : Expression(location), m_location(location), m_callee(callee), m_arguments(arguments) {}
@@ -39,7 +39,7 @@ public:
     }
 
     [[nodiscard]] std::shared_ptr<Expression> getCallee() const { return m_callee; }
-    [[nodiscard]] std::vector<std::shared_ptr<Expression>>& getArguments() const { return m_arguments; }
+    [[nodiscard]] const std::vector<std::shared_ptr<Expression>>& getArguments() const { return m_arguments; }
     [[nodiscard]] auto astChildren() const { return std::tie(m_callee, m_arguments); }
 
     void print(std::ostream &os) const override {

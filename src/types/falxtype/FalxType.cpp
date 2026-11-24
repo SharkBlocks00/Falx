@@ -326,6 +326,14 @@ void StructInfo::setOrigin(const std::optional<std::string> &origin) {
     m_origin = origin;
 }
 
+void StructInfo::setField(const std::string &key, const FieldInfo &info) {
+    this->m_fields.at(key) = info;
+}
+
+void StructInfo::setMethod(const std::string &key, const FunctionType &method) {
+    this->m_methods.at(key) = method;
+}
+
 std::string StructInfo::toString() const {
     std::ostringstream result;
 
@@ -367,7 +375,7 @@ bool StructInfo::equals(const FalxType &other) const {
 StructType::StructType(StructInfo info)
     : m_info(std::move(info)) {}
 
-const StructInfo &StructType::getInfo() const {
+StructInfo &StructType::getInfo() const {
     return m_info;
 }
 

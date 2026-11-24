@@ -43,17 +43,14 @@ class TypeChecker : public ExpressionChecker {
 private:
     std::optional<std::filesystem::path> m_projectDir;
     std::optional<std::filesystem::path> m_currentFile;
-    std::optional<ModuleCache> m_cache;
+    std::shared_ptr<ModuleCache> m_cache;
     bool m_isModule{false};
     std::filesystem::path m_stdlibDir{
-        std::filesystem::canonical(__FILE__).parent_path().parent_path() / "modules" / "stdlib"
+        std::filesystem::weakly_canonical(std::filesystem::path(__FILE__)).parent_path().parent_path() / "modules" / "stdlib"
     };
     std::shared_ptr<TypeEnvironment> builtins = makeBuiltinScope();
+    std::shared_ptr<TypeEnvironment> m_topScope;
 
-    std::shared_ptr<TypeEnvironment> m_environment{m_isModule ? builtins->child() : builtins };
-    std::shared_ptr<TypeEnvironment> m_topScope = m_environment;
-
-    std::vector<bool> m_chains{};
     std::vector<FunctionContext> m_functions{};
     std::map<std::string, std::shared_ptr<const FalxType>> m_exports{};
     std::map<std::string, StructType> m_exportedStructs{};
@@ -63,15 +60,15 @@ private:
     std::optional<std::string> iOrigin() const;
 
     void iDefine(const std::string& name, const std::shared_ptr<const FalxType> &type, bool _mutable, const std::string& kind, const SourceLocation& location) const;
-    void iExport(const bool& exported, const std::string& name, std::shared_ptr<const FalxType> type);
+    void iExport(bool exported, const std::string& name, const std::shared_ptr<const FalxType>& type);
 
     static void iForgetAssigned(TypeEnvironment &scope, const std::set<std::string>& names);
 
     static void iRequireCondition(const std::shared_ptr<const FalxType>& type, const std::shared_ptr<Expression>& condition, const SourceLocation& location);
-    void iDefineIn(const std::shared_ptr<TypeEnvironment>& scope, const std::string& name, std::shared_ptr<const FalxType> type, const std::string& kind, const SourceLocation& location);
-    void iDeclareStructMembers(const StructDeclaration& node, const StructInfo& info);
+    static void iDefineIn(const std::shared_ptr<TypeEnvironment>& scope, const std::string& name, const std::shared_ptr<const FalxType>& type, const std::string& kind, const SourceLocation& location);
+    void iDeclareStructMembers(const StructDeclaration& node, StructInfo& info);
 
-    static std::map<std::string, std::optional<std::shared_ptr<const FalxType>>> iState(const std::set<std::string>& names, TypeEnvironment scope);
+    static std::map<std::string, std::optional<std::shared_ptr<const FalxType>>> iState(const std::set<std::string>& names, const TypeEnvironment& scope);
 
     static std::shared_ptr<const FalxType> iElementType(const std::shared_ptr<const FalxType>& iterable, const ForeachStatement& node);
     std::shared_ptr<const FalxType> iParameterType(const ParameterDefinition& parameter);
@@ -80,11 +77,14 @@ private:
     FunctionType iCheckFunction(const FunctionDeclaration& node, bool define);
     FunctionType iConstructorType(const StructDeclaration& node, const StructType& _struct);
 
-    std::filesystem::path iResolveUserModule(const std::string& name);
+    std::filesystem::path iResolveUserModule(const std::string& name) const;
     ModuleType iLoadFile(const std::string& name, const std::filesystem::path& path, const SourceLocation& location);
 public:
-    explicit TypeChecker(const std::optional<std::filesystem::path>& projectDir = std::nullopt, const std::optional<std::filesystem::path>& currentFile = std::nullopt, const std::optional<ModuleCache> &cache = std::nullopt, const bool isModule = false)
-        : m_projectDir(projectDir? projectDir : std::filesystem::canonical(std::filesystem::current_path())), m_currentFile(currentFile), m_cache(cache? cache : ModuleCache{}), m_isModule(isModule) {}
+    explicit TypeChecker(const std::optional<std::filesystem::path>& projectDir = std::nullopt, const std::optional<std::filesystem::path>& currentFile = std::nullopt, std::shared_ptr<ModuleCache> cache = nullptr, const bool isModule = false)
+        : m_projectDir(projectDir ? std::filesystem::weakly_canonical(*projectDir) : std::filesystem::weakly_canonical(std::filesystem::current_path())), m_currentFile(currentFile), m_cache(cache ? std::move(cache) : std::make_shared<ModuleCache>()), m_isModule(isModule) {
+        m_environment = m_isModule ? std::make_shared<TypeEnvironment>(builtins, false) : builtins;
+        m_topScope = m_environment;
+    }
 
     void check(const std::vector<std::shared_ptr<Statement>>& statements);
     void defineBuiltin(const std::string& name, const std::shared_ptr<const FalxType>& type) const;
@@ -93,10 +93,10 @@ public:
 
     TypeResolver resolver();
     std::shared_ptr<const FalxType> resolveType(const TypeExpressionPtr& annotation, bool allowVoid = false);
-    std::shared_ptr<const FalxType> loadModule(const std::string& name, const SourceLocation& location);
+    std::shared_ptr<const FalxType> loadModule(const std::string& name, const SourceLocation& location) override;
 
     void prepareBlock(const std::vector<std::shared_ptr<Statement>>& statements);
-    void statement_ExpressionStatement(const ExpressionStatement& node) const;
+    void statement_ExpressionStatement(const ExpressionStatement& node);
     void statement_BreakStatement(const BreakStatement& node);
     void statement_ContinueStatement(const ContinueStatement& node);
     void statement_BlockStatement(const BlockStatement& node);

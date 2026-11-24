@@ -60,7 +60,7 @@ std::optional<std::shared_ptr<const FalxType>> binaryResult(const TokenKind& op,
     return nullptr;
 }
 
-std::shared_ptr<const FalxType> widen(std::shared_ptr<const FalxType> type, std::shared_ptr<const FalxType> mut) {
+std::shared_ptr<const FalxType> widen(std::shared_ptr<const FalxType> type, const bool& mut) {
     if (*type == *NEVER || *type == *NULL_LITERAL) {
         return ANY;
     }
@@ -99,26 +99,71 @@ std::shared_ptr<const FalxType> ExpressionChecker::infer(const std::shared_ptr<E
         throw std::invalid_argument("Expression cannot be null");
     }
 
-    if (auto node = std::dynamic_pointer_cast<NumberLiteral>(expression)) {
+    if (const auto node = std::dynamic_pointer_cast<NumberLiteral>(expression)) {
         return expression_NumberLiteral(*node, expected);
     }
-
-    if (auto node = std::dynamic_pointer_cast<StringLiteral>(expression)) {
+    if (const auto node = std::dynamic_pointer_cast<StringLiteral>(expression)) {
         return expression_StringLiteral(*node, expected);
     }
-
-    if (auto node = std::dynamic_pointer_cast<BooleanLiteral>(expression)) {
+    if (const auto node = std::dynamic_pointer_cast<BooleanLiteral>(expression)) {
         return expression_BooleanLiteral(*node, expected);
     }
-
-    if (auto node = std::dynamic_pointer_cast<NullLiteral>(expression)) {
+    if (const auto node = std::dynamic_pointer_cast<NullLiteral>(expression)) {
         return expression_NullLiteral(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<ArrayLiteral>(expression)) {
+        return expression_ArrayLiteral(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<MapLiteral>(expression)) {
+        return expression_MapLiteral(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<TupleLiteral>(expression)) {
+        return expression_TupleLiteral(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<VariableExpression>(expression)) {
+        return expression_VariableExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<AssignmentExpression>(expression)) {
+        return expression_AssignmentExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<DestructureAssignment>(expression)) {
+        return expression_DestructureAssignmentExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<BinaryExpression>(expression)) {
+        return expression_BinaryExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<UnaryExpression>(expression)) {
+        return expression_UnaryExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<LogicalExpression>(expression)) {
+        return expression_LogicalExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<NullCoalesceExpression>(expression)) {
+        return expression_NullCoalesceExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<OptionalChainExpression>(expression)) {
+        return expression_OptionalChainExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<GetExpression>(expression)) {
+        return expression_GetExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<SetExpression>(expression)) {
+        return expression_SetExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<IndexExpression>(expression)) {
+        return expression_IndexExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<IndexSetExpression>(expression)) {
+        return expression_IndexSetExpression(*node, expected);
+    }
+    if (const auto node = std::dynamic_pointer_cast<FunctionCallExpression>(expression)) {
+        return expression_FunctionCallExpression(*node, expected);
     }
 
     throw std::runtime_error{"Type checking is not implemented for this expression type."};
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::inferValue(const std::shared_ptr<Expression> &expression, std::optional<std::shared_ptr<const FalxType> > expected) const {
+std::shared_ptr<const FalxType> ExpressionChecker::inferValue(const std::shared_ptr<Expression> &expression, std::optional<std::shared_ptr<const FalxType> > expected) {
     const auto type = infer(expression, expected);
 
     if (type == VOID) {
@@ -128,46 +173,8 @@ std::shared_ptr<const FalxType> ExpressionChecker::inferValue(const std::shared_
     return type;
 }
 
-template<typename Callback>
-auto ExpressionChecker::scope(Callback &&callback, const std::optional<Facts> facts, const bool functionBoundary) -> std::invoke_result_t<Callback, TypeEnvironment &> {
-    using Result = std::invoke_result_t<Callback, TypeEnvironment&>;
-
-    static_assert(!std::is_reference_v<Result>, "Scope callbacks must not return references.");
-
-    TypeEnvironment previous = m_environment;
-
-    try {
-        m_environment = *previous.child(functionBoundary);
-
-        if (facts.has_value()) {
-            m_environment.narrowAll(*facts);
-        }
-
-        if constexpr (std::is_void_v<Result>) {
-            std::invoke(
-                std::forward<Callback>(callback),
-                m_environment);
-
-            m_environment = std::move(previous);
-        }
-        else {
-            Result result = std::invoke(
-                std::forward<Callback>(callback),
-                m_environment);
-
-            m_environment = std::move(previous);
-
-            return result;
-        }
-    } catch (...) {
-        m_environment = std::move(previous);
-        throw;
-    }
-    return nullptr;
-}
-
 std::pair<Facts, Facts> ExpressionChecker::factsFor(const std::shared_ptr<Expression> &condition) {
-    return conditionFacts(condition, [this](const auto& name) { return m_environment.typeOf(name);});
+    return conditionFacts(condition, [this](const auto& name) { return m_environment->typeOf(name);});
 }
 
 
@@ -266,7 +273,7 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_NullLiteral(const 
     return NULL_LITERAL;
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::expression_ArrayLiteral(const ArrayLiteral &node, const std::optional<std::shared_ptr<const FalxType> > &expected) const {
+std::shared_ptr<const FalxType> ExpressionChecker::expression_ArrayLiteral(const ArrayLiteral &node, const std::optional<std::shared_ptr<const FalxType> > &expected) {
     const auto elementHint = this->hint<ArrayType>(expected, [](const ArrayType& t) { return t.getElementType(); });
 
     if (node.getElements().empty()) {
@@ -288,7 +295,7 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_ArrayLiteral(const
     return std::make_shared<ArrayType>(makeUnion(elementTypes));
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::expression_MapLiteral(const MapLiteral &node, const std::optional<std::shared_ptr<const FalxType> >& expected) const {
+std::shared_ptr<const FalxType> ExpressionChecker::expression_MapLiteral(const MapLiteral &node, const std::optional<std::shared_ptr<const FalxType> >& expected) {
     const auto valueHint = this->hint<MapType>(expected, [](const MapType& t) { return t.getValueType(); });
     if (node.getValues().empty()) {
         return valueHint? std::make_shared<MapType>(STRING_LITERAL, valueHint.value()) : std::make_shared<MapType>(STRING_LITERAL, ANY);
@@ -310,7 +317,7 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_MapLiteral(const M
     return distinct.size() == 1? std::make_shared<MapType>(STRING_LITERAL, valueTypes[0]) : std::make_shared<MapType>(STRING_LITERAL, ANY);
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::expression_TupleLiteral(const TupleLiteral& node, const std::optional<std::shared_ptr<const FalxType>>& expected) const {
+std::shared_ptr<const FalxType> ExpressionChecker::expression_TupleLiteral(const TupleLiteral& node, const std::optional<std::shared_ptr<const FalxType>>& expected) {
     std::vector<std::shared_ptr<const FalxType>> hints;
 
     if (expected && *expected) {
@@ -340,11 +347,11 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_TupleLiteral(const
 }
 
 std::shared_ptr<const FalxType> ExpressionChecker::expression_VariableExpression(const VariableExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) const {
-    if (const auto type = this->m_environment.typeOf(node.getName())) {
+    if (const auto type = this->m_environment->typeOf(node.getName())) {
         return *type;
     }
 
-    if (this->m_environment.isPending(node.getName())) {
+    if (this->m_environment->isPending(node.getName())) {
         return ANY;
     }
 
@@ -352,10 +359,10 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_VariableExpression
 }
 
 std::shared_ptr<const FalxType> ExpressionChecker::expression_AssignmentExpression(const AssignmentExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) {
-    const auto symbol = this->m_environment.lookup(node.getName());
+    const auto symbol = this->m_environment->lookup(node.getName());
 
     if (!symbol) {
-        if (this->m_environment.isPending(node.getName())) {
+        if (this->m_environment->isPending(node.getName())) {
             return this->inferValue(node.getValue());
         }
         throw std::runtime_error{"Undefined variable '" + node.getName() + "'"};
@@ -367,7 +374,7 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_AssignmentExpressi
 
     const auto value = this->inferValue(node.getValue(), symbol.value()->getType());
     this->requireAssignable(symbol.value()->getType(), value, "variable '" + node.getName() + "'", node.getValue()->getLocation());
-    this->m_environment.narrow(node.getName(), flowType(symbol.value()->getType(), value));
+    this->m_environment->narrow(node.getName(), flowType(symbol.value()->getType(), value));
     return value;
 }
 
@@ -379,10 +386,10 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_DestructureAssignm
         auto& target = node.getTargets()[i];
         auto& element = elementTypes[i];
 
-        auto symbol = this->m_environment.lookup(target.getName());
+        auto symbol = this->m_environment->lookup(target.getName());
 
         if (symbol == nullptr) {
-            if (this->m_environment.isPending(target.getName())) {
+            if (this->m_environment->isPending(target.getName())) {
                 continue;
             }
 
@@ -394,7 +401,7 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_DestructureAssignm
         }
 
         this->requireAssignable(symbol.value()->getType(), element, "variable '" + target.getName() + "'", target.getLocation());
-        this->m_environment.narrow(target.getName(), flowType(symbol.value()->getType(), value));
+        this->m_environment->narrow(target.getName(), flowType(symbol.value()->getType(), value));
     }
     return value;
 }
@@ -422,7 +429,7 @@ std::vector<std::shared_ptr<const FalxType> > ExpressionChecker::unpackTuple(con
     throw std::runtime_error{"Unexpectedly found a tuple!"};
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::expression_BinaryExpression(const BinaryExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) const {
+std::shared_ptr<const FalxType> ExpressionChecker::expression_BinaryExpression(const BinaryExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) {
     const auto op = node.getOperator().getTokenKind();
     const auto left = this->inferValue(node.getLeft());
     const auto right = this->inferValue(node.getRight());
@@ -462,7 +469,7 @@ void ExpressionChecker::rejectMaybeNull(const std::shared_ptr<const FalxType> &t
     }
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::expression_UnaryExpression(const UnaryExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) const {
+std::shared_ptr<const FalxType> ExpressionChecker::expression_UnaryExpression(const UnaryExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) {
     const auto& operand = this->inferValue(node.getExpression());
     const auto& op = node.getOperator().getTokenKind();
 
@@ -514,7 +521,7 @@ void ExpressionChecker::requireTruthy(const std::shared_ptr<const FalxType> &typ
     }
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::expression_NullCoalesceExpression(const NullCoalesceExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) const {
+std::shared_ptr<const FalxType> ExpressionChecker::expression_NullCoalesceExpression(const NullCoalesceExpression &node, std::optional<std::shared_ptr<const FalxType> > expected) {
     const auto& left = this->inferValue(node.getLeft(), expected);
     const auto& right = this->inferValue(node.getRight(), expected);
 
@@ -820,8 +827,9 @@ std::shared_ptr<const FalxType> ExpressionChecker::expression_FunctionCallExpres
         }
         if (const auto* fun = dynamic_cast<const FunctionType*>(member.get())) {
             signatures.push_back(*fun);
+        } else {
+            throw std::runtime_error{"Object not callable!"};
         }
-        throw std::runtime_error{"Object not callable!"};
     }
 
     if (signatures.empty()) {
@@ -863,8 +871,8 @@ FunctionType ExpressionChecker::_commonSignature(const std::vector<FunctionType>
     return FunctionType{first.getParameterTypes(), makeUnion(returnTypes), first.getRequired(), first.getParameterNames()};
 }
 
-std::shared_ptr<const FalxType> ExpressionChecker::_checkCall(const FunctionType &signature, const FunctionCallExpression &node) const {
-    if (const auto& count = node.getArguments().size(); !(signature.getMinArguments() < count && signature.getMaxArguments() > count)) {
+std::shared_ptr<const FalxType> ExpressionChecker::_checkCall(const FunctionType &signature, const FunctionCallExpression &node) {
+    if (const auto& count = node.getArguments().size(); !(signature.getMinArguments() <= count && count <= signature.getMaxArguments())) {
         throw std::runtime_error{"Wrong number of arguments!"};
     }
 
@@ -881,15 +889,15 @@ std::shared_ptr<const FalxType> ExpressionChecker::_checkCall(const FunctionType
     return signature.getReturnType();
 }
 
-std::optional<std::shared_ptr<const FalxType> > ExpressionChecker::_requireCall(const FunctionCallExpression &node) const {
+std::optional<std::shared_ptr<const FalxType> > ExpressionChecker::_requireCall(const FunctionCallExpression &node) {
     const auto& callee = node.getCallee();
-    if (const auto* req = dynamic_cast<const VariableExpression*>(callee.get()); req && req->getName() == "require") {
-        return nullptr;
+    if (const auto* req = dynamic_cast<const VariableExpression*>(callee.get()); !req || req->getName() != "require") {
+        return std::nullopt;
     }
 
-    const auto& symbol = this->m_environment.lookup("require");
+    const auto& symbol = this->m_environment->lookup("require");
     if (!symbol || symbol.value()->getKind() != "builtin") {
-        return nullptr;
+        return std::nullopt;
     }
 
     if (node.getArguments().size() != 1) {

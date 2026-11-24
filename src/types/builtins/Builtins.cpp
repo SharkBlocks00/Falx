@@ -27,7 +27,7 @@ std::vector<std::string> SignatureTable::names() const {
 
 std::optional<std::shared_ptr<const FalxType> > SignatureTable::get(const std::string& name) const {
     if (!m_entries.contains(name)) {
-        return nullptr;
+        return std::nullopt;
     }
 
     if (!m_parsed.contains(name)) {
@@ -48,7 +48,7 @@ std::optional<std::shared_ptr<const FalxType> > SignatureTable::get(const std::s
 
         if (required) {
             if (const auto* expr = dynamic_cast<const FunctionType*>(parsed.get())) {
-                parsed = std::make_shared<FunctionType>(expr->getParameterTypes(), expr->getReturnType(), &*required);
+                parsed = std::make_shared<FunctionType>(expr->getParameterTypes(), expr->getReturnType(), static_cast<std::size_t>(*required));
             }
         }
 
@@ -73,7 +73,11 @@ std::map<std::string, std::shared_ptr<const FalxType> > SignatureTable::asDict()
 std::shared_ptr<const FalxType> parseType(const std::string& text, const std::vector<std::string>& variables) {
     const auto expression = Parser{Lexer{text, "<builtin>"}.lex()}.parseTypeAnnotation();
 
-    TypeResolver resolver{{}, {}, variables};
+    TypeResolver resolver{
+        [](const std::string&) -> std::optional<StructType> { return std::nullopt; },
+        [] { return std::vector<std::string>{}; },
+        variables
+    };
     return resolver.resolve(expression, true);
 }
 
@@ -131,7 +135,7 @@ std::optional<ModuleType> internalModule(const std::string& name) {
             const auto constructor = std::make_shared<FunctionType>(
                 con->getParameterTypes(),
                 con->getReturnType(),
-                nullptr
+                std::nullopt
             );
 
             std::map<std::string, std::shared_ptr<const FalxType>> exports{

@@ -170,16 +170,18 @@ public:
     [[nodiscard]] std::string toString() const override;
 
     void setOrigin(const std::optional<std::string>& origin);
+    void setField(const std::string& key, const FieldInfo& info);
+    void setMethod(const std::string& key, const FunctionType& method);
 };
 
 
 class StructType final : public FalxType {
 private:
-    StructInfo m_info;
+    mutable StructInfo m_info;
 public:
     explicit StructType(StructInfo  info);
 
-    [[nodiscard]] const StructInfo& getInfo() const;
+    [[nodiscard]] StructInfo &getInfo() const;
     [[nodiscard]] bool equals(const FalxType& other) const override;
     [[nodiscard]] std::string toString() const override;
 };

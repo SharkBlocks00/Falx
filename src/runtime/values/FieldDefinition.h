@@ -24,7 +24,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> const& getDefaultValue() const { return m_defaultValue; }
     [[nodiscard]] std::string const& getName() const { return m_name; }
-    [[nodiscard]] const TypeExpressionPtr& getTypeAnnotation() const { return m_typeAnnotation; }
+    [[nodiscard]] TypeExpressionPtr getTypeAnnotation() const { return m_typeAnnotation; }
 
     [[nodiscard]] auto astChildren() const { return std::tie(m_defaultValue); }
 

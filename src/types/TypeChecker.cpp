@@ -5,8 +5,19 @@
 
 #include "TypeChecker.h"
 
+#include <algorithm>
+#include <fstream>
 #include <ranges>
+#include <sstream>
 
+#include "../diagnostics/exceptions/TypeExceptions.h"
+#include "../diagnostics/exceptions/runtime/FalxRuntimeException.h"
+#include "../diagnostics/exceptions/runtime/MethodExceptions.h"
+#include "../diagnostics/exceptions/runtime/ModuleExceptions.h"
+#include "../diagnostics/exceptions/runtime/OperationExceptions.h"
+#include "../diagnostics/exceptions/runtime/VariableExceptions.h"
+#include "../lexer/Lexer.h"
+#include "../parser/Parser.h"
 #include "analysis/StatementAnalysis.h"
 #include "builtins/Builtins.h"
 #include "relations/TypeRelations.hpp"
@@ -40,6 +51,37 @@ void TypeChecker::checkBlock(const std::vector<std::shared_ptr<Statement> > &sta
 }
 
 void TypeChecker::checkStatement(const std::shared_ptr<Statement> &statement) {
+    if (!statement) {
+        return;
+    }
+
+    if (const auto* node = dynamic_cast<const ExpressionStatement*>(statement.get())) {
+        this->statement_ExpressionStatement(*node);
+    } else if (const auto* node = dynamic_cast<const BreakStatement*>(statement.get())) {
+        this->statement_BreakStatement(*node);
+    } else if (const auto* node = dynamic_cast<const ContinueStatement*>(statement.get())) {
+        this->statement_ContinueStatement(*node);
+    } else if (const auto* node = dynamic_cast<const BlockStatement*>(statement.get())) {
+        this->statement_BlockStatement(*node);
+    } else if (const auto* node = dynamic_cast<const VariableDeclaration*>(statement.get())) {
+        this->statement_VariableDeclaration(*node);
+    } else if (const auto* node = dynamic_cast<const DestructureDeclaration*>(statement.get())) {
+        this->statement_DestructureDeclaration(*node);
+    } else if (const auto* node = dynamic_cast<const IfStatement*>(statement.get())) {
+        this->statement_IfStatement(*node);
+    } else if (const auto* node = dynamic_cast<const WhileStatement*>(statement.get())) {
+        this->statement_WhileStatement(*node);
+    } else if (const auto* node = dynamic_cast<const ForeachStatement*>(statement.get())) {
+        this->statement_ForeachStatement(*node);
+    } else if (const auto* node = dynamic_cast<const FunctionDeclaration*>(statement.get())) {
+        this->statement_FunctionDeclaration(*node);
+    } else if (const auto* node = dynamic_cast<const ReturnStatement*>(statement.get())) {
+        this->statement_ReturnStatement(*node);
+    } else if (const auto* node = dynamic_cast<const StructDeclaration*>(statement.get())) {
+        this->statement_StructDeclaration(*node);
+    } else {
+        throw TypeCheckError("Type checking is not implemented for statement.", statement->getSourceLocation());
+    }
 }
 
 
@@ -65,13 +107,20 @@ std::optional<StructType> TypeChecker::iFindStruct(const std::string &name) cons
         const auto tail = name.substr(pos + 1);
 
         const auto module = this->m_environment->typeOf(head);
+        if (!module.has_value()) {
+            return std::nullopt;
+        }
 
         const auto* mod = dynamic_cast<const ModuleType*>(module.value().get());
         if (!mod) {
             return std::nullopt;
         }
 
-        return mod->getTypes().at(tail);
+        const auto& types = mod->getTypes();
+        if (const auto it = types.find(tail); it != types.end()) {
+            return it->second;
+        }
+        return std::nullopt;
     }
 
     return this->m_environment->findStruct(name);
@@ -96,28 +145,29 @@ void TypeChecker::prepareBlock(const std::vector<std::shared_ptr<Statement> > &s
 
     for (const auto& declaration : declarations) {
         if (!this->m_environment->getStructs().contains(declaration->getName())) {
-            const auto& _struct = StructType(StructInfo(declaration->getName(), this->iOrigin()));
+            const auto _struct = StructType(StructInfo(declaration->getName(), this->iOrigin()));
             this->m_environment->setStruct(declaration->getName(), _struct);
-            this->m_preparedStructs.at(declaration) = _struct;
+            this->m_preparedStructs.insert_or_assign(declaration, _struct);
         }
     }
 
     for (const auto& declaration : declarations) {
         if (this->m_preparedStructs.contains(declaration)) {
             this->iDeclareStructMembers(*declaration, this->m_preparedStructs.at(declaration).getInfo());
+            this->m_environment->setStruct(declaration->getName(), this->m_preparedStructs.at(declaration));
         }
     }
 }
 
 std::optional<std::string> TypeChecker::iOrigin() const {
     return this->m_currentFile
-        ? std::optional{this->m_currentFile->string()}
+        ? std::optional{this->m_currentFile->filename().string()}
         : std::nullopt;
 }
 
 // Statements
 
-void TypeChecker::statement_ExpressionStatement(const ExpressionStatement &node) const {
+void TypeChecker::statement_ExpressionStatement(const ExpressionStatement &node) {
     static_cast<void>(this->infer(node.getExpression()));
 }
 
@@ -158,7 +208,7 @@ void TypeChecker::statement_VariableDeclaration(const VariableDeclaration &node)
 
     this->iDefine(node.getName(), variableType, node.isMutable(), "variable", node.getSourceLocation());
 
-    if (narrowed != variableType) {
+    if (*narrowed != *variableType) {
         this->m_environment->narrow(node.getName(), narrowed);
     }
 
@@ -167,13 +217,13 @@ void TypeChecker::statement_VariableDeclaration(const VariableDeclaration &node)
 
 void TypeChecker::statement_DestructureDeclaration(const DestructureDeclaration &node) {
     const auto& value = this->inferValue(node.getInitializer());
-    const auto elements = this->unpackTuple(value, node.getTargets().size(), node.getLocation());
+    const auto elements = this->unpackTuple(value, static_cast<int>(node.getTargets().size()), node.getLocation());
 
     std::set<std::string> seen{};
 
     for (const auto& target : node.getTargets()) {
         if (seen.contains(target.getName())) {
-            throw std::runtime_error{"Variable already exists '" + target.getName() + "'"};
+            throw VariableAlreadyExistsException(target.getName(), target.getLocation());
         }
         seen.insert(target.getName());
     }
@@ -189,12 +239,16 @@ void TypeChecker::statement_DestructureDeclaration(const DestructureDeclaration 
 }
 
 void TypeChecker::iDefine(const std::string &name, const std::shared_ptr<const FalxType> &type, const bool _mutable, const std::string &kind, const SourceLocation &location) const {
-    static_cast<void>(this->m_environment->define(name, type, _mutable, kind));
+    try {
+        static_cast<void>(this->m_environment->define(name, type, _mutable, kind));
+    } catch (FalxException& error) {
+        throw error.withLocation(location);
+    }
 }
 
-void TypeChecker::iExport(const bool &exported, const std::string &name, std::shared_ptr<const FalxType> type) {
+void TypeChecker::iExport(const bool exported, const std::string &name, const std::shared_ptr<const FalxType>& type) {
     if (exported && this->m_environment == this->m_topScope) {
-        this->m_exports.at(name) = type;
+        this->m_exports[name] = type;
     }
 }
 
@@ -245,13 +299,13 @@ void TypeChecker::statement_IfStatement(const IfStatement &node) {
         std::vector<std::shared_ptr<const FalxType>> parts;
 
         if (!thenExits) {
-            if (const auto it = thenState.find(name); it != thenState.end()) {
+            if (const auto it = thenState.find(name); it != thenState.end() && it->second.has_value()) {
                 parts.push_back(it->second.value());
             }
         }
 
         if (!elseExits) {
-            if (const auto it = elseState.find(name); it != elseState.end()) {
+            if (const auto it = elseState.find(name); it != elseState.end() && it->second.has_value()) {
                 parts.push_back(it->second.value());
             }
         }
@@ -262,7 +316,7 @@ void TypeChecker::statement_IfStatement(const IfStatement &node) {
     }
 }
 
-std::map<std::string, std::optional<std::shared_ptr<const FalxType> > > TypeChecker::iState(const std::set<std::string> &names, TypeEnvironment scope) {
+std::map<std::string, std::optional<std::shared_ptr<const FalxType> > > TypeChecker::iState(const std::set<std::string> &names, const TypeEnvironment& scope) {
     std::map<std::string, std::optional<std::shared_ptr<const FalxType> > > result;
 
     for (const auto& name : names) {
@@ -311,15 +365,17 @@ void TypeChecker::statement_WhileStatement(const WhileStatement &node) {
 
 void TypeChecker::iRequireCondition(const std::shared_ptr<const FalxType> &type, const std::shared_ptr<Expression> &condition, const SourceLocation &location) {
     if (const auto* un = dynamic_cast<const UnionType*>(type.get())) {
-        if (std::ranges::find(un->getMembers().begin(), un->getMembers().end(), NULL_LITERAL) != un->getMembers().end()) {
-            throw std::runtime_error{"Potentially null value!"};
+        if (std::ranges::any_of(un->getMembers(), [](const auto& m) { return *m == *NULL_LITERAL; })) {
+            throw NullableValueException(
+                describe(condition) + " may be null ('" + type->toString() + "'), so it cannot be used as a condition",
+                location
+            );
         }
     }
 
-    const auto tmp = {ANY, BOOLEAN_LITERAL, STRING_LITERAL};
     for (const auto& member : membersOf(type)) {
-        if (std::ranges::find(tmp.begin(), tmp.end(), member) != tmp.end()) {
-            throw std::runtime_error{"Cannot convert to required type!"};
+        if (*member != *ANY && *member != *BOOLEAN_LITERAL && *member != *STRING_LITERAL) {
+            throw CannotConvertToTypeException(member->toString(), "bool", location);
         }
     }
 }
@@ -328,7 +384,10 @@ void TypeChecker::statement_ForeachStatement(const ForeachStatement &node) {
     const auto& iterable = this->inferValue(node.getIterable());
 
     if (*iterable != *NULL_LITERAL && isNullable(iterable)) {
-        throw std::runtime_error{"Potentially null value!!"};
+        throw NullableValueException(
+            describe(node.getIterable()) + " may be null ('" + iterable->toString() + "'), so it cannot be iterated",
+            node.getSourceLocation()
+        );
     }
 
     std::vector<std::shared_ptr<const FalxType>> members;
@@ -369,7 +428,7 @@ std::shared_ptr<const FalxType> TypeChecker::iElementType(const std::shared_ptr<
         return makeUnion(tuple->getElementTypes());
     }
 
-    throw std::runtime_error{"Object not iterable!"};
+    throw ObjectNotIterableException(iterable->toString(), node.getSourceLocation());
 }
 
 void TypeChecker::statement_FunctionDeclaration(const FunctionDeclaration &node) {
@@ -378,28 +437,34 @@ void TypeChecker::statement_FunctionDeclaration(const FunctionDeclaration &node)
 }
 
 void TypeChecker::statement_ReturnStatement(const ReturnStatement &node) {
-    const auto context = this->m_functions.end();
-    auto declared = context->declaredReturn;
+    auto& context = this->m_functions.back();
+    auto declared = context.declaredReturn;
 
     if (!node.getValue()) {
-        context->hasBareReturn = true;
+        context.hasBareReturn = true;
         if (declared && *declared.value() != *VOID && !acceptsNull(*declared)) {
-            throw std::runtime_error{"Invalid return type!"};
+            throw TypeMismatchException(
+                "Function '" + context.name + "' must return a value of type '" + declared.value()->toString() + "'",
+                node.getSourceLocation()
+            );
         }
         return;
     }
 
     auto value = this->inferValue(node.getValue(), declared);
 
-    if (*declared.value() == *VOID) {
-        throw std::runtime_error{"Function declared void but returns a value!"};
+    if (declared && *declared.value() == *VOID) {
+        throw TypeMismatchException(
+            "Function '" + context.name + "' is declared 'void' but returns a value",
+            node.getSourceLocation()
+        );
     }
 
     if (declared) {
-        requireAssignable(*declared, value, "the return value of '" + context->name + "'", node.getValue()->getLocation());
+        requireAssignable(*declared, value, "the return value of '" + context.name + "'", node.getValue()->getLocation());
     }
 
-    context->returnTypes.push_back(value);
+    context.returnTypes.push_back(value);
 }
 
 
@@ -410,7 +475,7 @@ FunctionType TypeChecker::iCheckFunction(const FunctionDeclaration& node, const 
         const auto& name = parameter.getName();
 
         if (std::ranges::find(names, name) != names.end()) {
-            throw std::runtime_error{"Duplicate parameter: " + name};
+            throw DuplicateParameterException(name, node.getSourceLocation());
         }
 
         names.push_back(name);
@@ -450,7 +515,8 @@ FunctionType TypeChecker::iCheckFunction(const FunctionDeclaration& node, const 
                 bodyScope.define(
                     parameter.getName(),
                     parameterTypes.back(),
-                    true
+                    true,
+                    "parameter"
                 )
             );
         }
@@ -477,6 +543,7 @@ FunctionType TypeChecker::iCheckFunction(const FunctionDeclaration& node, const 
 
         try {
             this->checkBlock(node.getBody());
+            context = this->m_functions.back();
             this->m_functions.pop_back();
         } catch (...) {
             this->m_functions.pop_back();
@@ -484,7 +551,7 @@ FunctionType TypeChecker::iCheckFunction(const FunctionDeclaration& node, const 
         }
 
         fallsThrough = !terminates(node.getBody());
-    });
+    }, std::nullopt, true);
 
     auto returnType = NULL_LITERAL;
 
@@ -494,7 +561,7 @@ FunctionType TypeChecker::iCheckFunction(const FunctionDeclaration& node, const 
             && !acceptsNull(*declaredReturn)
             && fallsThrough
         ) {
-            throw std::runtime_error{"Missing return!"};
+            throw MissingReturnException(node.getName(), declaredReturn.value()->toString(), node.getSourceLocation());
         }
 
         returnType = declaredReturn.value();
@@ -505,7 +572,7 @@ FunctionType TypeChecker::iCheckFunction(const FunctionDeclaration& node, const 
     else {
         auto parts = context.returnTypes;
 
-        if (context.hasBareReturn) {
+        if (context.hasBareReturn || fallsThrough) {
             parts.push_back(NULL_LITERAL);
         }
 
@@ -528,7 +595,7 @@ FunctionType TypeChecker::iCheckFunction(const FunctionDeclaration& node, const 
 }
 
 std::shared_ptr<const FalxType> TypeChecker::iParameterType(const ParameterDefinition &parameter) {
-    auto declared = this->resolveType(parameter.getTypeAnnotation()? nullptr : parameter.getTypeAnnotation());
+    auto declared = parameter.getTypeAnnotation() ? this->resolveType(parameter.getTypeAnnotation()) : nullptr;
 
     if (!parameter.getDefaultValue()) {
         return declared? declared : ANY;
@@ -544,13 +611,223 @@ std::shared_ptr<const FalxType> TypeChecker::iParameterType(const ParameterDefin
     return declared;
 }
 
-void TypeChecker::iDefineIn(const std::shared_ptr<TypeEnvironment> &scope, const std::string &name, std::shared_ptr<const FalxType> type, const std::string &kind, const SourceLocation &location) {
-    static_cast<void>(scope->define(name, type, false, kind));
+void TypeChecker::iDefineIn(const std::shared_ptr<TypeEnvironment> &scope, const std::string &name, const std::shared_ptr<const FalxType>& type, const std::string &kind, const SourceLocation &location) {
+    try {
+        static_cast<void>(scope->define(name, type, false, kind));
+    } catch (FalxException& error) {
+        throw error.withLocation(location);
+    }
 }
 
-void TypeChecker::iDeclareStructMembers(const StructDeclaration &node, const StructInfo &info) {
+void TypeChecker::iDeclareStructMembers(const StructDeclaration &node, StructInfo &info) {
     for (const auto& definition : node.getFields()) {
-        auto declared = this->resolveType(definition.getDefaultValue()? definition.getDefaultValue() : ANY);
-
+        auto declared = definition.getTypeAnnotation() ? this ->resolveType(definition.getTypeAnnotation()) : ANY;
+        info.setField(definition.getName(), FieldInfo{declared, definition.getDefaultValue() != nullptr});
     }
+
+    for (const auto& method : node.getMethods()) {
+        std::vector<std::shared_ptr<const FalxType>> parameters;
+        std::vector<std::string> parameterNames;
+        for (const auto& p : method->getParameters()) {
+            parameters.push_back(p.getTypeAnnotation()? this->resolveType(p.getTypeAnnotation()) : ANY);
+            parameterNames.push_back(p.getName());
+        }
+        auto returns = method->getReturnType()? this->resolveType(method->getReturnType(), true) : ANY;
+        const auto it = std::ranges::find_if(method->getParameters(), [](const auto& parameter) { return parameter.getDefaultValue() != nullptr; });
+
+        std::optional<std::size_t> required;
+
+        if (it != method->getParameters().end()) {
+            required = static_cast<std::size_t>(
+                std::distance(method->getParameters().begin(), it)
+            );
+        }
+
+        info.setMethod(method->getName(), FunctionType(parameters, returns, required, parameterNames));
+    }
+}
+
+void TypeChecker::statement_StructDeclaration(const StructDeclaration &node) {
+    std::shared_ptr<StructType> structType;
+
+    const auto it = this->m_preparedStructs.find(&node);
+
+    if (it != this->m_preparedStructs.end()) {
+        structType = std::make_shared<StructType>(it->second);
+    }
+
+    if (!structType) {
+        structType = std::make_shared<StructType>(StructInfo(node.getName(), this->iOrigin()));
+
+        this->iDeclareStructMembers(node, structType->getInfo());
+    }
+
+    auto& info = structType->getInfo();
+
+    for (const auto& definition : node.getFields()) {
+        info.setField(definition.getName(), FieldInfo{this->iFieldType(definition), definition.getDefaultValue() != nullptr});
+    }
+
+    const std::shared_ptr<const FalxType> constructor = std::make_shared<FunctionType>(this->iConstructorType(node, *structType));
+
+    TypeChecker::iDefineIn(this->m_environment, node.getName(), constructor, "struct", node.getSourceLocation());
+
+    auto members = std::make_shared<TypeEnvironment>(this->m_environment, false);
+
+    for (const auto& [name, fieldInfo] : info.getFields()) {
+        static_cast<void>(members->define(name, fieldInfo.getType(), true, "field"));
+    }
+
+    for (const auto& [name, method] : info.getMethods()) {
+        static_cast<void>(members->define(name, std::make_shared<FunctionType>(method), false, "function"));
+    }
+
+    this->scope(std::move(members), [&](TypeEnvironment& bodyScope) {
+        for (const auto& method : node.getMethods()) {
+            auto function = this->iCheckFunction(*method, false);
+
+            info.setMethod(method->getName(), function);
+
+            bodyScope.redefine(method->getName(), std::make_shared<FunctionType>(function));
+        }
+    });
+
+    this->m_environment->setStruct(node.getName(), *structType);
+
+    if (node.exported() && this->m_environment == this->m_topScope) {
+        this->m_exports[node.getName()] = constructor;
+        this->m_exportedStructs.insert_or_assign(node.getName(), *structType);
+    }
+}
+
+std::shared_ptr<const FalxType> TypeChecker::iFieldType(const FieldDefinition &field) {
+    auto declared = field.getTypeAnnotation()? this->resolveType(field.getTypeAnnotation()) : nullptr;
+
+    if (!field.getDefaultValue()) {
+        return declared? declared : ANY;
+    }
+
+    const auto def = this->inferValue(field.getDefaultValue(), declared);
+
+    if (!declared) {
+        return widen(def, true);
+    }
+
+    requireAssignable(declared, def, "field '" + field.getName() + "'", field.getDefaultValue()->getLocation());
+    return declared;
+}
+
+FunctionType TypeChecker::iConstructorType(const StructDeclaration &node, const StructType &_struct) {
+    const auto& fields = _struct.getInfo().getFields();
+
+    std::size_t required = 0;
+    std::size_t index = 0;
+    std::vector<std::shared_ptr<const FalxType>> types;
+    std::vector<std::string> names;
+
+    for (const auto& [name, fieldInfo] : fields) {
+        if (!fieldInfo.isDefault() && !acceptsNull(fieldInfo.getType())) {
+            required = index + 1;
+        }
+        types.push_back(fieldInfo.getType());
+        names.push_back(name);
+        index++;
+    }
+
+    return FunctionType{
+        types,
+        std::make_shared<StructType>(_struct),
+        required,
+        names
+    };
+}
+
+std::shared_ptr<const FalxType> TypeChecker::loadModule(const std::string &name, const SourceLocation &location) {
+    std::vector<std::string> parts;
+    std::size_t start = 0;
+    while (true) {
+        const auto pos = name.find("::", start);
+        if (pos == std::string::npos) {
+            parts.push_back(name.substr(start));
+            break;
+        }
+        parts.push_back(name.substr(start, pos - start));
+        start = pos + 2;
+    }
+
+    if (parts.size() == 1) {
+        return std::make_shared<ModuleType>(this->iLoadFile(name, this->iResolveUserModule(name), location));
+    }
+
+    std::string subPath;
+    for (std::size_t i = 1; i < parts.size(); ++i) {
+        if (i > 1) {
+            subPath += "/";
+        }
+        subPath += parts[i];
+    }
+
+    if (parts[0] == "_internal") {
+        const auto module = internalModule(subPath);
+        if (!module.has_value()) {
+            throw ModuleNotFoundException(name, "internal module directory").withLocation(location);
+        }
+        return std::make_shared<ModuleType>(*module);
+    }
+
+    if (parts[0] == "std") {
+        const auto path = std::filesystem::weakly_canonical(this->m_stdlibDir / (subPath + ".flx"));
+        const auto rel = path.lexically_relative(this->m_stdlibDir);
+        const bool isInside = !rel.empty() && rel.native().rfind(L"..", 0) != 0;
+        if (!isInside || !std::filesystem::is_regular_file(path)) {
+            throw ModuleNotFoundException(name, path.string()).withLocation(location);
+        }
+        return std::make_shared<ModuleType>(this->iLoadFile(name, path, location));
+    }
+
+    throw ModuleNotFoundException(name, parts[0]).withLocation(location);
+}
+
+std::filesystem::path TypeChecker::iResolveUserModule(const std::string &name) const {
+    const auto base = this->m_currentFile ? this->m_currentFile->parent_path() : *this->m_projectDir;
+    const auto path = std::filesystem::weakly_canonical(base / (name + ".flx"));
+    const auto rel = path.lexically_relative(*this->m_projectDir);
+    const bool isInside = !rel.empty() && rel.native().rfind(L"..", 0) != 0;
+
+    if (!isInside || !std::filesystem::is_regular_file(path)) {
+        throw ModuleNotFoundException(name, path.string());
+    }
+
+    return path;
+}
+
+ModuleType TypeChecker::iLoadFile(const std::string &name, const std::filesystem::path &path, const SourceLocation &location) {
+    if (std::ranges::find(this->m_cache->loading, path) != this->m_cache->loading.end()) {
+        throw CircularModuleDependencyException(path, this->m_cache->loading).withLocation(location);
+    }
+
+    if (const auto it = this->m_cache->modules.find(path); it != this->m_cache->modules.end()) {
+        return it->second;
+    }
+
+    this->m_cache->loading.push_back(path);
+    TypeChecker checker(this->m_projectDir, path, this->m_cache, true);
+    try {
+        std::ifstream file(path);
+        std::ostringstream buffer;
+        buffer << file.rdbuf();
+
+        const auto tokens = Lexer(buffer.str(), path.filename().string()).lex();
+        const auto statements = Parser(tokens).parse();
+        checker.check(statements);
+        this->m_cache->loading.pop_back();
+    } catch (...) {
+        this->m_cache->loading.pop_back();
+        throw;
+    }
+
+    std::map<std::string, const StructType> exportedTypes(checker.m_exportedStructs.begin(), checker.m_exportedStructs.end());
+    ModuleType module(name, checker.m_exports, exportedTypes);
+    this->m_cache->modules.insert_or_assign(path, module);
+    return module;
 }
